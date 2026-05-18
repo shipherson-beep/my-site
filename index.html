@@ -752,12 +752,84 @@ h1,h2,h3,h4,p{margin:0}
 /* =========================================================
    DISCOGRAPHY GRID
    ========================================================= */
+.section-head--disc{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px clamp(20px, 4vw, 56px);
+}
+.section-head--disc h2{
+  order: 0;
+  grid-column: auto;
+  flex: 0 1 auto;
+}
+.section-head--disc .disc-tabs{
+  order: 1;
+  flex: 0 1 auto;
+  margin: 0;
+  align-self: baseline;
+}
+
+.disc-tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  font-family: var(--font-mono);
+}
+.disc-tab{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 6px 0;
+  background: transparent;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  transition: color 120ms ease;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 0;
+  min-height: 0;
+}
+.disc-tab:not(:last-child){ margin-right: 14px; }
+.disc-tab:not(:last-child)::after{
+  content: "/";
+  margin-left: 14px;
+  color: rgba(255,255,255,0.18);
+}
+.disc-tab:hover{ color: var(--fg); }
+.disc-tab.is-active{
+  color: var(--red);
+  background: transparent;
+}
+.disc-tab .count{
+  font-size: 9px;
+  opacity: .55;
+  letter-spacing: .14em;
+}
+
+.disc-panel{ display: none; }
+.disc-panel.is-active{ display: block; }
+.disc-panel__empty{
+  padding: clamp(36px, 6vw, 80px) clamp(20px, 3vw, 32px);
+  border: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  color: rgba(255,255,255,.6);
+  text-align: center;
+  line-height: 1.7;
+}
+
 .disc{
   display:grid;
   grid-template-columns: 1fr;
-  gap: 1px;
-  background: var(--hairline);
-  border: 1px solid var(--hairline);
+  gap: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
 }
 @media (min-width: 640px){ .disc{ grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px){ .disc{ grid-template-columns: repeat(3, 1fr); } }
@@ -766,6 +838,8 @@ h1,h2,h3,h4,p{margin:0}
   background: var(--bg);
   padding: 18px;
   display:flex; flex-direction:column; gap: 16px;
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
 }
 .disc-item .cover{
   border: 1px solid var(--hairline);
@@ -781,7 +855,7 @@ h1,h2,h3,h4,p{margin:0}
   padding: 0;
   border: 1px solid var(--hairline);
   overflow: hidden;
-  background: #0a0a0a;
+  background: #1f1f1f;
 }
 .cover--art .cover__img{
   position:absolute; inset:0;
@@ -793,7 +867,8 @@ h1,h2,h3,h4,p{margin:0}
 }
 
 /* Spotify hover-embed (only on covers that opt-in via data-spotify) */
-.cover--art[data-spotify]{ cursor: pointer; }
+.cover--art[data-spotify],
+.cover--art[data-bandcamp]{ cursor: pointer; }
 .cover--art .cover__embed{
   position:absolute; inset:0;
   width:100%; height:100%;
@@ -802,17 +877,23 @@ h1,h2,h3,h4,p{margin:0}
   opacity:0;
   pointer-events:none;
   transition: opacity .22s ease;
-  background:#0a0a0a;
+  background:#1f1f1f;
 }
 .cover--art[data-spotify]:hover .cover__embed,
 .cover--art[data-spotify]:focus-within .cover__embed,
-.cover--art[data-spotify].is-active .cover__embed{
+.cover--art[data-spotify].is-active .cover__embed,
+.cover--art[data-bandcamp]:hover .cover__embed,
+.cover--art[data-bandcamp]:focus-within .cover__embed,
+.cover--art[data-bandcamp].is-active .cover__embed{
   opacity:1;
   pointer-events:auto;
 }
 .cover--art[data-spotify]:hover .cover__img,
 .cover--art[data-spotify]:focus-within .cover__img,
-.cover--art[data-spotify].is-active .cover__img{
+.cover--art[data-spotify].is-active .cover__img,
+.cover--art[data-bandcamp]:hover .cover__img,
+.cover--art[data-bandcamp]:focus-within .cover__img,
+.cover--art[data-bandcamp].is-active .cover__img{
   opacity:0;
 }
 /* When tapped open (is-active), no extra sizing — .cover already has
@@ -838,7 +919,7 @@ h1,h2,h3,h4,p{margin:0}
   letter-spacing: 0;
   text-transform: uppercase;
 }
-.disc-item__row .type{ opacity: .7; }
+.disc-item__row .type{ display: none; }
 
 details.disc-disclosure{
   border-top: 1px solid var(--hairline);
@@ -1681,10 +1762,30 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
      ============================================================ -->
 <section class="section" id="releases" data-screen-label="02 Releases">
   <div class="shell">
-    <div class="section-head">
+    <div class="section-head section-head--disc">
       <h2><span data-lang-only="uk">Дискографія</span><span data-lang-only="en">Discography</span></h2>
+      <div class="disc-tabs" role="tablist" aria-label="Discography categories">
+        <button class="disc-tab is-active" type="button" role="tab" aria-selected="true" data-disc-tab="albums">
+          <span><span data-lang-only="uk">Альбоми</span><span data-lang-only="en">Albums</span></span>
+          <span class="count">03</span>
+        </button>
+        <button class="disc-tab" type="button" role="tab" aria-selected="false" data-disc-tab="ep">
+          <span>EP</span>
+          <span class="count">03</span>
+        </button>
+        <button class="disc-tab" type="button" role="tab" aria-selected="false" data-disc-tab="collabs">
+          <span><span data-lang-only="uk">Колаборації</span><span data-lang-only="en">Collaborations</span></span>
+          <span class="count">04</span>
+        </button>
+        <button class="disc-tab" type="button" role="tab" aria-selected="false" data-disc-tab="remixes">
+          <span><span data-lang-only="uk">Ремікси</span><span data-lang-only="en">Remixes</span></span>
+          <span class="count">04</span>
+        </button>
+      </div>
     </div>
 
+    <!-- ALBUMS -->
+    <div class="disc-panel is-active" data-disc-panel="albums" role="tabpanel">
     <div class="disc">
       <!-- 01 — SHS·006  Саундтрек до порядку денного — Instrumentals -->
       <article class="disc-item">
@@ -1697,7 +1798,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
             <span class="name">СДПД – Instrumentals</span>
             <span class="year"><span data-lang-only="uk">Лист. 2025</span><span data-lang-only="en">Nov 2025</span></span>
           </span>
-          <span class="type">LP</span>
+          <span class="type">DNIPROPOP</span>
         </div>
         <details class="disc-disclosure">
           <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
@@ -1727,7 +1828,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
             <span class="name">Саундтрек до порядку денного</span>
             <span class="year"><span data-lang-only="uk">Жовт. 2025</span><span data-lang-only="en">Oct 2025</span></span>
           </span>
-          <span class="type">LP</span>
+          <span class="type">DNIPROPOP</span>
         </div>
         <details class="disc-disclosure">
           <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
@@ -1746,7 +1847,44 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </details>
       </article>
 
-      <!-- 03 — SHS·004  Alles wird gut -->
+      <!-- 04 — SHS·003  Essen -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/0u18iIVEU84DPbID2bi9QQ?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/essen.jpg" alt="Essen cover — brick building at dusk on a foggy plain" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Essen" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Essen</span>
+            <span class="year"><span data-lang-only="uk">Трав. 2021</span><span data-lang-only="en">May 2021</span></span>
+          </span>
+          <span class="type">DNIPROPOP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Gott</span><span>03:40</span></li>
+              <li><span class="n">02</span><span>Biest</span><span>03:58</span></li>
+              <li><span class="n">03</span><span>Vier Liter Wasser (revised)</span><span>04:40</span></li>
+              <li><span class="n">04</span><span>Kunst</span><span>03:58</span></li>
+              <li><span class="n">05</span><span>Lustig / Lecker</span><span>04:17</span></li>
+              <li><span class="n">06</span><span>Legende (revised)</span><span>04:56</span></li>
+              <li><span class="n">07</span><span>Spül (revised)</span><span>03:34</span></li>
+              <li><span class="n">08</span><span>Leben</span><span>02:42</span></li>
+              <li><span class="n">09</span><span>Ich hab&#39; nicht (revised)</span><span>04:19</span></li>
+              <li><span class="n">10</span><span>Essen</span><span>03:26</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+    </div>
+    </div><!-- /albums -->
+
+    <!-- EP -->
+    <div class="disc-panel" data-disc-panel="ep" role="tabpanel" hidden>
+    <div class="disc">
+      <!-- SHS·004  Alles wird gut -->
       <article class="disc-item">
         <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/77faDiVnrd5PdZeYDMri1u?utm_source=generator&amp;theme=0">
           <img class="cover__img" src="assets/alles-wird-gut.jpg" alt="Alles wird gut cover — red sheep on a dyke" width="800" height="800" loading="lazy" decoding="async" />
@@ -1769,38 +1907,6 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
               <li><span class="n">04</span><span>Sei nicht traurig</span><span>04:34</span></li>
               <li><span class="n">05</span><span>Union</span><span>02:24</span></li>
               <li><span class="n">06</span><span>Alles wird gut</span><span>03:35</span></li>
-            </ol>
-          </div>
-        </details>
-      </article>
-
-      <!-- 04 — SHS·003  Essen -->
-      <article class="disc-item">
-        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/0u18iIVEU84DPbID2bi9QQ?utm_source=generator&amp;theme=0">
-          <img class="cover__img" src="assets/essen.jpg" alt="Essen cover — brick building at dusk on a foggy plain" width="800" height="800" loading="lazy" decoding="async" />
-          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Essen" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
-        </div>
-        <div class="disc-item__row">
-          <span class="title">
-            <span class="name">Essen</span>
-            <span class="year"><span data-lang-only="uk">Трав. 2021</span><span data-lang-only="en">May 2021</span></span>
-          </span>
-          <span class="type">LP</span>
-        </div>
-        <details class="disc-disclosure">
-          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
-          <div class="disc-body">
-            <ol>
-              <li><span class="n">01</span><span>Gott</span><span>03:40</span></li>
-              <li><span class="n">02</span><span>Biest</span><span>03:58</span></li>
-              <li><span class="n">03</span><span>Vier Liter Wasser (revised)</span><span>04:40</span></li>
-              <li><span class="n">04</span><span>Kunst</span><span>03:58</span></li>
-              <li><span class="n">05</span><span>Lustig / Lecker</span><span>04:17</span></li>
-              <li><span class="n">06</span><span>Legende (revised)</span><span>04:56</span></li>
-              <li><span class="n">07</span><span>Spül (revised)</span><span>03:34</span></li>
-              <li><span class="n">08</span><span>Leben</span><span>02:42</span></li>
-              <li><span class="n">09</span><span>Ich hab&#39; nicht (revised)</span><span>04:19</span></li>
-              <li><span class="n">10</span><span>Essen</span><span>03:26</span></li>
             </ol>
           </div>
         </details>
@@ -1861,6 +1967,130 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </details>
       </article>
     </div>
+    </div><!-- /ep -->
+
+    <!-- COLLABORATIONS -->
+    <div class="disc-panel" data-disc-panel="collabs" role="tabpanel" hidden>
+    <div class="disc">
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/6ztirDg04nHhqI03JQJ3XW?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/collab-elektronna.jpg" alt="електронна × АНТАЙТЛД — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — електронна" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">електронна × АНТАЙТЛД</span>
+            <span class="year"><span data-lang-only="uk">Жовт. 2025</span><span data-lang-only="en">Oct 2025</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Сингл</span><span data-lang-only="en">Single</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/5Iet089wO24u3TB220O6UL?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/collab-invaders-must-die.jpg" alt="Invaders Must Die × 1914 — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Invaders Must Die" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Invaders Must Die × 1914</span>
+            <span class="year"><span data-lang-only="uk">Лют. 2025</span><span data-lang-only="en">Feb 2025</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Сингл</span><span data-lang-only="en">Single</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/39HL1XQei147bTHUGbAG7S?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/collab-vsenetakpohano.jpg" alt="Все не так погано × паліндром — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Все не так погано" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Все не так погано × паліндром</span>
+            <span class="year"><span data-lang-only="uk">Груд. 2022</span><span data-lang-only="en">Dec 2022</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Сингл</span><span data-lang-only="en">Single</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/5E3sZBdJKVDF5xPjbzHwOv?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/collab-spy.jpg" alt="Спи × паліндром — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Спи" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Спи × паліндром</span>
+            <span class="year"><span data-lang-only="uk">Бер. 2022</span><span data-lang-only="en">Mar 2022</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Сингл</span><span data-lang-only="en">Single</span></span>
+        </div>
+      </article>
+    </div>
+    </div><!-- /collabs -->
+
+    <!-- REMIXES -->
+    <div class="disc-panel" data-disc-panel="remixes" role="tabpanel" hidden>
+    <div class="disc">
+      <article class="disc-item">
+        <div class="cover cover--art" data-bandcamp="https://bandcamp.com/EmbeddedPlayer/album=507797602/size=large/bgcol=1f1f1f/linkcol=E10600/tracklist=false/track=2725882990/transparent=true/">
+          <img class="cover__img" src="assets/remix-1914.jpg" alt="1914 — Die Karpathenschlacht (Ship Her Son RMX) artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" title="Bandcamp player — 1914 · Die Karpathenschlacht (SHS RMX)" src="about:blank" loading="lazy" frameborder="0" seamless=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">1914 — Die Karpathenschlacht<br>(Ship Her Son RMX)</span>
+            <span class="year"><span data-lang-only="uk">Лист. 2025</span><span data-lang-only="en">Nov 2025</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Ремікс</span><span data-lang-only="en">Remix</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/6jBOasmQmdvLaCDIwdOXOB?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/remix-djozers.jpg" alt="Джозерс — Існуй, а не живи (Ship Her Son Rework) artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Джозерс · Існуй, а не живи (SHS Rework)" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Джозерс — Існуй, а не живи<br>(Ship Her Son Rework)</span>
+            <span class="year"><span data-lang-only="uk">Лист. 2025</span><span data-lang-only="en">Nov 2025</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Ремікс</span><span data-lang-only="en">Remix</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/6Z0JgguXg6H7gOfhCyLe2A?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/remix-thenietzsche.jpg" alt="The Nietzsche — Dreams 4/17 (Ship Her Son Remix) artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — The Nietzsche · Dreams 4/17 (SHS Remix)" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">The Nietzsche — Dreams 4/17<br>(Ship Her Son Remix)</span>
+            <span class="year"><span data-lang-only="uk">Лист. 2023</span><span data-lang-only="en">Nov 2023</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Ремікс</span><span data-lang-only="en">Remix</span></span>
+        </div>
+      </article>
+
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/457Iz0BxRhfPj24wgt7pTF?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/remix-lindemann.jpg" alt="Till Lindemann — Ich hasse Kinder (Ship Her Son Remix) artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Till Lindemann · Ich hasse Kinder (SHS Remix)" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Till Lindemann — Ich hasse Kinder<br>(Ship Her Son Remix)</span>
+            <span class="year"><span data-lang-only="uk">Трав. 2021</span><span data-lang-only="en">May 2021</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Ремікс</span><span data-lang-only="en">Remix</span></span>
+        </div>
+      </article>
+    </div>
+    </div><!-- /remixes -->
+
   </div>
 </section>
 
@@ -2288,7 +2518,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 
 <footer class="sitefoot" data-screen-label="Footer">
   <span class="sitefoot__left">© 2026 <span data-lang-only="uk">АНТОН ШИФЕРСОН</span><span data-lang-only="en">ANTON SHIFERSON</span> / SHIP HER SON</span>
-  <span class="sitefoot__right"><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a></span>
+  <span class="sitefoot__right"><!--email_off--><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><!--/email_off--></span>
 </footer>
 
 
@@ -2358,6 +2588,30 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
   })();
 
 
+
+  // Discography tabs
+  (function(){
+    var tabs = document.querySelectorAll('[data-disc-tab]');
+    var panels = document.querySelectorAll('[data-disc-panel]');
+    if (!tabs.length || !panels.length) return;
+    function activate(key){
+      tabs.forEach(function(t){
+        var on = t.getAttribute('data-disc-tab') === key;
+        t.classList.toggle('is-active', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      panels.forEach(function(p){
+        var on = p.getAttribute('data-disc-panel') === key;
+        p.classList.toggle('is-active', on);
+        if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
+      });
+    }
+    tabs.forEach(function(t){
+      t.addEventListener('click', function(){
+        activate(t.getAttribute('data-disc-tab'));
+      });
+    });
+  })();
 
   // Façade player
   (function(){
@@ -2547,7 +2801,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 <!-- Lazy-load Spotify embed inside cover on first hover -->
 <script>
 (function(){
-  var covers = document.querySelectorAll('.cover--art[data-spotify]');
+  var covers = document.querySelectorAll('.cover--art[data-spotify], .cover--art[data-bandcamp]');
   var isTouch = window.matchMedia('(hover: none)').matches;
 
   function closeOthers(except){
@@ -2557,7 +2811,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
   covers.forEach(function(cover){
     var iframe = cover.querySelector('iframe.cover__embed');
     if (!iframe) return;
-    var url = cover.getAttribute('data-spotify');
+    var url = cover.getAttribute('data-spotify') || cover.getAttribute('data-bandcamp');
     var loaded = false;
     function load(){
       if (loaded) return;
