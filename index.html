@@ -815,15 +815,9 @@ h1,h2,h3,h4,p{margin:0}
 .cover--art[data-spotify].is-active .cover__img{
   opacity:0;
 }
-/* When tapped open (is-active), constrain the cover to Spotify's natural
-   full-embed render size (352px) so the square fits the player content with
-   no empty black space. Desktop hover is unaffected. */
-.cover--art[data-spotify].is-active{
-  width: 100%;
-  max-width: 352px;
-  margin-left: auto;
-  margin-right: auto;
-}
+/* When tapped open (is-active), no extra sizing — .cover already has
+   aspect-ratio: 1 / 1, so on mobile (1-column grid) the cover stays
+   full-width and square. */
 
 
 
@@ -2053,7 +2047,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </dl>
         <div class="merch-primary__price">
           <span>2300 ₴</span>
-          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#5f2c37362f71373a2d712c30311f38323e3633713c3032"><span class="__cf_email__" data-cfemail="fc8f94958cd294998ed28f9392bc9b919d9590d29f9391">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
+          <small><span data-lang-only="uk">для замовлення з автографом пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
         </div>
         <a class="merch-primary__buy" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span><span data-lang-only="uk">КУПИТИ</span><span data-lang-only="en">BUY NOW</span></span><span>→</span></a>
       </div>
@@ -2304,7 +2298,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 <!-- ============================================================
      JS — minimal, progressive
      ============================================================ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   document.documentElement.classList.remove('no-js');
   document.documentElement.classList.add('has-js');
 
