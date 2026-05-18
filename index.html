@@ -815,30 +815,17 @@ h1,h2,h3,h4,p{margin:0}
 .cover--art[data-spotify].is-active .cover__img{
   opacity:0;
 }
-/* On touch devices keep the player square, matching the cover */
-@media (hover: none){
-  .cover--art[data-spotify].is-active{
-    aspect-ratio: 1 / 1;
-    height: auto;
-  }
+/* When tapped open (is-active), constrain the cover to Spotify's natural
+   full-embed render size (352px) so the square fits the player content with
+   no empty black space. Desktop hover is unaffected. */
+.cover--art[data-spotify].is-active{
+  width: 100%;
+  max-width: 352px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Close button — shows only while active on touch */
-.cover__close{
-  position:absolute;
-  top: 6px; right: 6px;
-  z-index: 2;
-  width: 28px; height: 28px;
-  display: none;
-  align-items: center; justify-content: center;
-  background: rgba(0,0,0,.72);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.25);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-.cover--art[data-spotify].is-active .cover__close{ display: flex; }
+
 
 .disc-item__row{
   display:grid; grid-template-columns: 1fr auto; align-items:end; gap: 14px;
@@ -2066,7 +2053,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </dl>
         <div class="merch-primary__price">
           <span>2300 ₴</span>
-          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#1f6c77766f31777a6d316c70715f78727e7673317c7072"><span class="__cf_email__" data-cfemail="7f0c17160f51171a0d510c10113f18121e1613511c1012">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
+          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#5f2c37362f71373a2d712c30311f38323e3633713c3032"><span class="__cf_email__" data-cfemail="fc8f94958cd294998ed28f9392bc9b919d9590d29f9391">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
         </div>
         <a class="merch-primary__buy" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span><span data-lang-only="uk">КУПИТИ</span><span data-lang-only="en">BUY NOW</span></span><span>→</span></a>
       </div>
@@ -2591,23 +2578,12 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     // so the first hover/tap reveals an already-loaded player.
     cover.__preload = load;
 
-    // Inject a close button for the touch-tap state
-    var closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.className = 'cover__close';
-    closeBtn.setAttribute('aria-label', 'Close player');
-    closeBtn.textContent = '×';
-    cover.appendChild(closeBtn);
-    closeBtn.addEventListener('click', function(e){
-      e.stopPropagation();
-      cover.classList.remove('is-active');
-    });
-
-    // Tap-to-toggle on touch devices (image is on top until active)
-    cover.addEventListener('click', function(e){
-      if (e.target === closeBtn) return;
-      if (!isTouch) return;
-      // Ignore clicks that originate inside the iframe (Spotify controls)
+    // Tap-to-reveal on narrow viewports (the discography grid switches to
+    // 1 column below 640px). Desktop multi-column layout keeps the hover
+    // behavior and is not toggled here.
+    cover.addEventListener('click', function(){
+      var narrow = window.matchMedia('(max-width: 640px)').matches;
+      if (!narrow && !isTouch) return;
       if (cover.classList.contains('is-active')) return;
       load();
       closeOthers(cover);
