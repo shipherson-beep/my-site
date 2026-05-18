@@ -815,11 +815,11 @@ h1,h2,h3,h4,p{margin:0}
 .cover--art[data-spotify].is-active .cover__img{
   opacity:0;
 }
-/* On touch devices the Spotify embed itself is tall (~352px) — let the cover grow */
+/* On touch devices keep the player square, matching the cover */
 @media (hover: none){
   .cover--art[data-spotify].is-active{
-    aspect-ratio: auto;
-    height: 352px;
+    aspect-ratio: 1 / 1;
+    height: auto;
   }
 }
 
@@ -2066,7 +2066,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </dl>
         <div class="merch-primary__price">
           <span>2300 ₴</span>
-          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#ee9d86879ec0868b9cc09d8180ae89838f8782c08d8183"><span class="__cf_email__" data-cfemail="9ae9f2f3eab4f2ffe8b4e9f5f4dafdf7fbf3f6b4f9f5f7">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
+          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#1f6c77766f31777a6d316c70715f78727e7673317c7072"><span class="__cf_email__" data-cfemail="7f0c17160f51171a0d510c10113f18121e1613511c1012">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
         </div>
         <a class="merch-primary__buy" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span><span data-lang-only="uk">КУПИТИ</span><span data-lang-only="en">BUY NOW</span></span><span>→</span></a>
       </div>
