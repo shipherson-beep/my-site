@@ -1,0 +1,2770 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>SHIP HER SON — Post-industrial / Lviv / since 2020</title>
+<meta name="description" content="Ship Her Son — Ukrainian post-industrial electronic project from Lviv. EBM, darkwave, electro-industrial, techno. Latest release: Саундтрек до порядку денного (2025)." />
+
+<!-- OG / Twitter -->
+<meta property="og:title" content="SHIP HER SON" />
+<meta property="og:description" content="Post-industrial / Lviv / since 2020" />
+<meta property="og:type" content="profile" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- Preconnects only where strictly needed -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<!-- React + Babel (for the Tweaks panel only — main site is JS-optional) -->
+<script>
+  // Filter benign Chrome ResizeObserver-loop notifications before anything mounts.
+  (function(){
+    var msg = 'ResizeObserver loop';
+    var ce = console.error;
+    console.error = function(){
+      for (var i=0;i<arguments.length;i++){
+        var a = arguments[i];
+        if (typeof a === 'string' && a.indexOf(msg) !== -1) return;
+      }
+      return ce.apply(console, arguments);
+    };
+    window.addEventListener('error', function(e){
+      if (e && e.message && e.message.indexOf(msg) !== -1){
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return false;
+      }
+    }, true);
+    if (window.ResizeObserver){
+      var Native = window.ResizeObserver;
+      window.ResizeObserver = function(cb){
+        var queued = false;
+        return new Native(function(entries, obs){
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(function(){
+            queued = false;
+            try { cb(entries, obs); } catch(_){}
+          });
+        });
+      };
+      window.ResizeObserver.prototype = Native.prototype;
+    }
+  })();
+</script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- JSON-LD: MusicGroup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  "name": "Ship Her Son",
+  "alternateName": "SHS",
+  "foundingLocation": "Lviv, Ukraine",
+  "foundingDate": "2020",
+  "genre": ["EBM", "Darkwave", "Electro-industrial", "Techno", "Post-industrial"],
+  "url": "https://shipherson.com/",
+  "sameAs": [
+    "https://ship-her-son.bandcamp.com",
+    "https://soundcloud.com/ship-her-son",
+    "https://www.instagram.com/ship.her.son",
+    "https://www.youtube.com/@shipherson"
+  ]
+}
+</script>
+
+<!-- JSON-LD: featured MusicAlbum -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicAlbum",
+  "name": "Саундтрек до порядку денного",
+  "byArtist": {"@type":"MusicGroup","name":"Ship Her Son"},
+  "datePublished": "2025-10-10",
+  "numTracks": 10,
+  "albumProductionType": "StudioAlbum"
+}
+</script>
+
+<style>
+/* =========================================================
+   TOKENS
+   ========================================================= */
+:root{
+  --bg: #000000;
+  --fg: #FFFFFF;
+  --red: #E10600;            /* AA-locked project red */
+  --hairline: rgba(255,255,255,0.18);
+  --hairline-on-white: rgba(0,0,0,0.18);
+
+  --font-display: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-text: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --gutter: clamp(20px, 4vw, 56px);
+  --maxw: 1440px;
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+body{
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-text);
+  font-size: 17px;
+  line-height: 1.5;
+  font-feature-settings: "ss01","cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x:hidden;
+}
+html{ overflow-x: clip; }
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+img,svg{display:block;max-width:100%}
+ul,ol{margin:0;padding:0;list-style:none}
+h1,h2,h3,h4,p{margin:0}
+
+/* Focus */
+:focus-visible{
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
+.skip{
+  position:absolute; left:-9999px; top:0;
+  background:var(--red); color:#fff;
+  padding:10px 14px; font-family:var(--font-mono); font-size:12px; letter-spacing:.08em;
+  z-index:1000;
+}
+.skip:focus{left:8px; top:8px}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; animation:none !important}
+}
+
+/* =========================================================
+   LAYOUT PRIMITIVES
+   ========================================================= */
+.shell{
+  width:100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
+}
+.section{
+  border-top: 1px solid var(--hairline);
+  padding: clamp(56px, 8vw, 120px) 0;
+}
+.section--invert{
+  background: var(--fg);
+  color: var(--bg);
+}
+.section--invert{ --hairline: var(--hairline-on-white); }
+.section--red{
+  background: var(--red);
+  color: var(--fg);
+  border-top-color: rgba(0,0,0,0.25);
+  --hairline: rgba(0,0,0,0.25);
+}
+.section--red .rail{ background: var(--fg); border-color: var(--fg); grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 767px){ .section--red .rail{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 479px){ .section--red .rail{ grid-template-columns: 1fr; } }
+.section--red .rail a{ background: var(--red); }
+.section--red .rail a:hover{ background: var(--fg); color: var(--bg); }
+
+.section-head{
+  display:grid;
+  grid-template-columns: 1fr;
+  align-items:end;
+  gap: 24px;
+  margin-bottom: clamp(32px, 4vw, 64px);
+}
+.section-head .idx,
+.section-head .meta{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.section-head .idx{ color: var(--red); }
+.section-head h2{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(26px, 4.6vw, 68px);
+  letter-spacing: -0.01em;
+  line-height: .96;
+  text-transform: uppercase;
+  grid-column: 1 / -1;
+  order: 2;
+  overflow-wrap: anywhere;
+}
+.section-head .meta{ order: 3; text-align:right; }
+
+
+/* =========================================================
+   STICKY SITEBAR
+   ========================================================= */
+.sitefoot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px var(--gutter);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+.sitefoot__right{ text-align: right; }
+.sitefoot__right a{ color: inherit; text-decoration: none; border-bottom: 1px solid currentColor; transition: color 120ms ease; }
+.sitefoot__right a:hover{ color: var(--fg); }
+@media (max-width: 640px){
+  .sitefoot{ flex-direction: column; align-items: flex-start; gap: 4px; }
+  .sitefoot__right{ text-align: left; }
+}
+
+.sitebar{
+  position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+.sitebar.is-scrolled{
+  background: var(--bg);
+  border-bottom-color: var(--hairline);
+}
+/* Over the hero photo: white logo + icons against the darkened image. */
+.sitebar:not(.is-scrolled){ color: #fff; }
+.sitebar:not(.is-scrolled) .sitebar__mark{ color: #fff; }
+.sitebar:not(.is-scrolled) .sitebar__mark em{ color: #fff; }
+.sitebar:not(.is-scrolled) .sitebar__mark img{ filter: brightness(0) invert(1); }
+.sitebar:not(.is-scrolled) .sitebar__social a{ color: #fff; }
+.sitebar:not(.is-scrolled) .sitebar__social a:hover{ color: var(--red); }
+.sitebar__inner{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--gutter);
+  gap: 12px;
+  min-width: 0;
+}
+.sitebar__mark{ min-width: 0; }
+.sitebar__mark > span{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px){
+  .sitebar__mark > span{ display: none; }
+  .sitebar__social{ gap: 10px; }
+  .sitebar__social a{ width: 32px; height: 32px; }
+}
+.sitebar__mark{
+  display:flex; align-items:center; gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.sitebar__mark img{ width: 36px; height: 36px; }
+.sitebar__mark em{ color: var(--red); font-style: normal; }
+.sitebar:not(.is-scrolled) .sitebar__social{
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.sitebar__social{
+  transition: opacity 200ms ease, visibility 200ms ease;
+}
+.sitebar__social{
+  display: flex; align-items: center; gap: 14px;
+}
+.sitebar__social a{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  color: var(--fg);
+  transition: color 120ms ease;
+}
+.sitebar__social a:hover{
+  color: var(--red);
+}
+.sitebar__social a:focus-visible{
+  outline: 2px solid var(--red); outline-offset: 2px;
+}
+.sitebar__social svg{
+  width: 20px; height: 20px; display: block;
+}
+
+/* =========================================================
+   HERO  — photo-led editorial split, fits one viewport
+   ========================================================= */
+.hero{
+  height: 100svh;
+  min-height: 580px;
+  position: relative;
+  display:grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  overflow:hidden;
+}
+@media (min-width: 900px){
+  .hero{
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    column-gap: 0;
+  }
+}
+.hero__photo{
+  position:absolute !important;
+  inset: 0;
+  z-index: 0;
+}
+.hero__photo::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg,
+      rgba(0,0,0,0.18) 0%,
+      rgba(0,0,0,0.18) 35%,
+      rgba(0,0,0,0.26) 55%,
+      rgba(0,0,0,0.38) 75%,
+      rgba(0,0,0,0.52) 100%);
+  pointer-events:none;
+}
+.hero__body{
+  position:relative;
+  z-index: 1;
+}
+.hero__body{ border-right: 0 !important; border-left: 0 !important; }
+
+/* Top bar inside hero (logo + social) */
+.hero__top{
+  grid-column: 1 / -1;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px var(--gutter);
+  border-bottom: 1px solid var(--hairline);
+  gap: 16px;
+}
+
+.hero__social{
+  display: flex; align-items: center; gap: 14px;
+}
+.hero__social a{
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  color: var(--fg);
+  border: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.hero__social a:hover{
+  color: var(--red);
+  border-color: var(--hairline);
+}
+.hero__social a:focus-visible{
+  outline: 2px solid var(--red); outline-offset: 2px;
+}
+.hero__social svg{
+  width: 20px; height: 20px; display: block;
+}
+.hero__mark{
+  display:flex; align-items:center; gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.hero__mark img{
+  width: 36px; height: 36px;
+  filter: brightness(0) invert(1); /* gray PNG → white */
+}
+.hero__mark em{ color: var(--red); font-style:normal; }
+.hero__meta{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  display:flex; gap: 18px;
+}
+.hero__meta span:nth-child(2){ display:none }
+@media (min-width: 640px){ .hero__meta span:nth-child(2){ display:inline } }
+
+/* Left column: type stack */
+.hero__body{
+  display:flex;
+  flex-direction:column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: clamp(16px, 2.4vw, 28px);
+  padding: 20px var(--gutter);
+  padding-top: clamp(120px, 18vw, 240px);
+  position:relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.hero__type{
+  display:flex;
+  flex-direction:column;
+  gap: clamp(10px, 1.4vw, 16px);
+  min-height: 0;
+}
+.hero__bottom{
+  display:flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+@media (min-width: 900px){
+  .hero__bottom{
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(24px, 4vw, 56px);
+  }
+}
+.hero__overline{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  display:flex; align-items:center; gap: 14px;
+  color: var(--fg);
+}
+.hero__overline::before{
+  content:""; display:block; width: 24px; height:1px; background: var(--red);
+}
+.hero__lede{
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: .9;
+  letter-spacing: -0.015em;
+  font-size: clamp(23px, 2.9vw, 50px);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.hero__lede em{ color: var(--red); font-style:normal; }
+.hero__lede--cyr{ font-size: clamp(24px, 2.8vw, 44px); }
+
+.hero__desc{
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.55;
+  opacity: .85;
+}
+.hero__desc em{ color: var(--red); font-style:normal; }
+.hero__release{
+  margin-top: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.hero__release span{ opacity:.55; }
+
+.hero__stats{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px 16px;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 10px 0;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.14em; text-transform:uppercase;
+  margin: 0;
+  max-width: 440px;
+}
+.hero__stats > div{ display:flex; flex-direction:column; gap: 2px; }
+.hero__stats dt{ opacity:.55; }
+.hero__stats dd{ margin:0; color: var(--fg); font-size: 11px; }
+.hero__cta{ display:flex; flex-wrap:wrap; gap: 12px; align-items:center; max-width: 640px; }
+@media (min-width: 900px){
+  .hero .hero__cta{ flex-wrap: nowrap; max-width: none; }
+}
+
+/* Right column: portrait */
+.hero__photo{
+  position:relative;
+  background: var(--bg);
+  min-height: 32vh;
+  height: 100%;
+  overflow:hidden;
+  contain: layout paint;
+}
+@media (min-width: 900px){
+  .hero__photo{ min-height: 0; }
+}
+.hero__photo img{
+  position:absolute; inset: 0;
+  width:100%; height:100%;
+  object-fit: cover;
+  object-position: 30% 75%;
+  display:block;
+  transform: scale(1);
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+.hero.is-active .hero__photo img{
+  animation: heroZoom 24s ease-out forwards;
+}
+@keyframes heroZoom{
+  from{ transform: scale(1); }
+  to{ transform: scale(1.18); }
+}
+@media (prefers-reduced-motion: reduce){
+  .hero.is-active .hero__photo img{ animation: none; }
+}
+.hero__photo .caption{
+  position:absolute; left: 16px; bottom: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--bg);
+  background: var(--fg);
+  padding: 6px 8px;
+  border: 1px solid var(--bg);
+}
+.hero__photo .corner{
+  position:absolute; right: 16px; top: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--bg);
+  color: var(--fg);
+  padding: 4px 8px;
+  border: 1px solid var(--fg);
+}
+
+/* Hero \u2014 album cover overlay (clickable, links to Bandcamp) */
+/* Hero — album cover badge, sits above title */
+.hero__cover{
+  display: block;
+  width: 160px;
+  height: 160px;
+  flex: 0 0 160px;
+  aspect-ratio: 1 / 1;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+  transition: transform 120ms ease, border-color 120ms ease;
+  align-self: flex-start;
+}
+.hero__cover img{
+  display:block;
+  width:100%; height:100%;
+  object-fit: cover;
+}
+
+
+/* HERO PHOTO — clean, no effects */
+
+/* Bottom band: metadata + CTA */
+.hero__foot{
+  grid-column: 1 / -1;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px 16px;
+  padding: 12px var(--gutter);
+  border-top: 1px solid var(--hairline);
+  align-items:center;
+}
+@media (min-width: 768px){
+  .hero__foot{
+    grid-template-columns: 1fr 1fr auto;
+    gap: 32px;
+  }
+}
+.hero__lat{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  line-height:1.6;
+  opacity:.85;
+}
+.hero__lat strong{ color: var(--red); font-weight:500; }
+.btn{
+  display:inline-flex; align-items:center; gap:14px;
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing:.18em; text-transform:uppercase;
+  border: 1px solid var(--fg);
+  padding: 16px 22px;
+  min-height: 44px;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.btn:hover{ background: var(--fg); color: var(--bg); }
+.btn--red{ border-color: var(--red); color: var(--red); }
+.btn--red:hover{ background: var(--red); color: var(--fg); }
+.btn--inv{ border-color: var(--bg); color: var(--bg); }
+.btn--inv:hover{ background: var(--bg); color: var(--fg); }
+.btn .arrow{
+  width: 18px; height: 1px; background: currentColor; position:relative;
+}
+.btn .arrow::after{
+  content:""; position:absolute; right:-1px; top:-3px;
+  width:7px; height:7px; border-top:1px solid currentColor; border-right:1px solid currentColor;
+  transform: rotate(45deg); transform-origin: right top;
+}
+.btn--ghost{
+  border-color: var(--hairline);
+  padding: 12px 16px;
+  font-size: 11px;
+}
+.btn--ghost:hover{ border-color: var(--fg); background: var(--fg); color: var(--bg); }
+.btn--ghost.btn--red{ border-color: var(--red); color: var(--red); }
+.btn--ghost.btn--red:hover{ background: var(--red); border-color: var(--red); color: var(--fg); }
+
+/* =========================================================
+   LATEST RELEASE
+   ========================================================= */
+.latest{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 4vw, 56px);
+  align-items:start;
+}
+@media (min-width: 900px){
+  .latest{ grid-template-columns: minmax(280px, 460px) 1fr; }
+}
+.cover{
+  width:100%;
+  aspect-ratio: 1 / 1;
+  position:relative;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding: clamp(16px, 2vw, 24px);
+  border: 1px solid var(--hairline);
+}
+.cover--red{ background: var(--red); color: var(--fg); border-color: transparent; }
+.cover--white{ background: var(--fg); color: var(--bg); border-color: transparent; }
+.cover--black{ background: var(--bg); color: var(--fg); border: 1px solid var(--fg); }
+.cover__cat{
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+  display:flex; justify-content:space-between;
+}
+.cover__title{
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: .88;
+  letter-spacing: -0.01em;
+  font-size: clamp(28px, 5vw, 64px);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.cover__title.cyr{ font-size: clamp(28px, 4vw, 52px); }
+.cover__bar{
+  display:flex; justify-content:space-between; align-items:end;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+}
+.cover__mark{
+  font-family: var(--font-display);
+  font-weight:700;
+  font-size: 11px;
+  letter-spacing:.18em;
+}
+
+.latest__meta{
+  display:flex; flex-direction:column; gap: 18px;
+}
+.latest__type{
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--red);
+}
+.latest h3{
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(28px, 5.4vw, 76px);
+  line-height: .95;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+.latest__stats{
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px 32px;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 16px 0;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+}
+.latest__stats dt{ opacity:.6; }
+.latest__stats dd{ margin:0; padding-top: 4px; }
+.latest__copy{
+  max-width: 56ch;
+  font-size: 16px; line-height: 1.55;
+  opacity: .9;
+}
+.latest__rail{
+  display:flex; flex-wrap:wrap; gap: 10px;
+  margin-top: 8px;
+}
+.latest__rail .btn{ padding: 12px 16px; }
+.latest__rail .btn--ghost{
+  border-color: var(--hairline);
+}
+.latest__rail .btn--ghost:hover{
+  border-color: var(--fg);
+}
+
+.facade{
+  margin-top: 8px;
+  border: 1px solid var(--hairline);
+  padding: 16px;
+  display:flex; align-items:center; gap: 16px;
+}
+.facade__play{
+  width: 44px; height: 44px;
+  border:1px solid var(--fg);
+  display:grid; place-items:center;
+  transition: background 120ms, color 120ms;
+}
+.facade__play:hover{ background:var(--fg); color:var(--bg); }
+.facade__play::after{
+  content:""; width:0; height:0;
+  border-left: 10px solid currentColor;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  margin-left: 3px;
+}
+.facade__copy{
+  font-family: var(--font-mono); font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  line-height:1.7;
+}
+.facade__copy strong{ display:block; color: var(--red); font-weight:500; }
+
+/* =========================================================
+   DISCOGRAPHY GRID
+   ========================================================= */
+.disc{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+}
+@media (min-width: 640px){ .disc{ grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px){ .disc{ grid-template-columns: repeat(3, 1fr); } }
+
+.disc-item{
+  background: var(--bg);
+  padding: 18px;
+  display:flex; flex-direction:column; gap: 16px;
+}
+.disc-item .cover{
+  border: 1px solid var(--hairline);
+  margin-bottom: 4px;
+}
+.disc-item .cover--white,
+.disc-item .cover--red,
+.disc-item .cover--black{ border-color: transparent }
+.disc-item .cover--black{ border:1px solid var(--hairline) }
+
+/* image-based covers */
+.cover--art{
+  padding: 0;
+  border: 1px solid var(--hairline);
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.cover--art .cover__img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: cover;
+  display:block;
+  filter: saturate(0.95) contrast(1.02);
+  transition: opacity .22s ease;
+}
+
+/* Spotify hover-embed (only on covers that opt-in via data-spotify) */
+.cover--art[data-spotify]{ cursor: pointer; }
+.cover--art .cover__embed{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  border:0;
+  display:block;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .22s ease;
+  background:#0a0a0a;
+}
+.cover--art[data-spotify]:hover .cover__embed,
+.cover--art[data-spotify]:focus-within .cover__embed{
+  opacity:1;
+  pointer-events:auto;
+}
+.cover--art[data-spotify]:hover .cover__img,
+.cover--art[data-spotify]:focus-within .cover__img{
+  opacity:0;
+}
+@media (hover: none){
+  .cover--art[data-spotify] .cover__embed{ display:none; }
+}
+
+.disc-item__row{
+  display:grid; grid-template-columns: 1fr auto; align-items:end; gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: .14em; text-transform:uppercase;
+  min-width: 0;
+}
+.disc-item__row .title{ overflow-wrap: anywhere; }
+.disc-item__row .name{ overflow-wrap: anywhere; }
+.disc-item__row .title{ display:flex; flex-direction:column; gap: 6px; min-width: 0; }
+.disc-item__row .year{ color: var(--red); }
+.disc-item__row .name{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.disc-item__row .type{ opacity: .7; }
+
+details.disc-disclosure{
+  border-top: 1px solid var(--hairline);
+  padding-top: 14px;
+}
+details.disc-disclosure summary{
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+  cursor:pointer;
+  list-style:none;
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 4px 0;
+}
+details.disc-disclosure summary::-webkit-details-marker{ display:none }
+details.disc-disclosure summary::after{
+  content:"[+]"; color: var(--red);
+}
+details.disc-disclosure[open] summary::after{ content:"[—]"; }
+.disc-body{
+  display:grid; gap: 8px;
+  padding-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.06em; text-transform:uppercase;
+  line-height:1.7;
+}
+.disc-body ol{ display:grid; gap: 4px; }
+.disc-body ol li{
+  display:grid; grid-template-columns: 28px 1fr auto; gap: 12px;
+}
+.disc-body ol li .n{ color: var(--red); }
+.disc-body .credits{ opacity:.7; padding-top: 6px; }
+.disc-body .links{
+  display:flex; flex-wrap:wrap; gap: 6px 14px;
+  padding-top: 8px;
+}
+.disc-body .links a{
+  border-bottom: 1px solid currentColor; padding-bottom: 2px;
+}
+.disc-body .links a:hover{ color: var(--red); border-color: var(--red); }
+
+/* =========================================================
+   ABOUT — half-view photo + text
+   ========================================================= */
+.section--about{ padding-top: 0; padding-bottom: 0; border-top: 0; }
+.about-split{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin-top: 0;
+}
+@media (min-width: 900px){
+  .about-split{ grid-template-columns: 1fr 1fr; align-items: stretch; }
+}
+.about-split__photo{
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+  aspect-ratio: 4 / 5;
+  min-height: 360px;
+}
+@media (min-width: 900px){
+  .about-split__photo{ aspect-ratio: auto; min-height: 0; }
+}
+.about-split__photo img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+@media (min-width: 900px){
+  .about-split__photo img{ object-position: center 8%; }
+}
+.about-split__body{
+  padding: clamp(28px, 5vw, 64px) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2vw, 28px);
+  max-width: 720px;
+}
+@media (min-width: 900px){
+  .about-split__body{ border-top: 0; border-left: 0; }
+}
+.section--about .bio__detail{ max-width: 60ch; }
+
+/* =========================================================
+   BIO
+   ========================================================= */
+.bio{
+  display:grid; gap: clamp(28px, 4vw, 56px);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px){ .bio{ grid-template-columns: 1.1fr 1fr; } }
+.bio__lead{
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(26px, 4vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+.bio__lead em{
+  color: var(--red); font-style:normal;
+}
+.bio__detail p + p{ margin-top: 1em; }
+.bio__detail{ font-size: 16px; line-height: 1.65; max-width: 60ch; }
+.bio__donor{
+  margin-top: 24px;
+  border: 1px solid var(--red);
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  line-height: 1.7;
+}
+.bio__donor strong{ color: var(--red); }
+
+.timeline{
+  margin-top: clamp(28px, 4vw, 48px);
+  border-top: 1px solid var(--hairline);
+  padding-top: 24px;
+  display:grid; gap: 14px;
+}
+.timeline li{
+  display:grid; grid-template-columns: 80px 1fr;
+  gap: 18px; align-items:baseline;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.12em; text-transform:uppercase;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.timeline li:last-child{ border-bottom: none; }
+.timeline .y{ color: var(--red); }
+.timeline .e{ font-family: var(--font-display); font-weight:600; font-size: 18px; letter-spacing:0; }
+
+/* =========================================================
+   TOUR DATES
+   ========================================================= */
+.tour{
+  border-top: 1px solid var(--hairline);
+}
+.tour__row{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 4px 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing:.1em; text-transform:uppercase;
+  align-items: baseline;
+  min-width: 0;
+}
+.tour__row > *{ min-width: 0; overflow-wrap: anywhere; }
+@media (min-width: 768px){
+  .tour__row{
+    grid-template-columns: 140px 1fr 1.4fr auto;
+    align-items: center;
+  }
+}
+.tour__row .date{ color: var(--red); }
+.tour__row .tix{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  border: 1px solid var(--fg);
+  padding: 10px 14px;
+  white-space: nowrap;
+  justify-self: start;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+@media (min-width: 768px){ .tour__row .tix{ justify-self: end; } }
+.tour__row .tix:hover{ background: var(--red); border-color: var(--red); color: var(--fg); }
+.tour__row[data-sold] .tix{ pointer-events: none; opacity: .5; border-color: var(--hairline); }
+.tour__row .city{
+  font-family: var(--font-display); font-weight:600;
+  font-size: 22px; letter-spacing:0;
+}
+.tour__row .venue{ opacity:.75; }
+.tour__row[data-sold]{ opacity: .55; }
+.tour__row[data-sold] .venue::after{ content: " · SOLD OUT"; color: var(--red); }
+
+.tour__empty{
+  font-family: var(--font-display);
+  font-weight: 800; text-transform:uppercase;
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: -0.005em;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--red);
+}
+.tour__archive{ margin-top: 28px; }
+.tour__archive summary{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  cursor:pointer; padding: 8px 0;
+  list-style:none;
+  display:flex; justify-content:space-between;
+}
+.tour__archive summary::-webkit-details-marker{ display:none }
+.tour__archive summary::after{ content:"[ARCHIVE +]"; color: var(--red); }
+.tour__archive[open] summary::after{ content:"[ARCHIVE —]"; }
+
+/* =========================================================
+   MERCH
+   ========================================================= */
+.merch-primary{
+  display:grid; grid-template-columns: 1fr; gap: 28px;
+  margin-bottom: 40px;
+  color: var(--bg);
+}
+@media (min-width: 768px){
+  .merch-primary{ grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; margin-bottom: 56px; }
+}
+.merch-primary:has(+ .merch[hidden]){ margin-bottom: 0; }
+.merch-primary__img{
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background: var(--bg);
+  position:relative;
+  overflow:hidden;
+  color: var(--fg);
+}
+.merch-primary__img .label{
+  font-family: var(--font-display); font-weight:700; text-transform:uppercase;
+  font-size: clamp(44px, 6vw, 88px); line-height: .88;
+  text-align:center; letter-spacing: -0.01em;
+}
+.merch-primary__img .tag{
+  position:absolute; top: 16px; left: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  z-index: 3;
+  background: var(--fg); color: var(--bg);
+  padding: 6px 10px;
+}
+
+/* Carousel */
+.carousel{ position:absolute; inset:0; }
+.carousel__track{ position:absolute; inset:0; }
+.carousel__slide{
+  position:absolute; inset:0;
+  opacity:0; visibility:hidden;
+  transition: opacity 400ms ease;
+}
+.carousel__slide.is-active{ opacity:1; visibility:visible; }
+.carousel__slide img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.carousel__btn{
+  z-index: 3;
+  color: var(--fg);
+  background: rgba(0,0,0,.55);
+  padding: 0 10px;
+  border: 0;
+  cursor:pointer;
+  transition: background 120ms, color 120ms;
+  display:inline-flex; align-items:center; justify-content:center;
+  height: 28px;
+  font-family: var(--font-mono); font-size: 11px;
+}
+.carousel__btn svg{ display:block; width: 11px; height: 11px; }
+.carousel__counter{
+  position:absolute; top: 16px; right: 16px;
+  z-index: 3;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--fg);
+  background: rgba(0,0,0,.55);
+  padding: 0 10px;
+  height: 28px;
+  display:inline-flex; align-items:center; justify-content:center;
+  line-height: 1;
+}
+.carousel__counter > span{ display:inline-block; transform: translateY(0.5px); }
+.carousel__btn:hover{ background: var(--fg); color: var(--bg); }
+.carousel__nav{
+  position:absolute; top: 16px; left: 16px;
+  z-index: 3;
+  display:flex; gap: 4px;
+}
+.carousel__dots{
+  position:absolute; left:0; right:0; bottom: 16px;
+  display:flex; justify-content:center; gap: 8px;
+  z-index: 3;
+}
+.carousel__dot{
+  width: 28px; height: 3px;
+  background: rgba(255,255,255,.4);
+  border: 0; padding: 0; cursor:pointer;
+  transition: background 160ms;
+}
+.carousel__dot.is-active{ background: var(--fg); }
+.merch-primary__body{
+  display:flex; flex-direction:column; gap: 18px;
+  padding-top: 4px;
+}
+.merch-primary__eyebrow{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  display:flex; justify-content:space-between; align-items:baseline;
+  border-top: 1px solid currentColor; padding-top: 18px;
+}
+.merch-primary__name{
+  font-family: var(--font-display); font-weight:700; text-transform:uppercase;
+  font-size: clamp(26px, 4vw, 52px); line-height: .95;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.merch-primary__name em{
+  font-style: normal; font-weight: 400;
+  display: block; margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  opacity: .75;
+}
+.merch-primary__desc{
+  font-family: var(--font-body);
+  font-size: 15px; line-height: 1.5;
+  max-width: 52ch;
+  text-wrap: pretty;
+  opacity: .85;
+}
+.merch-primary__meta{
+  display:flex; flex-wrap:wrap; gap: 20px 28px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  margin-top: 4px;
+}
+.merch-primary__meta dt{ opacity:.6; margin-bottom: 4px; }
+.merch-primary__meta dd{ margin: 0; }
+.merch-primary__price{
+  font-family: var(--font-display); font-weight:700;
+  font-size: clamp(28px, 3.4vw, 44px); line-height: 1;
+  margin-top: auto;
+  display:flex; flex-direction:column; align-items:flex-start; gap: 12px;
+  border-top: 1px solid currentColor; padding-top: 18px;
+}
+.merch-primary__price small{
+  font-family: var(--font-mono); font-weight:400;
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  opacity:.7; line-height: 1.6;
+  align-self: stretch;
+}
+.merch-primary__price small a{
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.merch-primary__price small a:hover{ opacity: .7; }
+.merch-primary__buy{
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing:.18em; text-transform:uppercase;
+  border:1px solid currentColor; padding: 14px 18px;
+  transition: background 120ms, color 120ms;
+  align-self:flex-start;
+  display:inline-flex; align-items:center; gap: 14px;
+}
+.merch-primary__buy:hover{ background: var(--bg); color: var(--fg); border-color: var(--bg); }
+
+.merch{
+  display:grid; grid-template-columns: 1fr; gap: 28px;
+}
+.merch[hidden]{ display:none; }
+@media (min-width: 768px){ .merch{ grid-template-columns: repeat(3, 1fr); } }
+.merch-item{
+  display:flex; flex-direction:column; gap: 14px;
+  color: var(--bg);
+}
+.merch-item__img{
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--hairline-on-white);
+  display:grid; place-items:center;
+  padding: 20px;
+  position:relative;
+}
+.merch-item__img.bg-red{ background: var(--red); border-color: transparent; color: var(--fg) }
+.merch-item__img.bg-black{ background: var(--bg); border-color: transparent; color: var(--fg) }
+.merch-item__img .label{
+  font-family: var(--font-display); font-weight:700; text-transform:uppercase;
+  font-size: clamp(28px, 3.2vw, 42px); line-height: .9;
+  text-align:center; letter-spacing: -0.005em;
+}
+.merch-item__row{
+  display:flex; align-items:baseline; justify-content:space-between;
+  border-top: 1px solid currentColor; padding-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+}
+.merch-item__name{
+  font-family: var(--font-display); font-weight:600;
+  font-size: 18px; letter-spacing:0; text-transform:uppercase;
+}
+.merch-item__buy{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  border:1px solid currentColor; padding: 10px 14px;
+  transition: background 120ms, color 120ms;
+  align-self:flex-start;
+}
+.merch-item__buy:hover{ background: var(--bg); color: var(--fg); border-color: var(--bg); }
+.merch-item:nth-child(odd) .merch-item__buy:hover{ color: var(--fg); }
+
+/* =========================================================
+   VIDEOS
+   ========================================================= */
+.videos{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 24px;
+}
+.videos > .video-card:first-child{ grid-column: 1 / -1; }
+.videos > .video-card:first-child .video-card__thumb{ aspect-ratio: 16 / 9; }
+
+.video-card{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.video-card__thumb{
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 0;
+}
+.video-card__thumb--red{ background: var(--red); color: var(--fg); border-color: transparent; }
+.video-card__thumb--black{ background: var(--bg); color: var(--fg); border: 1px solid var(--fg); }
+.video-card__thumb--white{ background: var(--fg); color: var(--bg); border-color: transparent; }
+.video-card__thumb--art{ background: #0a0a0a; color: var(--fg); overflow:hidden; }
+.video-card__thumb--art .video-card__img{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: cover;
+  display:block;
+  transition: transform .35s ease, filter .25s ease;
+}
+.video-card:hover .video-card__thumb--art .video-card__img{ transform: scale(1.03); filter: brightness(1.05); }
+
+.video-card__overlay{
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(22px, 2.6vw, 36px);
+  letter-spacing: -.01em;
+  line-height: .9;
+  text-align: center;
+  padding: 8px 14px;
+}
+.video-card__sub{
+  position: absolute;
+  bottom: 10px; left: 14px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.video-card__play{ display: none; }
+
+.video-card__row{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 10px;
+}
+.video-card__title{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+.video-card__meta{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+/* =========================================================
+   PRESS
+   ========================================================= */
+.press{
+  display:grid; grid-template-columns: 1fr; gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+}
+@media (min-width: 768px){ .press{ grid-template-columns: repeat(2, 1fr); } }
+.press blockquote{
+  background: var(--bg);
+  margin: 0;
+  padding: clamp(24px, 3vw, 40px);
+  display:flex; flex-direction:column; gap: 20px;
+  position:relative;
+}
+.press blockquote::before{
+  content: none;
+}
+.press blockquote:not(.press--news)::before{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  opacity: .6;
+  position: static;
+  margin: 0;
+}
+html[lang="uk"] .press blockquote:not(.press--news)::before{ content: "Цитата"; }
+html[lang="en"] .press blockquote:not(.press--news)::before{ content: "Quote"; }
+.press q{
+  display:block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  quotes: none;
+  padding-top: 0;
+}
+.press q::before, .press q::after{ content: ""; }
+.press cite{
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  border-top: 1px solid var(--hairline);
+  padding-top: 12px;
+  display:flex; justify-content:space-between;
+  flex-wrap:wrap; gap: 6px;
+}
+.press cite a{ border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+.press cite a:hover{ color: var(--red); border-color: var(--red); }
+
+.press blockquote.press--news{
+  gap: 18px;
+  background: var(--fg);
+  color: var(--bg);
+  cursor: pointer;
+  transition: background 160ms, color 160ms;
+  position: relative;
+}
+.press blockquote.press--news:hover{
+  background: var(--red);
+  color: var(--fg);
+}
+.press blockquote.press--news:hover a.news-link{
+  border-top-color: rgba(255,255,255,0.35);
+}
+.press blockquote.press--news .news-kicker{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  opacity: .6;
+}
+.press blockquote.press--news .news-title{
+  display:block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(22px, 3.4vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.press blockquote.press--news .news-title em{
+  font-style: normal;
+}
+.press blockquote.press--news a.news-link{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(0,0,0,0.18);
+  padding-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  margin-top: auto;
+}
+.press blockquote.press--news a.news-link:hover{ color: inherit; }
+
+/* Make entire news card clickable */
+.press blockquote.press--news .news-link{ position: static; }
+.press blockquote.press--news .news-link::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.press-kit{
+  margin-top: clamp(28px, 4vw, 48px);
+  display:flex; align-items:center; justify-content:space-between;
+  border-top: 1px solid var(--hairline);
+  padding-top: 24px;
+  flex-wrap:wrap; gap: 16px;
+}
+.press-kit p{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  line-height: 1.7;
+}
+.press-kit p strong{ color: var(--red); font-weight:500; }
+
+/* =========================================================
+   STREAMING / SOCIAL RAILS
+   ========================================================= */
+.rail{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+}
+@media (min-width: 480px){ .rail{ grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 768px){ .rail{ grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px){ .rail{ grid-template-columns: repeat(4, 1fr); } }
+
+.rail a{
+  background: var(--bg);
+  padding: 22px 20px;
+  display:grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 16px;
+  align-items:center;
+  min-width: 0;
+  transition: background 120ms, color 120ms;
+}
+.rail a > .label{ min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rail a:hover{ background: var(--red); color: var(--fg); }
+.rail a:hover .ext{ opacity: 1; }
+.rail .ico{
+  width: 24px; height: 24px;
+  color: currentColor;
+}
+.rail .ico--mask{
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+}
+.rail .ico--deezer{
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20width%3D%22954.66669%22%20height%3D%22948%22%20viewBox%3D%220%200%20954.66669%20948%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cdefs%3E%3C%2Fdefs%3E%20%3Cg%20transform%3D%22matrix(1.3333333%2C0%2C0%2C1.3333333%2C0%2C2.37e-5)%22%3E%20%3Cpath%20d%3D%22m%20167.07%2C0%20c%208.97%2C1.94%2014.83%2C9.41%2019.19%2C17.02%206.11%2C10.68%2010.61%2C22.72%2014.15%2C34.75%208.88%2C30.2%2014.07%2C62.48%2017.65%2C95.01%200.01%2C0.11%200.1%2C0.19%200.21%2C0.19%200.11%2C0.01%200.2%2C-0.07%200.22%2C-0.18%204.07%2C-27.87%209.3%2C-56.04%2019.41%2C-81.14%201.45%2C-3.61%203.36%2C-7.36%205.75%2C-11.25%2016.08%2C-26.24%2029.97%2C1.62%2035.06%2C15.37%204.57%2C12.35%208.43%2C26.26%2011.57%2C41.73%205.29%2C26.08%209.31%2C54.2%2012.06%2C84.35%200.95%2C10.43%201.95%2C23.11%202.99%2C38.06%200.01%2C0.12%200.1%2C0.21%200.22%2C0.22%200.12%2C0.01%200.23%2C-0.07%200.25%2C-0.19%204.42%2C-20.44%2025.81%2C-105.16%2060.92%2C-90.07%207.08%2C3.05%2013.62%2C10.75%2017.88%2C17.53%2013.56%2C21.55%2021.01%2C47.8%2026.86%2C72.68%200.02%2C0.08%200.1%2C0.14%200.18%2C0.13%200.09%2C-0.01%200.15%2C-0.07%200.16%2C-0.16%202.82%2C-46.04%207.78%2C-92.34%2018.21%2C-136.55%202.52%2C-10.68%2014.83%2C-59.58%2032.65%2C-53.37%206.42%2C2.23%2011.22%2C10.04%2014.1%2C16.14%203.94%2C8.35%207.18%2C17.18%209.72%2C26.49%205.35%2C19.63%209.39%2C39.64%2012.12%2C60.01%200.02%2C0.12%200.12%2C0.21%200.24%2C0.21%200.12%2C0%200.22%2C-0.09%200.23%2C-0.21%203.6%2C-32.5%208.9%2C-65.06%2017.78%2C-95.47%203.37%2C-11.53%207.84%2C-22.63%2013.41%2C-33.29%201.71%2C-3.27%204.23%2C-6.83%207.56%2C-10.67%203.32%2C-3.82%207.39%2C-6.27%2012.22%2C-7.34%20h%203.27%20c%205.26%2C1.22%209.65%2C4.06%2013.17%2C8.53%205%2C6.35%208.97%2C13.13%2011.92%2C20.34%2010.27%2C25.06%2016.17%2C51.79%2020.57%2C78.82%200.01%2C0.09%200.09%2C0.15%200.18%2C0.15%200.09%2C0%200.17%2C-0.06%200.18%2C-0.15%201.96%2C-12.19%204.78%2C-24.17%208.47%2C-35.92%202.29%2C-7.33%205.99%2C-16.72%2011.47%2C-22.16%2011.96%2C-11.86%2021.46%2C11.5%2024.07%2C19.4%204.55%2C13.77%208%2C28.45%2010.36%2C44.03%203.29%2C21.75%205.54%2C42.9%206.76%2C63.46%202.88%2C48.58%201.98%2C96.49%20-2.7%2C143.74%20-1.84%2C18.6%20-4.78%2C36.93%20-8.82%2C54.99%20-1.51%2C6.77%20-3.58%2C13.86%20-6.21%2C21.25%20-2.71%2C7.6%20-11.99%2C29.6%20-23.53%2C17.81%20-2.2%2C-2.25%20-3.95%2C-4.67%20-5.25%2C-7.26%20-4.19%2C-8.37%20-7.31%2C-17.08%20-9.36%2C-26.13%20-0.03%2C-0.14%20-0.16%2C-0.24%20-0.3%2C-0.23%20-0.15%2C0.01%20-0.26%2C0.13%20-0.28%2C0.27%20-2.56%2C24.18%20-6.37%2C47.62%20-11.44%2C70.33%20-3.45%2C15.45%20-7.77%2C29.74%20-12.94%2C42.85%20-4.07%2C10.32%20-12.9%2C28.81%20-25.09%2C31.53%20-27.83%2C6.21%20-44.03%2C-73.63%20-47.38%2C-90.95%20-0.01%2C-0.05%20-0.05%2C-0.09%20-0.1%2C-0.08%20-0.06%2C0%20-0.1%2C0.04%20-0.1%2C0.09%20-2.99%2C43.87%20-7.96%2C88.42%20-18.26%2C130.77%20-2.75%2C11.32%20-13.94%2C53.27%20-29.74%2C51.64%20-19.72%2C-2.05%20-31.33%2C-62.54%20-34.14%2C-78.02%20-0.02%2C-0.11%20-0.11%2C-0.18%20-0.22%2C-0.18%20-0.11%2C0%20-0.2%2C0.08%20-0.21%2C0.19%20-3.67%2C33.14%20-9.22%2C67.1%20-17.68%2C97.62%20-5.59%2C20.17%20-13.12%2C41.87%20-25.45%2C58.99%20-3.94%2C5.47%20-8.51%2C9.58%20-13.71%2C12.32%20-13.39%2C7.06%20-26.24%2C-3.84%20-33.25%2C-14.33%20-6.19%2C-9.27%20-11.33%2C-19.53%20-15.43%2C-30.78%20-14.4%2C-39.48%20-21.74%2C-82.01%20-26.18%2C-123.96%200%2C-0.05%20-0.04%2C-0.08%20-0.09%2C-0.09%20-0.05%2C0%20-0.09%2C0.03%20-0.1%2C0.08%20-1.42%2C6.83%20-3.2%2C14.83%20-5.34%2C23.99%20-2.46%2C10.53%20-17.39%2C70.83%20-38.54%2C49.85%20-5.86%2C-5.81%20-9.97%2C-15.09%20-13.04%2C-23.6%20-2.84%2C-7.9%20-5.19%2C-15.64%20-7.05%2C-23.21%20-10.39%2C-42.33%20-15.4%2C-87%20-18.34%2C-131.24%200%2C-0.08%20-0.07%2C-0.15%20-0.15%2C-0.15%20-0.08%2C-0.01%20-0.16%2C0.05%20-0.17%2C0.13%20-3.84%2C20.52%20-9.01%2C41.23%20-16.96%2C60.72%20-3.93%2C9.63%20-9.66%2C20.75%20-17.89%2C27.02%20-18.14%2C13.81%20-32.51%2C-15.71%20-37.48%2C-28.24%20-5.07%2C-12.77%20-9.28%2C-26.51%20-12.61%2C-41.21%20-5.29%2C-23.38%20-9.24%2C-47.42%20-11.84%2C-72.11%20-0.01%2C-0.13%20-0.12%2C-0.23%20-0.25%2C-0.24%20-0.13%2C-0.01%20-0.25%2C0.07%20-0.28%2C0.2%20-2.6%2C10.44%20-6.15%2C21.33%20-12.04%2C30.38%20-1%2C1.53%20-2.43%2C3.01%20-4.28%2C4.45%20C%2083.14%2C425.88%2073.29%2C394.26%2071.26%2C386.99%2063.86%2C360.54%2060.18%2C333.02%2057.95%2C305.26%2054.07%2C256.74%2054.04%2C208.32%2057.85%2C160%2059.52%2C138.93%2062.09%2C119.26%2065.56%2C101.01%2068.22%2C87%2071.49%2C73.33%2077.08%2C60.81%2079.2%2C56.07%2082.62%2C49.93%2087.29%2C47.36%20c%2018.23%2C-10.01%2029.02%2C51.43%2030.57%2C60.36%200.02%2C0.09%200.1%2C0.16%200.19%2C0.15%200.09%2C0%200.17%2C-0.07%200.18%2C-0.16%203.21%2C-21.53%207.99%2C-42.33%2014.33%2C-62.4%203.26%2C-10.33%207.31%2C-19.77%2012.15%2C-28.31%204.27%2C-7.54%2010.13%2C-14.96%2019.06%2C-17%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3Cpath%20d%3D%22M%2023.87%2C296.68%20C%2012.56%2C296.68%203.4%2C259.53%203.4%2C213.7%20c%200%2C-45.83%209.16%2C-82.98%2020.47%2C-82.98%2011.31%2C0%2020.47%2C37.15%2020.47%2C82.98%200%2C45.83%20-9.16%2C82.98%20-20.47%2C82.98%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3Cpath%20d%3D%22m%20693.2%2C296.68%20c%20-11.3%2C0%20-20.46%2C-37.15%20-20.46%2C-82.98%200%2C-45.83%209.16%2C-82.98%2020.46%2C-82.98%2011.3%2C0%2020.46%2C37.15%2020.46%2C82.98%200%2C45.83%20-9.16%2C82.98%20-20.46%2C82.98%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg%20version%3D%221.1%22%20width%3D%22954.66669%22%20height%3D%22948%22%20viewBox%3D%220%200%20954.66669%20948%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%20%3Cdefs%3E%3C%2Fdefs%3E%20%3Cg%20transform%3D%22matrix(1.3333333%2C0%2C0%2C1.3333333%2C0%2C2.37e-5)%22%3E%20%3Cpath%20d%3D%22m%20167.07%2C0%20c%208.97%2C1.94%2014.83%2C9.41%2019.19%2C17.02%206.11%2C10.68%2010.61%2C22.72%2014.15%2C34.75%208.88%2C30.2%2014.07%2C62.48%2017.65%2C95.01%200.01%2C0.11%200.1%2C0.19%200.21%2C0.19%200.11%2C0.01%200.2%2C-0.07%200.22%2C-0.18%204.07%2C-27.87%209.3%2C-56.04%2019.41%2C-81.14%201.45%2C-3.61%203.36%2C-7.36%205.75%2C-11.25%2016.08%2C-26.24%2029.97%2C1.62%2035.06%2C15.37%204.57%2C12.35%208.43%2C26.26%2011.57%2C41.73%205.29%2C26.08%209.31%2C54.2%2012.06%2C84.35%200.95%2C10.43%201.95%2C23.11%202.99%2C38.06%200.01%2C0.12%200.1%2C0.21%200.22%2C0.22%200.12%2C0.01%200.23%2C-0.07%200.25%2C-0.19%204.42%2C-20.44%2025.81%2C-105.16%2060.92%2C-90.07%207.08%2C3.05%2013.62%2C10.75%2017.88%2C17.53%2013.56%2C21.55%2021.01%2C47.8%2026.86%2C72.68%200.02%2C0.08%200.1%2C0.14%200.18%2C0.13%200.09%2C-0.01%200.15%2C-0.07%200.16%2C-0.16%202.82%2C-46.04%207.78%2C-92.34%2018.21%2C-136.55%202.52%2C-10.68%2014.83%2C-59.58%2032.65%2C-53.37%206.42%2C2.23%2011.22%2C10.04%2014.1%2C16.14%203.94%2C8.35%207.18%2C17.18%209.72%2C26.49%205.35%2C19.63%209.39%2C39.64%2012.12%2C60.01%200.02%2C0.12%200.12%2C0.21%200.24%2C0.21%200.12%2C0%200.22%2C-0.09%200.23%2C-0.21%203.6%2C-32.5%208.9%2C-65.06%2017.78%2C-95.47%203.37%2C-11.53%207.84%2C-22.63%2013.41%2C-33.29%201.71%2C-3.27%204.23%2C-6.83%207.56%2C-10.67%203.32%2C-3.82%207.39%2C-6.27%2012.22%2C-7.34%20h%203.27%20c%205.26%2C1.22%209.65%2C4.06%2013.17%2C8.53%205%2C6.35%208.97%2C13.13%2011.92%2C20.34%2010.27%2C25.06%2016.17%2C51.79%2020.57%2C78.82%200.01%2C0.09%200.09%2C0.15%200.18%2C0.15%200.09%2C0%200.17%2C-0.06%200.18%2C-0.15%201.96%2C-12.19%204.78%2C-24.17%208.47%2C-35.92%202.29%2C-7.33%205.99%2C-16.72%2011.47%2C-22.16%2011.96%2C-11.86%2021.46%2C11.5%2024.07%2C19.4%204.55%2C13.77%208%2C28.45%2010.36%2C44.03%203.29%2C21.75%205.54%2C42.9%206.76%2C63.46%202.88%2C48.58%201.98%2C96.49%20-2.7%2C143.74%20-1.84%2C18.6%20-4.78%2C36.93%20-8.82%2C54.99%20-1.51%2C6.77%20-3.58%2C13.86%20-6.21%2C21.25%20-2.71%2C7.6%20-11.99%2C29.6%20-23.53%2C17.81%20-2.2%2C-2.25%20-3.95%2C-4.67%20-5.25%2C-7.26%20-4.19%2C-8.37%20-7.31%2C-17.08%20-9.36%2C-26.13%20-0.03%2C-0.14%20-0.16%2C-0.24%20-0.3%2C-0.23%20-0.15%2C0.01%20-0.26%2C0.13%20-0.28%2C0.27%20-2.56%2C24.18%20-6.37%2C47.62%20-11.44%2C70.33%20-3.45%2C15.45%20-7.77%2C29.74%20-12.94%2C42.85%20-4.07%2C10.32%20-12.9%2C28.81%20-25.09%2C31.53%20-27.83%2C6.21%20-44.03%2C-73.63%20-47.38%2C-90.95%20-0.01%2C-0.05%20-0.05%2C-0.09%20-0.1%2C-0.08%20-0.06%2C0%20-0.1%2C0.04%20-0.1%2C0.09%20-2.99%2C43.87%20-7.96%2C88.42%20-18.26%2C130.77%20-2.75%2C11.32%20-13.94%2C53.27%20-29.74%2C51.64%20-19.72%2C-2.05%20-31.33%2C-62.54%20-34.14%2C-78.02%20-0.02%2C-0.11%20-0.11%2C-0.18%20-0.22%2C-0.18%20-0.11%2C0%20-0.2%2C0.08%20-0.21%2C0.19%20-3.67%2C33.14%20-9.22%2C67.1%20-17.68%2C97.62%20-5.59%2C20.17%20-13.12%2C41.87%20-25.45%2C58.99%20-3.94%2C5.47%20-8.51%2C9.58%20-13.71%2C12.32%20-13.39%2C7.06%20-26.24%2C-3.84%20-33.25%2C-14.33%20-6.19%2C-9.27%20-11.33%2C-19.53%20-15.43%2C-30.78%20-14.4%2C-39.48%20-21.74%2C-82.01%20-26.18%2C-123.96%200%2C-0.05%20-0.04%2C-0.08%20-0.09%2C-0.09%20-0.05%2C0%20-0.09%2C0.03%20-0.1%2C0.08%20-1.42%2C6.83%20-3.2%2C14.83%20-5.34%2C23.99%20-2.46%2C10.53%20-17.39%2C70.83%20-38.54%2C49.85%20-5.86%2C-5.81%20-9.97%2C-15.09%20-13.04%2C-23.6%20-2.84%2C-7.9%20-5.19%2C-15.64%20-7.05%2C-23.21%20-10.39%2C-42.33%20-15.4%2C-87%20-18.34%2C-131.24%200%2C-0.08%20-0.07%2C-0.15%20-0.15%2C-0.15%20-0.08%2C-0.01%20-0.16%2C0.05%20-0.17%2C0.13%20-3.84%2C20.52%20-9.01%2C41.23%20-16.96%2C60.72%20-3.93%2C9.63%20-9.66%2C20.75%20-17.89%2C27.02%20-18.14%2C13.81%20-32.51%2C-15.71%20-37.48%2C-28.24%20-5.07%2C-12.77%20-9.28%2C-26.51%20-12.61%2C-41.21%20-5.29%2C-23.38%20-9.24%2C-47.42%20-11.84%2C-72.11%20-0.01%2C-0.13%20-0.12%2C-0.23%20-0.25%2C-0.24%20-0.13%2C-0.01%20-0.25%2C0.07%20-0.28%2C0.2%20-2.6%2C10.44%20-6.15%2C21.33%20-12.04%2C30.38%20-1%2C1.53%20-2.43%2C3.01%20-4.28%2C4.45%20C%2083.14%2C425.88%2073.29%2C394.26%2071.26%2C386.99%2063.86%2C360.54%2060.18%2C333.02%2057.95%2C305.26%2054.07%2C256.74%2054.04%2C208.32%2057.85%2C160%2059.52%2C138.93%2062.09%2C119.26%2065.56%2C101.01%2068.22%2C87%2071.49%2C73.33%2077.08%2C60.81%2079.2%2C56.07%2082.62%2C49.93%2087.29%2C47.36%20c%2018.23%2C-10.01%2029.02%2C51.43%2030.57%2C60.36%200.02%2C0.09%200.1%2C0.16%200.19%2C0.15%200.09%2C0%200.17%2C-0.07%200.18%2C-0.16%203.21%2C-21.53%207.99%2C-42.33%2014.33%2C-62.4%203.26%2C-10.33%207.31%2C-19.77%2012.15%2C-28.31%204.27%2C-7.54%2010.13%2C-14.96%2019.06%2C-17%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3Cpath%20d%3D%22M%2023.87%2C296.68%20C%2012.56%2C296.68%203.4%2C259.53%203.4%2C213.7%20c%200%2C-45.83%209.16%2C-82.98%2020.47%2C-82.98%2011.31%2C0%2020.47%2C37.15%2020.47%2C82.98%200%2C45.83%20-9.16%2C82.98%20-20.47%2C82.98%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3Cpath%20d%3D%22m%20693.2%2C296.68%20c%20-11.3%2C0%20-20.46%2C-37.15%20-20.46%2C-82.98%200%2C-45.83%209.16%2C-82.98%2020.46%2C-82.98%2011.3%2C0%2020.46%2C37.15%2020.46%2C82.98%200%2C45.83%20-9.16%2C82.98%20-20.46%2C82.98%20z%22%20fill%3D%22currentColor%22%3E%3C%2Fpath%3E%20%3C%2Fg%3E%20%3C%2Fsvg%3E");
+}
+.rail .label{
+  font-family: var(--font-display);
+  font-weight: 800; text-transform: uppercase;
+  font-size: 17px; letter-spacing: 0.01em;
+}
+.rail .ext{
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+  opacity:.6;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.foot{
+  display:grid; gap: clamp(28px, 4vw, 48px);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px){
+  .foot{ grid-template-columns: 1.4fr 1fr 1fr; }
+}
+.foot__mark{
+  font-family: var(--font-display);
+  font-weight: 800; text-transform: uppercase;
+  font-size: clamp(28px, 6.4vw, 100px);
+  line-height: .84;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.foot__mark em{ color: var(--red); font-style:normal; }
+.foot__block h4{
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--red); margin-bottom: 8px;
+}
+.foot__block p, .foot__block a{
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing:.06em; text-transform:uppercase;
+  line-height: 1.7;
+}
+.foot__block a{ border-bottom: 1px solid currentColor; padding-bottom: 1px; }
+.foot__block a:hover{ color: var(--red); border-color: var(--red); }
+.foot__bar{
+  margin-top: clamp(40px, 6vw, 80px);
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  display:flex; flex-wrap:wrap; justify-content:space-between; gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing:.18em; text-transform:uppercase;
+  opacity:.7;
+}
+
+/* =========================================================
+   I18N — show only the active language
+   ========================================================= */
+html[lang="uk"] [data-lang-only="en"]{ display:none !important; }
+html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
+
+/* =========================================================
+   LANGUAGE SWITCHER (sitebar + hero)
+   ========================================================= */
+.lang{
+  display:inline-flex; align-items:center; gap: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border: 1px solid var(--hairline);
+  height: 36px;
+  padding: 0;
+  margin-left: 4px;
+}
+.lang button{
+  height: 100%;
+  padding: 0 12px;
+  display:inline-flex; align-items:center; justify-content:center;
+  color: currentColor;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+  opacity: .55;
+}
+.lang button:hover{ opacity: 1; }
+.lang button.is-active{
+  background: var(--fg);
+  color: var(--bg);
+  opacity: 1;
+}
+.lang__sep{
+  display:inline-block;
+  width: 1px;
+  align-self: stretch;
+  background: var(--hairline);
+}
+.sitebar:not(.is-scrolled) .lang{
+  border-color: rgba(255,255,255,0.35);
+}
+.sitebar:not(.is-scrolled) .lang__sep{
+  background: rgba(255,255,255,0.35);
+}
+.sitebar:not(.is-scrolled) .lang button.is-active{
+  background: #fff;
+  color: #000;
+}
+.sitebar__nav{
+  display:flex; align-items:center; gap: 14px;
+}
+
+/* =========================================================
+   TWEAKS HOST
+   ========================================================= */
+#tweaks-root{ position:fixed; inset: 0; pointer-events:none; z-index: 200 }
+#tweaks-root > *{ pointer-events:auto; }
+
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main"><span data-lang-only="uk">Перейти до контенту</span><span data-lang-only="en">SKIP TO CONTENT</span></a>
+
+
+<header class="sitebar" id="sitebar" data-screen-label="00 Header">
+  <div class="sitebar__inner">
+    <span class="sitebar__mark">
+      <img src="assets/shs-logo.png" alt="Ship Her Son monogram" width="36" height="36" />
+      <span>SHIP HER SON</span>
+    </span>
+    <div class="sitebar__nav">
+      <nav class="sitebar__social" aria-label="Social">
+        <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer" aria-label="Instagram — @ship.her.son" title="Instagram">
+          <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M22.3,8.4c-0.8,0-1.4,0.6-1.4,1.4c0,0.8,0.6,1.4,1.4,1.4c0.8,0,1.4-0.6,1.4-1.4C23.7,9,23.1,8.4,22.3,8.4z"/><path d="M16,10.2c-3.3,0-5.9,2.7-5.9,5.9s2.7,5.9,5.9,5.9s5.9-2.7,5.9-5.9S19.3,10.2,16,10.2z M16,19.9c-2.1,0-3.8-1.7-3.8-3.8c0-2.1,1.7-3.8,3.8-3.8c2.1,0,3.8,1.7,3.8,3.8C19.8,18.2,18.1,19.9,16,19.9z"/><path d="M20.8,4h-9.5C7.2,4,4,7.2,4,11.2v9.5c0,4,3.2,7.2,7.2,7.2h9.5c4,0,7.2-3.2,7.2-7.2v-9.5C28,7.2,24.8,4,20.8,4z M25.7,20.8c0,2.7-2.2,5-5,5h-9.5c-2.7,0-5-2.2-5-5v-9.5c0-2.7,2.2-5,5-5h9.5c2.7,0,5,2.2,5,5V20.8z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@shipherson" target="_blank" rel="noopener noreferrer" aria-label="YouTube — @shipherson" title="YouTube">
+          <svg viewBox="0 -3 20 20" aria-hidden="true" fill="currentColor"><g transform="translate(-244 -7282)"><path d="M251.988432,7291.58588 L251.988432,7285.97425 C253.980638,7286.91168 255.523602,7287.8172 257.348463,7288.79353 C255.843351,7289.62824 253.980638,7290.56468 251.988432,7291.58588 M263.090998,7283.18289 C262.747343,7282.73013 262.161634,7282.37809 261.538073,7282.26141 C259.705243,7281.91336 248.270974,7281.91237 246.439141,7282.26141 C245.939097,7282.35515 245.493839,7282.58153 245.111335,7282.93357 C243.49964,7284.42947 244.004664,7292.45151 244.393145,7293.75096 C244.556505,7294.31342 244.767679,7294.71931 245.033639,7294.98558 C245.376298,7295.33761 245.845463,7295.57995 246.384355,7295.68865 C247.893451,7296.0008 255.668037,7296.17532 261.506198,7295.73552 C262.044094,7295.64178 262.520231,7295.39147 262.895762,7295.02447 C264.385932,7293.53455 264.28433,7285.06174 263.090998,7283.18289"/></g></svg>
+        </a>
+        <a href="https://ship-her-son.bandcamp.com" target="_blank" rel="noopener noreferrer" aria-label="Bandcamp" title="Bandcamp">
+          <svg viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M0 25l9.917-18h22.083l-9.917 18z"/></svg>
+        </a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language / Мова">
+        <button type="button" data-set-lang="uk" aria-label="Українська">UA</button>
+        <span class="lang__sep" aria-hidden="true"></span>
+        <button type="button" data-set-lang="en" aria-label="English">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================================================
+     01 — HERO
+     ============================================================ -->
+<section class="hero" id="hero" data-variant="stacked" data-screen-label="01 Hero">
+
+  <div class="hero__body">
+    <div class="hero__type">
+    </div>
+
+    <div class="hero__bottom">
+      <p class="hero__release">
+        Саундтрек до порядку денного <span data-lang-only="uk">· Альбом / Цифровий реліз</span><span data-lang-only="en">· LP / DIGITAL</span>
+      </p>
+
+      <div class="hero__cta">
+      <a class="btn btn--ghost" href="https://ship-her-son.bandcamp.com" target="_blank" rel="noopener noreferrer">Bandcamp ↗</a>
+      <a class="btn btn--ghost" href="https://open.spotify.com/artist/62Q4pz0eKSAr0OAmemGvAL" target="_blank" rel="noopener noreferrer">Spotify ↗</a>
+      <a class="btn btn--ghost" href="https://music.apple.com/ua/artist/ship-her-son/1512919640" target="_blank" rel="noopener noreferrer">Apple Music ↗</a>
+      <a class="btn btn--ghost" href="https://www.youtube.com/@shipherson" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+      <a class="btn btn--ghost" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">Купити вініл ↗</span><span data-lang-only="en">Buy Vinyl ↗</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__photo">
+    <img src="assets/daily-agenda.jpg"
+         width="2000" height="2000"
+         alt="Cover artwork for Saundtrek do poryadku dennoho — a figure in headphones watching a distant fire next to a brick wall at dusk."
+         loading="eager" fetchpriority="high" decoding="async" />
+  </div>
+</section>
+
+<!-- ============================================================
+     02 — RELEASES / DISCOGRAPHY
+     ============================================================ -->
+<section class="section" id="releases" data-screen-label="02 Releases">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Дискографія</span><span data-lang-only="en">Discography</span></h2>
+    </div>
+
+    <div class="disc">
+      <!-- 01 — SHS·006  Саундтрек до порядку денного — Instrumentals -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/1VKYZlvkJugFdZBVhtw1Ce?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/daily-agenda-instrumentals.jpg" alt="Саундтрек до порядку денного — Instrumentals cover" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — СДПД Instrumentals" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">СДПД – Instrumentals</span>
+            <span class="year"><span data-lang-only="uk">Лист. 2025</span><span data-lang-only="en">Nov 2025</span></span>
+          </span>
+          <span class="type">LP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Світло (Instrumental)</span><span>04:14</span></li>
+              <li><span class="n">02</span><span>Я йду до клубу (Instrumental)</span><span>03:50</span></li>
+              <li><span class="n">03</span><span>У вічність (Instrumental)</span><span>03:31</span></li>
+              <li><span class="n">04</span><span>Вдих (Instrumental)</span><span>03:58</span></li>
+              <li><span class="n">05</span><span>Усе найгірше (Instrumental)</span><span>03:54</span></li>
+              <li><span class="n">06</span><span>Магніт (вириває з грудей) (Instrumental)</span><span>04:11</span></li>
+              <li><span class="n">07</span><span>Я не маю сил (Instrumental)</span><span>03:58</span></li>
+              <li><span class="n">08</span><span>Кінцева (Instrumental)</span><span>04:37</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+
+      <!-- 02 — SHS·005  Саундтрек до порядку денного -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/7ndAbKhr4gLB6Bc1UMwLjd?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/daily-agenda.jpg" alt="Саундтрек до порядку денного cover" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Саундтрек до порядку денного" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Саундтрек до порядку денного</span>
+            <span class="year"><span data-lang-only="uk">Жовт. 2025</span><span data-lang-only="en">Oct 2025</span></span>
+          </span>
+          <span class="type">LP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Світло</span><span>04:14</span></li>
+              <li><span class="n">02</span><span>Я йду до клубу feat. Eugene Tymchyk</span><span>03:50</span></li>
+              <li><span class="n">03</span><span>У вічність feat. Антон Слєпаков</span><span>03:31</span></li>
+              <li><span class="n">04</span><span>Вдих</span><span>04:00</span></li>
+              <li><span class="n">05</span><span>Усе найгірше feat. паліндром</span><span>03:54</span></li>
+              <li><span class="n">06</span><span>Магніт (вириває з грудей) feat. Олександр Куц</span><span>04:11</span></li>
+              <li><span class="n">07</span><span>Я не маю сил feat. Divuar</span><span>03:58</span></li>
+              <li><span class="n">08</span><span>Кінцева</span><span>04:36</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+
+      <!-- 03 — SHS·004  Alles wird gut -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/77faDiVnrd5PdZeYDMri1u?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/alles-wird-gut.jpg" alt="Alles wird gut cover — red sheep on a dyke" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Alles wird gut" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Alles wird gut</span>
+            <span class="year"><span data-lang-only="uk">Лип. 2022</span><span data-lang-only="en">Jul 2022</span></span>
+          </span>
+          <span class="type">EP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Kindheitsgeschmack</span><span>03:49</span></li>
+              <li><span class="n">02</span><span>Das ist anders</span><span>03:40</span></li>
+              <li><span class="n">03</span><span>Alt</span><span>04:40</span></li>
+              <li><span class="n">04</span><span>Sei nicht traurig</span><span>04:34</span></li>
+              <li><span class="n">05</span><span>Union</span><span>02:24</span></li>
+              <li><span class="n">06</span><span>Alles wird gut</span><span>03:35</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+
+      <!-- 04 — SHS·003  Essen -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/0u18iIVEU84DPbID2bi9QQ?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/essen.jpg" alt="Essen cover — brick building at dusk on a foggy plain" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Essen" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Essen</span>
+            <span class="year"><span data-lang-only="uk">Трав. 2021</span><span data-lang-only="en">May 2021</span></span>
+          </span>
+          <span class="type">LP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Gott</span><span>03:40</span></li>
+              <li><span class="n">02</span><span>Biest</span><span>03:58</span></li>
+              <li><span class="n">03</span><span>Vier Liter Wasser (revised)</span><span>04:40</span></li>
+              <li><span class="n">04</span><span>Kunst</span><span>03:58</span></li>
+              <li><span class="n">05</span><span>Lustig / Lecker</span><span>04:17</span></li>
+              <li><span class="n">06</span><span>Legende (revised)</span><span>04:56</span></li>
+              <li><span class="n">07</span><span>Spül (revised)</span><span>03:34</span></li>
+              <li><span class="n">08</span><span>Leben</span><span>02:42</span></li>
+              <li><span class="n">09</span><span>Ich hab&#39; nicht (revised)</span><span>04:19</span></li>
+              <li><span class="n">10</span><span>Essen</span><span>03:26</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+
+      <!-- 05 — SHS·002  Leicht zu öffnen -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/4sG6lSHtw3jUtByCJS17SV?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/leicht-zu-offen.jpg" alt="Leicht zu öffnen cover — orange hashmark over a portrait" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Leicht zu öffnen" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Leicht zu öffnen</span>
+            <span class="year"><span data-lang-only="uk">Серп. 2020</span><span data-lang-only="en">Aug 2020</span></span>
+          </span>
+          <span class="type">EP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Kunst</span><span>03:57</span></li>
+              <li><span class="n">02</span><span>Zentrum Auftakt</span><span>01:44</span></li>
+              <li><span class="n">03</span><span>Zentrum</span><span>04:47</span></li>
+              <li><span class="n">04</span><span>Spül</span><span>03:32</span></li>
+              <li><span class="n">05</span><span>Ich hab&#39; nicht</span><span>04:16</span></li>
+              <li><span class="n">06</span><span>Danke</span><span>01:16</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+
+      <!-- 06 — SHS·001  Ratten -->
+      <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/album/3xpmEqbkutEm6ugBYUzYeu?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/ratten.jpg" alt="Ratten cover — black outline of a mouse / rat head" width="800" height="800" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Ratten" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Ratten</span>
+            <span class="year"><span data-lang-only="uk">Черв. 2020</span><span data-lang-only="en">Jun 2020</span></span>
+          </span>
+          <span class="type">EP</span>
+        </div>
+        <details class="disc-disclosure">
+          <summary><span data-lang-only="uk">ТРЕКЛИСТ</span><span data-lang-only="en">TRACKLIST</span></summary>
+          <div class="disc-body">
+            <ol>
+              <li><span class="n">01</span><span>Stadt</span><span>03:09</span></li>
+              <li><span class="n">02</span><span>Vier Liter Wasser</span><span>04:54</span></li>
+              <li><span class="n">03</span><span>Ratten</span><span>04:28</span></li>
+              <li><span class="n">04</span><span>Legende</span><span>05:12</span></li>
+              <li><span class="n">05</span><span>Endlich</span><span>04:52</span></li>
+            </ol>
+          </div>
+        </details>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     06 — VIDEOS
+     ============================================================ -->
+<section class="section section--invert" id="videos" data-screen-label="06 Videos">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Відео</span><span data-lang-only="en">Videos</span></h2>
+    </div>
+
+    <div class="videos">
+      <a class="video-card" href="https://www.youtube.com/watch?v=Jb9_TxCv4Ag" data-yt="Jb9_TxCv4Ag" data-yt-title="Я не маю сил (feat. Divuar)" target="_blank" rel="noopener noreferrer" aria-label="Play Я не маю сил feat. Divuar (2025)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-ya-ne-mayu-syl.jpg" alt="Я не маю сил feat. Divuar — burning wreckage on a field" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Я не маю сил (feat. Divuar)</span>
+          <span class="video-card__meta">2025 · 3:59</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=O3atvRGw_Xs" data-yt="O3atvRGw_Xs" data-yt-title="У вічність / Вдих" target="_blank" rel="noopener noreferrer" aria-label="Play У вічність / Вдих (2024)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-vichnist-vdykh.jpg" alt="У вічність / Вдих feat. Антон Слєпаков — red-tinted portrait" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">У вічність / Вдих</span>
+          <span class="video-card__meta">2024 · 7:31</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=Q1LjJZp0TfY" data-yt="Q1LjJZp0TfY" data-yt-title="Das ist anders" target="_blank" rel="noopener noreferrer" aria-label="Play Das ist anders (2023)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-das-ist-anders.jpg" alt="Das ist anders — sheep in a field of red poppies" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Das ist anders</span>
+          <span class="video-card__meta">2023 · 3:41</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=Z6ZZ_lWexMc" data-yt="Z6ZZ_lWexMc" data-yt-title="Alles wird gut" target="_blank" rel="noopener noreferrer" aria-label="Play Alles wird gut (2022)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-alles-wird-gut.jpg" alt="Alles wird gut — hand holding a tape spool, deep red tone" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Alles wird gut</span>
+          <span class="video-card__meta">2022 · 3:43</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=0ylS0a5KEDU" data-yt="0ylS0a5KEDU" data-yt-title="Gott" target="_blank" rel="noopener noreferrer" aria-label="Play Gott (2021)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-gott.jpg" alt="Gott — black and white close-up portrait with eyes closed" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Gott</span>
+          <span class="video-card__meta">2021 · 3:48</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=F_lq1ghwYNk" data-yt="F_lq1ghwYNk" data-yt-title="Vier Liter Wasser" target="_blank" rel="noopener noreferrer" aria-label="Play Vier Liter Wasser (2021)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-vier-liter-wasser.jpg" alt="Vier Liter Wasser — blue gas flame on black" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Vier Liter Wasser</span>
+          <span class="video-card__meta">2021 · 4:40</span>
+        </div>
+      </a>
+
+      <a class="video-card" href="https://www.youtube.com/watch?v=o67Ik8EmF_0" data-yt="o67Ik8EmF_0" data-yt-title="Kunst" target="_blank" rel="noopener noreferrer" aria-label="Play Kunst (2020)">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-kunst.jpg" alt="Kunst — torn posters on a graffitied brick wall, black and white" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Kunst</span>
+          <span class="video-card__meta">2020 · 4:03</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     05 — TOUR
+     ============================================================ -->
+<section class="section" id="tour" data-screen-label="04 Tour">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Концерти</span><span data-lang-only="en">Events</span></h2>
+    </div>
+
+    <div class="tour" id="tour-list">
+      <div class="tour__row">
+        <span class="date">06.06.2026</span>
+        <span class="city"><span data-lang-only="uk">Київ, UA</span><span data-lang-only="en">Kyiv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">Фестиваль попкультури FANCON · МВЦ</span><span data-lang-only="en">FANCON pop-culture festival · IEC</span></span>
+        <a class="tix" href="https://fancon.ua/prydbaty-kvytky-na-fancon/" target="_blank" rel="noopener noreferrer" aria-label="Tickets — FANCON, Kyiv, 2026.06.06"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
+      </div>
+      <div class="tour__row">
+        <span class="date">26.06.2026</span>
+        <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">!FESTREPUBLIC · на розігріві в Анни</span><span data-lang-only="en">!FESTREPUBLIC · supporting Anna</span></span>
+        <a class="tix" href="https://smart.concert.ua/uk/faine-events/e/anna-lviv/booking" target="_blank" rel="noopener noreferrer" aria-label="Tickets — !FESTREPUBLIC, Lviv, 2026.06.26"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
+      </div>
+      <div class="tour__row">
+        <span class="date">02.08.2026</span>
+        <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">FAINE MISTO FESTIVAL · територія Арени Львів</span><span data-lang-only="en">FAINE MISTO FESTIVAL · Arena Lviv grounds</span></span>
+        <a class="tix" href="https://fainemisto.com.ua/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets — Faine Misto Festival, Lviv, 2026.08.02"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     06 — MERCH  (inverted block)
+     ============================================================ -->
+<section class="section section--invert" id="merch" data-screen-label="05 Merch">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Мерч</span><span data-lang-only="en">Merch</span></h2>
+    </div>
+
+    <article class="merch-primary">
+      <div class="merch-primary__img">
+        <div class="carousel" data-carousel aria-roledescription="carousel">
+          <div class="carousel__track">
+            <div class="carousel__slide is-active"><img src="assets/merch/ost-vinyl-1.jpeg" alt="Vinyl on turntable" loading="lazy" /></div>
+            <div class="carousel__slide"><img src="assets/merch/ost-vinyl-2.jpeg" alt="Soundtrack to the Daily Agenda — vinyl spread" loading="lazy" /></div>
+            <div class="carousel__slide"><img src="assets/merch/ost-vinyl-3.jpeg" alt="Vinyl record with gatefold sleeve" loading="lazy" /></div>
+            <div class="carousel__slide"><img src="assets/merch/ost-vinyl-4.jpeg" alt="Gatefold interior with vinyl" loading="lazy" /></div>
+            <div class="carousel__slide"><img src="assets/merch/ost-vinyl-5.jpeg" alt="Back cover with tracklist" loading="lazy" /></div>
+          </div>
+          <div class="carousel__nav">
+            <button class="carousel__btn carousel__btn--prev" type="button" data-carousel-prev aria-label="Previous image"><svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M7.5 2L3 6l4.5 4" /></svg></button>
+            <button class="carousel__btn carousel__btn--next" type="button" data-carousel-next aria-label="Next image"><svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M4.5 2L9 6l-4.5 4" /></svg></button>
+          </div>
+          <div class="carousel__counter"><span data-carousel-current>1</span>/<span data-carousel-total>5</span></div>
+        </div>
+      </div>
+      <div class="merch-primary__body">
+        <div class="merch-primary__eyebrow">
+          <span><span data-lang-only="uk">Лімітований тираж</span><span data-lang-only="en">Limited Edition</span></span>
+        </div>
+        <h3 class="merch-primary__name"><span data-lang-only="uk">Саундтрек до порядку денного <em>Purple / Amber Swirl Vinyl</em></span><span data-lang-only="en">Soundtrack to the Daily Agenda <em>Purple / Amber Swirl Vinyl</em></span></h3>
+        <p class="merch-primary__desc"><span data-lang-only="uk">Перша повноформатна робота, яка записана повністю українською мовою. До створення долучилися паліндром, Антон Слєпаков, Євген Тимчик, Олександр Куц та Divuar. Реліз отримав широке визнання критиків, ставши найкращим альбомом року за версією Gothica Magazine та увійшовши до багатьох річних підсумків. Також робота була номінована на «Кращий альбом» премії «Золота зоря» від LiRoom та «Альбом року» на Jager Music Awards.
+</span><span data-lang-only="en">The first full-length record written entirely in Ukrainian. Contributors include паліндром, Anton Slepakov, Yevhen Tymchyk, Oleksandr Kuts and Divuar. The release was met with wide critical acclaim — named Album of the Year by Gothica Magazine and featured across multiple year-end lists. It was also nominated for «Best Album» at the LiRoom «Золота зоря» awards and «Album of the Year» at the Jager Music Awards.</span></p>
+        <dl class="merch-primary__meta">
+          <div><dt><span data-lang-only="uk">Кількість носіїв</span><span data-lang-only="en">Discs</span></dt><dd><span data-lang-only="uk">1 платівка</span><span data-lang-only="en">1 Vinyl</span></dd></div>
+          <div><dt><span data-lang-only="uk">Видавець</span><span data-lang-only="en">Publisher</span></dt><dd>Igor Shamych &amp; AbyShoMzk</dd></div>
+        </dl>
+        <div class="merch-primary__price">
+          <span>2300 ₴</span>
+          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
+        </div>
+        <a class="merch-primary__buy" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span><span data-lang-only="uk">КУПИТИ</span><span data-lang-only="en">BUY NOW</span></span><span>→</span></a>
+      </div>
+    </article>
+
+    <div class="merch" hidden>
+      <article class="merch-item">
+        <div class="merch-item__img bg-red">
+          <span class="label">SHS<br />T-SHIRT<br />OVER-<br />SIZED</span>
+        </div>
+        <div class="merch-item__row">
+          <span class="merch-item__name"><span data-lang-only="uk">Футболка SHS Wordmark</span><span data-lang-only="en">SHS Wordmark Tee</span></span>
+          <span>€ 25</span>
+        </div>
+        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+      </article>
+
+      <article class="merch-item">
+        <div class="merch-item__img bg-black">
+          <span class="label">САУНД<br />ТРЕК<br />12&quot;<br />VINYL</span>
+        </div>
+        <div class="merch-item__row">
+          <span class="merch-item__name">Саундтрек 12" LP</span>
+          <span>€ 28</span>
+        </div>
+        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+      </article>
+
+      <article class="merch-item">
+        <div class="merch-item__img">
+          <span class="label">CASSETTE<br />— ESSEN<br />REPRESS</span>
+        </div>
+        <div class="merch-item__row">
+          <span class="merch-item__name"><span data-lang-only="uk">Essen — касета</span><span data-lang-only="en">Essen — Cassette</span></span>
+          <span>€ 12</span>
+        </div>
+        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     07 — PRESS
+     ============================================================ -->
+<section class="section" id="press" data-screen-label="07 Press">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Медіа</span><span data-lang-only="en">Media</span></h2>
+    </div>
+
+    <div class="press">
+      <blockquote class="press--news">
+        <span class="news-kicker" data-lang-only="uk">Фічер / Суспільне Культура</span>
+        <span class="news-kicker" data-lang-only="en">Feature / Suspilne Kultura</span>
+        <span class="news-title" data-lang-only="uk"><em>«Цей альбом робить з мене Халка»</em> — паліндром, Слєпаков, Divuar та інші оцінюють нову роботу Ship Her Son</span>
+        <span class="news-title" data-lang-only="en"><em>“This album turns me into the Hulk”</em> — паліндром, Slepakov, Divuar and others on Ship Her Son's new record</span>
+        <a class="news-link" href="https://suspilne.media/culture/1144342-cej-albom-robit-z-mene-halka-palindrom-slepakov-divuar-ta-insi-ocinuut-novu-robotu-ship-her-son/" target="_blank" rel="noopener noreferrer">
+          <span>suspilne.media</span>
+          <span><span data-lang-only="uk">Читати ↗</span><span data-lang-only="en">Read ↗</span></span>
+        </a>
+      </blockquote>
+
+      <blockquote>
+        <q data-lang-only="uk">Вийшов один з головних українських альбомів не лише 2025-го, а й останніх п'яти років. Музика, яка вимірює температуру в палаті, де живе більшість людей не байдужих до навколишнього світу. Музика, якій вдається вхопити за горлянку дух часу, той самий zeitgeist.</q>
+        <q data-lang-only="en">One of the main Ukrainian albums not only of 2025, but of the last five years. Music that takes the temperature in the ward where most people who still care about the world around them live. Music that manages to grab the spirit of the time — that very zeitgeist — by the throat.</q>
+        <cite>
+          <span data-lang-only="uk">Ігор Панасов</span>
+          <span data-lang-only="en">Ihor Panasov</span>
+        </cite>
+      </blockquote>
+
+      <blockquote>
+        <q data-lang-only="uk">Ship Her Son випустив ідеальний альбом постіндустріальної музики під назвою «Саундтрек до порядку денного». Ми обрали дует із паліндромом як один із хайлайтів релізу, але, звісно ж, рекомендуємо прослухати його повністю. Ефект від прослуховування пісні нагадує досвід споживання найпохмуріших блек-метал альбомів: випустивши назовні все темне, надалі всередині відчуваєш чистоту та ясність зимового морозного дня.</q>
+        <q data-lang-only="en">Ship Her Son has released a flawless post-industrial album, Soundtrack to the Daily Agenda. We chose the duet with паліндром as one of the release's highlights, but of course we recommend listening to the whole thing. The effect is like consuming the bleakest black-metal records: once everything dark is let out, what remains inside is the clarity of a cold winter day.</q>
+        <cite>
+          <span data-lang-only="uk">Олесь Ніколенко</span>
+          <span data-lang-only="en">Oles Nikolenko</span>
+          <span>ТИКИЇВ</span>
+        </cite>
+      </blockquote>
+
+      <blockquote class="press--news">
+        <span class="news-kicker" data-lang-only="uk">Інтерв’ю / LiRoom</span>
+        <span class="news-kicker" data-lang-only="en">Interview / LiRoom</span>
+        <span class="news-title" data-lang-only="uk"><em>Пісня за піснею:</em> Ship Her Son про альбом «Саундтрек до порядку денного»</span>
+        <span class="news-title" data-lang-only="en"><em>Track by track:</em> Ship Her Son on the album “Soundtrack to the Daily Agenda”</span>
+        <a class="news-link" href="https://liroom.com.ua/articles/track_by_track/ship-her-son-saundtrek-do-poriadku-dennoho/" target="_blank" rel="noopener noreferrer">
+          <span>liroom.com.ua</span>
+          <span><span data-lang-only="uk">Читати ↗</span><span data-lang-only="en">Read ↗</span></span>
+        </a>
+      </blockquote>
+
+      <blockquote class="press--news">
+        <span class="news-kicker" data-lang-only="uk">Рецензія</span>
+        <span class="news-kicker" data-lang-only="en">Review</span>
+        <span class="news-title" data-lang-only="uk">Антону справді вдалося закарбувати щось універсальне — що має відгукнутися на якомусь глибинному метафізичному рівні у багатьох з нас.</span>
+        <span class="news-title" data-lang-only="en">Anton has truly managed to capture something universal — something that should resonate at a deep, metaphysical level for many of us.</span>
+        <a class="news-link" href="https://tymchyk.com/reviews/1091" target="_blank" rel="noopener noreferrer">
+          <span>tymchyk.com</span>
+          <span><span data-lang-only="uk">Читати рецензію ↗</span><span data-lang-only="en">Read review ↗</span></span>
+        </a>
+      </blockquote>
+
+      <blockquote>
+        <q data-lang-only="uk">Виникає нестерпне бажання просто йти і слухати. І саме в тому порядку, як задумував автор. Якщо пробігтися по треках по декілька відрізків почитавши назви, то може скластися враження похмурості і (можливо) безвиході. Вибачайте, доросла музика вона така: сповнена рефлексій і роздумів. Чудова історія, щоб зловити свій дзен і випустити пар. Вже рік «Заплющуй очі — глибокий вдих» один із особистих антистресів.</q>
+        <q data-lang-only="en">There's an irresistible urge to just walk and listen — in exactly the order the author intended. Skim a few seconds across the tracks and read the titles and you might think it's all bleakness and dead ends. Forgive me — grown-up music is like that: full of reflection and thought. A wonderful story to catch your zen and let off steam. For a year now «Close your eyes — deep breath» has been one of my personal anti-stress tracks.</q>
+        <cite>
+          <span data-lang-only="uk">Немейнстрімний</span>
+          <span data-lang-only="en">Nemeinstrimnyi</span>
+        </cite>
+      </blockquote>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     ABOUT  (inverted block — black-on-white for rhythm)
+     ============================================================ -->
+<section class="section section--invert section--about" id="bio" data-screen-label="07 About">
+  <div class="about-split">
+    <figure class="about-split__photo">
+      <img src="assets/anton.jpg"
+           width="1665" height="2500"
+           alt="Anton Shiferson, sole member of Ship Her Son, lit from one side with a red lamp."
+           loading="lazy" decoding="async" />
+    </figure>
+
+    <div class="about-split__body">
+      <p class="bio__lead" data-lang-only="uk">
+        <em>Ship Her Son</em> — аудіовізуальний проєкт,
+        заснований у 2020 році дизайнером із Дніпра Антоном Шиферсоном.
+      </p>
+      <p class="bio__lead" data-lang-only="en">
+        <em>Ship Her Son</em> is an audio-visual project, founded in 2020 by
+        Dnipro-based designer Anton Shyferson.
+      </p>
+
+      <div class="bio__detail" data-lang-only="uk">
+        <p>
+          Музика проєкту поєднує важку
+          <em>пост-індустріальну електроніку</em>,
+          ритмічні елементи техно та шуми, створюючи потужне та похмуре звучання.
+          Проєкт пройшов трансформацію від холодних механізованих німецькомовних
+          історій до більш живого та емоційного звучання українською мовою.
+        </p>
+        <p>
+          Новий альбом
+          <em>«Саундтрек до порядку денного»</em>
+          концептуально відтворює один день людини, яка перебуває у стані
+          постійної напруги та тривоги — від ранкового пробудження після
+          безсоння до нічного виснаження. Це чесна музична хроніка сучасної
+          буденності у нескінченному циклі.
+        </p>
+        <p>
+          Завдяки дизайнерському досвіду Шиферсона, виступи проєкту — це не просто
+          музика, а цілісне шоу, де візуальний ряд і світло є невідʼємною
+          частиною атмосфери. Ship Her Son створює простір для вивільнення
+          емоцій через гучний звук і ритм, перетворюючи спільну втому на
+          терапевтичну форму спротиву.
+        </p>
+      </div>
+
+      <div class="bio__detail" data-lang-only="en">
+        <p>
+          The project's music fuses heavy
+          <em>post-industrial electronics</em>,
+          techno-leaning rhythms, and noise — a dense, brooding sound. Over time
+          it has transformed from cold, mechanised German-language storytelling
+          into something more alive and emotional, sung in Ukrainian.
+        </p>
+        <p>
+          The new album
+          <em>Soundtrack to the Daily Agenda</em>
+          traces a single day in the life of someone living in a constant state
+          of tension and anxiety — from a sleepless morning to nocturnal
+          exhaustion. An honest musical chronicle of contemporary daily life on
+          an endless loop.
+        </p>
+        <p>
+          Drawing on Shyferson's design background, Ship Her Son's shows are
+          never just music — they are full audio-visual works, with light and
+          image inseparable from the atmosphere. The project creates space to
+          release emotion through loud sound and rhythm, turning shared
+          exhaustion into a therapeutic form of resistance.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     08 — LISTEN
+     ============================================================ -->
+<section class="section section--red" id="listen" data-screen-label="07 Listen">
+  <div class="shell">
+    <div class="section-head">
+      <h2><span data-lang-only="uk">Слухати або придбати</span><span data-lang-only="en">Listen or Buy</span></h2>
+    </div>
+
+    <div class="rail">
+      <a href="https://ship-her-son.bandcamp.com" target="_blank" rel="noopener noreferrer">
+        <svg class="ico" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M0 25l9.917-18h22.083l-9.917 18z"/></svg>
+        <span class="label">Bandcamp</span>
+        <span class="ext">↗</span>
+      </a>
+      <a href="https://open.spotify.com/artist/62Q4pz0eKSAr0OAmemGvAL" target="_blank" rel="noopener noreferrer">
+        <svg class="ico" viewBox="84 7319 20 20" aria-hidden="true" fill="currentColor"><path d="M99.915,7327.865 C96.692,7325.951 91.375,7325.775 88.297,7326.709 C87.803,7326.858 87.281,7326.58 87.131,7326.085 C86.981,7325.591 87.26,7325.069 87.754,7324.919 C91.287,7323.846 97.159,7324.053 100.87,7326.256 C101.314,7326.52 101.46,7327.094 101.196,7327.538 C100.934,7327.982 100.358,7328.129 99.915,7327.865 Z M99.81,7330.7 C99.584,7331.067 99.104,7331.182 98.737,7330.957 C96.05,7329.305 91.952,7328.827 88.773,7329.792 C88.36,7329.916 87.925,7329.684 87.8,7329.272 C87.676,7328.86 87.908,7328.425 88.32,7328.3 C91.951,7327.198 96.466,7327.732 99.553,7329.629 C99.92,7329.854 100.035,7330.334 99.81,7330.7 Z M98.586,7333.423 C98.406,7333.717 98.023,7333.81 97.729,7333.63 C95.381,7332.195 92.425,7331.871 88.944,7332.666 C88.609,7332.743 88.274,7332.533 88.198,7332.197 C88.121,7331.862 88.33,7331.528 88.667,7331.451 C92.476,7330.58 95.743,7330.955 98.379,7332.566 C98.673,7332.746 98.766,7333.129 98.586,7333.423 Z M94,7319 C88.477,7319 84,7323.477 84,7329 C84,7334.523 88.477,7339 94,7339 C99.523,7339 104,7334.523 104,7329 C104,7323.478 99.523,7319.001 94,7319.001 Z"/></svg>
+        <span class="label">Spotify</span>
+        <span class="ext">↗</span>
+      </a>
+      <a href="https://music.apple.com/ua/artist/ship-her-son/1512919640" target="_blank" rel="noopener noreferrer">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="m24 6.124c0-.029.001-.063.001-.097 0-.743-.088-1.465-.253-2.156l.013.063c-.312-1.291-1.1-2.359-2.163-3.031l-.02-.012c-.536-.35-1.168-.604-1.847-.723l-.03-.004c-.463-.084-1.003-.138-1.553-.15h-.011c-.04 0-.083-.01-.124-.013h-12.025c-.152.01-.3.017-.455.026-.791.016-1.542.161-2.242.415l.049-.015c-1.306.501-2.327 1.495-2.853 2.748l-.012.033c-.17.409-.297.885-.36 1.38l-.003.028c-.051.343-.087.751-.1 1.165v.016c0 .032-.007.062-.01.093v12.224c.01.14.017.283.027.424.02.861.202 1.673.516 2.416l-.016-.043c.609 1.364 1.774 2.387 3.199 2.792l.035.009c.377.111.817.192 1.271.227l.022.001c.555.053 1.11.06 1.667.06h11.028c.554 0 1.099-.037 1.633-.107l-.063.007c.864-.096 1.645-.385 2.321-.823l-.021.013c.825-.539 1.47-1.29 1.867-2.176l.013-.032c.166-.383.295-.829.366-1.293l.004-.031c.084-.539.132-1.161.132-1.794 0-.086-.001-.171-.003-.256v.013q0-5.7 0-11.394zm-6.424 3.99v5.712c.001.025.001.054.001.083 0 .407-.09.794-.252 1.14l.007-.017c-.273.562-.771.979-1.373 1.137l-.015.003c-.316.094-.682.156-1.06.173h-.01c-.029.002-.062.002-.096.002-1.033 0-1.871-.838-1.871-1.871 0-.741.431-1.382 1.056-1.685l.011-.005c.293-.14.635-.252.991-.32l.027-.004c.378-.082.758-.153 1.134-.24.264-.045.468-.252.51-.513v-.003c.013-.057.02-.122.02-.189 0-.002 0-.003 0-.005q0-2.723 0-5.443c-.001-.066-.01-.13-.027-.19l.001.005c-.026-.134-.143-.235-.283-.235-.006 0-.012 0-.018.001h.001c-.178.013-.34.036-.499.07l.024-.004q-1.14.225-2.28.456l-3.7.748c-.016 0-.032.01-.048.013-.222.03-.392.219-.392.447 0 .015.001.03.002.045v-.002.13q0 3.9 0 7.801c.001.028.001.062.001.095 0 .408-.079.797-.224 1.152l.007-.021c-.264.614-.792 1.072-1.436 1.235l-.015.003c-.319.096-.687.158-1.067.172h-.008c-.031.002-.067.003-.104.003-.913 0-1.67-.665-1.815-1.536l-.001-.011c-.02-.102-.031-.218-.031-.338 0-.785.485-1.458 1.172-1.733l.013-.004c.315-.127.687-.234 1.072-.305l.036-.005c.287-.06.575-.116.86-.177.341-.05.6-.341.6-.693 0-.007 0-.015 0-.022v.001-.15q0-4.44 0-8.883c0-.002 0-.004 0-.007 0-.129.015-.254.044-.374l-.002.011c.066-.264.277-.466.542-.517l.004-.001c.255-.066.515-.112.774-.165.733-.15 1.466-.3 2.2-.444l2.27-.46c.67-.134 1.34-.27 2.01-.4.181-.042.407-.079.637-.104l.027-.002c.018-.002.04-.004.061-.004.27 0 .489.217.493.485.008.067.012.144.012.222v.001q0 2.865 0 5.732z"/></svg>
+        <span class="label">Apple Music</span>
+        <span class="ext">↗</span>
+      </a>
+      <a href="https://www.youtube.com/@shipherson" target="_blank" rel="noopener noreferrer">
+        <svg class="ico" viewBox="0 -3 20 20" aria-hidden="true" fill="currentColor"><g transform="translate(-244 -7282)"><path d="M251.988432,7291.58588 L251.988432,7285.97425 C253.980638,7286.91168 255.523602,7287.8172 257.348463,7288.79353 C255.843351,7289.62824 253.980638,7290.56468 251.988432,7291.58588 M263.090998,7283.18289 C262.747343,7282.73013 262.161634,7282.37809 261.538073,7282.26141 C259.705243,7281.91336 248.270974,7281.91237 246.439141,7282.26141 C245.939097,7282.35515 245.493839,7282.58153 245.111335,7282.93357 C243.49964,7284.42947 244.004664,7292.45151 244.393145,7293.75096 C244.556505,7294.31342 244.767679,7294.71931 245.033639,7294.98558 C245.376298,7295.33761 245.845463,7295.57995 246.384355,7295.68865 C247.893451,7296.0008 255.668037,7296.17532 261.506198,7295.73552 C262.044094,7295.64178 262.520231,7295.39147 262.895762,7295.02447 C264.385932,7293.53455 264.28433,7285.06174 263.090998,7283.18289"/></g></svg>
+        <span class="label">YouTube</span>
+        <span class="ext">↗</span>
+      </a>
+      <a href="https://soundcloud.com/ship-her-son" target="_blank" rel="noopener noreferrer">
+        <svg class="ico" viewBox="0 -1 34 34" aria-hidden="true" fill="currentColor"><path d="M28.125 15.563c-0.25-2.156-1.125-3.625-2.406-4.781-1.188-1.094-2.906-2.031-5.25-1.906-0.531 0.031-1.031 0.094-1.531 0.219-0.313 0.094-1.031 0.281-1.156 0.531-0.094 0.156-0.063 0.5-0.063 0.813v11.375c0 0.5-0.094 1.406 0.156 1.625 0.156 0.219 0.563 0.156 1 0.156h10.469c1.313 0 2.188-0.281 2.938-0.875 0.719-0.531 1.25-1.313 1.5-2.281 0.281-1.125 0.031-2.281-0.438-3.094-0.906-1.531-2.875-2.625-5.219-1.781zM16.844 9.875c-0.5 0.031-0.438 0.5-0.438 1.063-0.063 0.906-0.031 1.844-0.063 2.656-0.063 1.688 0 3.563-0.094 5.281-0.031 1.188 0.063 2.219 0.125 3.438 0.031 0.594-0.031 1.281 0.531 1.25 0.5-0.031 0.438-0.531 0.469-1.063 0.063-0.969 0.156-1.969 0.156-2.875 0.031-1.563-0.094-3.219-0.094-4.781 0-1.156-0.031-2.406-0.094-3.594-0.031-0.688 0.094-1.438-0.5-1.375zM15.375 10.688c-0.438 0.063-0.344 0.5-0.344 1.031-0.031 0.813-0.063 1.75-0.063 2.469 0 1.094 0 2.094-0.063 3.281-0.063 1.688 0 3.219 0.063 4.875 0.031 0.594 0 1.219 0.438 1.25 0.594 0.031 0.5-0.688 0.5-1.281 0.094-1.625 0.188-3.219 0.125-4.875-0.094-1.594-0.031-3.313-0.125-4.969 0-0.313 0.063-1.375-0.063-1.594-0.125-0.188-0.375-0.219-0.469-0.188zM11.125 11.656c-0.344 0.063-0.281 0.563-0.281 1.031 0 1.719-0.094 3.281-0.156 4.969-0.031 0.719-0.063 1.406-0.063 2 0.031 0.969 0.156 2.156 0.219 3.156 0 0.344 0 0.781 0.344 0.781 0.438 0 0.375-0.719 0.406-1.156 0.031-0.531 0.063-1.031 0.094-1.5 0.156-2-0.031-4-0.063-6.094 0-0.813-0.063-1.469-0.063-2.313 0-0.5-0.031-0.938-0.438-0.875zM12.5 11.844c-0.344 0.094-0.281 0.625-0.281 1.094 0 1.031-0.063 1.875-0.094 2.906-0.031 1.25-0.094 2.688-0.094 3.813 0 0.938 0.125 2.188 0.188 3.188 0.031 0.406 0.031 0.719 0.375 0.719 0.406 0.031 0.375-0.406 0.406-0.781 0.094-1.063 0.188-2.094 0.188-3.094 0.031-0.594 0-1.281-0.031-1.938-0.063-1.625-0.094-3.188-0.156-4.875-0.031-0.594 0.063-1.156-0.5-1.031zM9.75 11.938c-0.344 0.063-0.281 0.438-0.281 0.844-0.031 0.75-0.063 1.594-0.063 2.25-0.063 1.938-0.219 4-0.063 5.938 0 0.406 0.063 0.875 0.094 1.406 0.031 0.469-0.063 1.219 0.375 1.188 0.313 0 0.313-0.406 0.344-0.75 0.063-1.063 0.188-2.094 0.219-3.094 0.031-0.625-0.031-1.281-0.063-1.938-0.063-1.563-0.094-3.188-0.156-4.813-0.031-0.469 0.031-1.094-0.406-1.031zM13.906 12.094c-0.344 0.094-0.281 0.469-0.313 0.906-0.031 2.719-0.219 5.438-0.063 8.094 0 0.406 0.031 0.906 0.063 1.438 0.031 0.5-0.031 1.094 0.469 1.063 0.281-0.031 0.375-0.313 0.406-0.719 0.031-1.094 0.156-2.219 0.156-3.219 0-1.188-0.063-2.5-0.094-3.781-0.031-0.875-0.063-1.938-0.094-2.844-0.031-0.344 0.031-0.719-0.125-0.844-0.094-0.125-0.344-0.156-0.406-0.094zM8.344 12.563c-0.25 0.031-0.219 0.281-0.219 0.625-0.063 1.844-0.125 3.25-0.188 5.063-0.031 0.469-0.063 0.969-0.063 1.406 0.031 1 0.125 1.781 0.188 2.781 0.031 0.406-0.031 1.156 0.375 1.156 0.313-0.031 0.281-0.5 0.281-0.813 0.094-1.063 0.25-2.094 0.25-3.125 0-0.531-0.031-1.156-0.063-1.75-0.063-1.5-0.125-2.969-0.188-4.469 0-0.375 0.031-0.969-0.375-0.875zM7 13.844c-0.313 0.063-0.25 0.844-0.281 1.25-0.063 1.406-0.094 2.344-0.156 3.75-0.063 1.313 0.063 2.469 0.156 3.719 0.031 0.406 0 1 0.313 1 0.313 0.031 0.281-0.5 0.313-0.813 0.031-0.406 0.063-0.719 0.063-1.031 0.063-0.719 0.188-1.406 0.188-2.031 0-0.375-0.063-0.938-0.094-1.438-0.063-1.281-0.125-2.406-0.188-3.625-0.031-0.406 0.031-0.813-0.313-0.781zM4.469 15.844c-0.063-0.031-0.219-0.094-0.25 0-0.156 0.063-0.125 0.625-0.156 0.938-0.031 0.344-0.063 0.688-0.094 0.969-0.031 0.656-0.156 1.281-0.156 1.969 0 0.625 0.094 1.313 0.156 1.969 0.031 0.281 0.063 0.625 0.094 0.969 0.031 0.25 0 0.844 0.281 0.813 0.219 0 0.219-0.531 0.219-0.813 0.031-0.375 0.063-0.688 0.094-1 0.063-0.625 0.188-1.344 0.219-1.938 0-0.344-0.063-0.656-0.094-1-0.063-0.656-0.125-1.313-0.188-1.938-0.031-0.344-0.031-0.656-0.125-0.938zM2.906 15.938c-0.156 0.063-0.156 0.688-0.156 0.938-0.031 0.344-0.063 0.656-0.094 0.969-0.063 0.625-0.188 1.219-0.156 1.906 0 0.875 0.156 1.875 0.25 2.813 0.031 0.219-0.031 0.813 0.25 0.781 0.188-0.031 0.188-0.531 0.219-0.813 0.031-0.375 0.063-0.688 0.094-0.969 0.063-0.625 0.188-1.219 0.188-1.875 0-0.688-0.125-1.25-0.188-1.906-0.031-0.313-0.063-0.594-0.094-0.969-0.031-0.281 0-1-0.313-0.875zM5.625 16.031c-0.25 0.063-0.219 0.531-0.25 0.844 0 0.344-0.031 0.688-0.063 0.969-0.031 0.656-0.156 1.188-0.156 1.875 0 0.625 0.094 1.281 0.156 1.969 0.031 0.313 0.063 0.625 0.063 1.031 0.031 0.313 0.031 0.781 0.25 0.813 0.313 0.031 0.281-0.406 0.344-0.781 0.063-0.781 0.094-1.344 0.156-2.031 0.031-0.344 0.094-0.656 0.094-1.031 0-0.594-0.125-1.188-0.188-1.781-0.031-0.281-0.031-0.594-0.063-0.938s0-1-0.344-0.938zM1.531 16.563c-0.094 0.5-0.125 1.031-0.188 1.563s-0.188 1.063-0.188 1.594c0.031 0.5 0.125 1.094 0.188 1.625 0.031 0.219 0.063 0.469 0.094 0.781 0.031 0.188 0.031 0.688 0.219 0.688 0.094 0 0.125-0.063 0.156-0.281 0.094-0.719 0.156-1.344 0.25-2 0.031-0.281 0.094-0.531 0.094-0.813s-0.063-0.563-0.094-0.844-0.125-1.031-0.219-1.625c-0.031-0.25 0-0.906-0.313-0.688zM0.469 17.719c-0.063-0.031-0.188-0.063-0.188 0.031-0.063 0.25-0.125 0.625-0.156 0.969-0.031 0.313-0.125 0.688-0.125 1 0 0.281 0.094 0.688 0.156 1.031 0 0.125 0.031 0.313 0.063 0.531 0.031 0.156 0.031 0.406 0.188 0.406 0.188-0.031 0.219-0.719 0.25-0.938 0.063-0.344 0.156-0.75 0.156-1.031 0-0.344-0.094-0.688-0.156-1.031s-0.063-0.688-0.188-0.969z"/></svg>
+        <span class="label">SoundCloud</span>
+        <span class="ext">↗</span>
+      </a>
+      <a href="https://link.deezer.com/s/33iORg5T9PQZATEPyE92r" target="_blank" rel="noopener noreferrer">
+        <span class="ico ico--mask ico--deezer" aria-hidden="true"></span>
+        <span class="label">Deezer</span>
+        <span class="ext">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="sitefoot" data-screen-label="Footer">
+  <span class="sitefoot__left">© 2026 <span data-lang-only="uk">АНТОН ШИФЕРСОН</span><span data-lang-only="en">ANTON SHIFERSON</span> / SHIP HER SON</span>
+  <span class="sitefoot__right"><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a></span>
+</footer>
+
+
+<!-- Tweaks mount -->
+<div id="tweaks-root"></div>
+
+<!-- ============================================================
+     JS — minimal, progressive
+     ============================================================ -->
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('has-js');
+
+  // Language switcher
+  (function(){
+    var KEY = 'shs-lang';
+    var supported = ['uk', 'en'];
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch(_){}
+    var initial = supported.indexOf(saved) >= 0 ? saved : 'uk';
+    setLang(initial);
+
+    function setLang(lang){
+      if (supported.indexOf(lang) < 0) lang = 'uk';
+      document.documentElement.lang = lang;
+      try { localStorage.setItem(KEY, lang); } catch(_){}
+      document.querySelectorAll('[data-set-lang]').forEach(function(btn){
+        btn.classList.toggle('is-active', btn.getAttribute('data-set-lang') === lang);
+        btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === lang ? 'true' : 'false');
+      });
+    }
+
+    document.querySelectorAll('[data-set-lang]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        setLang(btn.getAttribute('data-set-lang'));
+      });
+    });
+  })();
+
+  /* External-link fallback: Safari inside the preview iframe blocks
+     target="_blank" navigations under Cross-Origin-Opener-Policy.
+     Intercept clicks on external links and use window.open(), which
+     reliably opens in a new tab in real browsers and works around
+     the sandbox restriction. Only active inside an iframe — on the
+     deployed/exported site native target="_blank" works and we must
+     NOT swallow clicks meant for the video lightbox. */
+  (function(){
+    var inIframe = false;
+    try { inIframe = window.self !== window.top; } catch(_){ inIframe = true; }
+    if (!inIframe) return;
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a[target="_blank"]');
+      if (!a) return;
+      // Let the video lightbox (and any other opt-out) handle its own clicks.
+      if (a.hasAttribute('data-yt')) return;
+      if (e.defaultPrevented) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#') return;
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        var w = window.open(href, '_blank', 'noopener,noreferrer');
+        if (w) { try { w.opener = null; } catch(_){} }
+      } catch(_){}
+    }, true);
+  })();
+
+
+
+  // Façade player
+  (function(){
+    var box = document.getElementById('facade');
+    var play = document.getElementById('facade-play');
+    if (!box || !play) return;
+    play.addEventListener('click', function(){
+      box.innerHTML = '<div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:18px 0;color:var(--red);">[PLAYER WOULD LOAD HERE — Bandcamp iframe injected on click]</div>';
+    });
+  })();
+
+  // Email obfuscation
+  (function(){
+    var a = document.getElementById('email');
+    if (!a) return;
+    a.addEventListener('click', function(e){
+      if (a.dataset.revealed) return;
+      e.preventDefault();
+      var addr = a.dataset.u + '@' + a.dataset.d;
+      a.textContent = addr;
+      a.href = 'mailto:' + addr;
+      a.dataset.revealed = '1';
+    });
+  })();
+</script>
+
+<!-- Tweaks panel (React) -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "red": "#E10600",
+    "displayFont": "Geist",
+    "photoSide": "right"
+  }/*EDITMODE-END*/;
+
+  function App(){
+    const [t, setTweak] = window.useTweaks(TWEAK_DEFAULTS);
+
+    React.useEffect(()=>{
+      document.documentElement.style.setProperty('--red', t.red);
+    }, [t.red]);
+
+    React.useEffect(()=>{
+      var stack = '"' + t.displayFont + '", "Helvetica Neue", Helvetica, Arial, sans-serif';
+      document.documentElement.style.setProperty('--font-display', stack);
+      // ensure font is loaded
+      var id = 'gf-' + t.displayFont.replace(/\W/g,'');
+      if (!document.getElementById(id)){
+        var l = document.createElement('link');
+        l.id = id; l.rel = 'stylesheet';
+        l.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(t.displayFont) + ':wght@500;600;700;800;900&display=swap';
+        document.head.appendChild(l);
+      }
+    }, [t.displayFont]);
+
+    React.useEffect(()=>{
+      var hero = document.getElementById('hero');
+      if (!hero) return;
+      hero.dataset.photo = t.photoSide;
+    }, [t.photoSide]);
+
+    React.useEffect(()=>{
+      // Toggle the /## index numbers on section heads via CSS
+      var rule = document.getElementById('idx-rule');
+      if (!rule){
+        rule = document.createElement('style');
+        rule.id = 'idx-rule';
+        document.head.appendChild(rule);
+      }
+      rule.textContent = t.showNumbers ? '' : '.section-head .idx, .menu li a::before { display:none !important; }';
+    }, [t.showNumbers]);
+
+    return (
+      <window.TweaksPanel title="Tweaks · SHS">
+        <window.TweakSection title="Palette">
+          <window.TweakColor
+            label="Project red"
+            value={t.red}
+            onChange={(v)=>setTweak('red', v)}
+            options={["#E10600","#D60000","#FF1F1F","#C00000","#FF3B30"]}
+          />
+          <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'.12em',textTransform:'uppercase',opacity:.6,marginTop:6,lineHeight:1.6}}>
+            All AA-checked. #E10600 is the locked v1 value.
+          </div>
+        </window.TweakSection>
+
+        <window.TweakSection title="Type">
+          <window.TweakSelect
+            label="Display family"
+            value={t.displayFont}
+            onChange={(v)=>setTweak('displayFont', v)}
+            options={[
+              {value:"Geist", label:"Geist — Vercel neo-grotesque (default)"},
+              {value:"Onest", label:"Onest — modern grotesque"},
+              {value:"Wix Madefor Display", label:"Wix Madefor Display"},
+              {value:"Inter Tight", label:"Inter Tight — Helvetica-adjacent"},
+              {value:"Manrope", label:"Manrope — geometric"},
+              {value:"Archivo Black", label:"Archivo Black — heavy"}
+            ]}
+          />
+        </window.TweakSection>
+
+        <window.TweakSection title="Hero photo">
+          <window.TweakRadio
+            label="Side"
+            value={t.photoSide}
+            onChange={(v)=>setTweak('photoSide', v)}
+            options={[
+              {value:"left", label:"Left"},
+              {value:"right", label:"Right"}
+            ]}
+          />
+        </window.TweakSection>
+
+        <window.TweakSection title="Section indices">
+          <window.TweakToggle
+            label="Show /NN numbers"
+            value={t.showNumbers}
+            onChange={(v)=>setTweak('showNumbers', v)}
+          />
+        </window.TweakSection>
+      </window.TweaksPanel>
+    );
+  }
+
+  // Wait for tweaks-panel.jsx to expose its helpers, then mount on idle
+  function mount(){
+    if (!window.TweaksPanel || !window.useTweaks) { return setTimeout(mount, 50); }
+    var go = function(){
+      ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App />);
+    };
+    if (window.requestIdleCallback) window.requestIdleCallback(go, { timeout: 800 });
+    else setTimeout(go, 400);
+  }
+  mount();
+</script>
+
+<!-- Pause hero photo glitch when off-screen -->
+<script>
+(function(){
+  var bar = document.getElementById('sitebar');
+  var hero = document.getElementById('hero');
+  if (!bar || !hero) return;
+  var update = function(){
+    // Switch to opaque as soon as the user starts scrolling.
+    bar.classList.toggle('is-scrolled', window.scrollY > 0);
+  };
+  update();
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+})();
+(function(){
+  var photo = document.querySelector('.hero__photo');
+  if (!photo || !('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      photo.classList.toggle('is-paused', !e.isIntersecting);
+    });
+  }, { rootMargin: '120px' });
+  io.observe(photo);
+})();
+
+/* Slow zoom-in on hero background; resets to start when the hero scrolls
+   out of view so it re-plays from scale(1) when the user comes back. */
+(function(){
+  var hero = document.getElementById('hero');
+  if (!hero || !('IntersectionObserver' in window)) return;
+  // Kick off the first time we’re in view.
+  hero.classList.add('is-active');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){
+        // Restart the animation from scale(1).
+        hero.classList.remove('is-active');
+        // force reflow so removing+adding the class restarts @keyframes
+        void hero.offsetWidth;
+        hero.classList.add('is-active');
+      } else {
+        hero.classList.remove('is-active');
+      }
+    });
+  }, { threshold: 0.25 });
+  io.observe(hero);
+})();
+</script>
+
+<!-- Lazy-load Spotify embed inside cover on first hover -->
+<script>
+(function(){
+  var covers = document.querySelectorAll('.cover--art[data-spotify]');
+  covers.forEach(function(cover){
+    var iframe = cover.querySelector('iframe.cover__embed');
+    if (!iframe) return;
+    var url = cover.getAttribute('data-spotify');
+    var loaded = false;
+    function load(){
+      if (loaded) return;
+      loaded = true;
+      iframe.src = url;
+    }
+    cover.addEventListener('mouseenter', load, { once: true });
+    cover.addEventListener('focusin', load, { once: true });
+    cover.addEventListener('touchstart', load, { once: true, passive: true });
+  });
+})();
+</script>
+
+<!-- Video lightbox -->
+<style>
+.vlb{
+  position: fixed; inset: 0;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.92);
+  padding: clamp(16px, 3vw, 40px);
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.vlb.is-open{ display: flex; opacity: 1; }
+.vlb__inner{
+  width: 100%;
+  max-width: min(1600px, calc((100vh - 140px) * 16 / 9));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.vlb__bar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 0;
+}
+.vlb__label{
+  color: #fff;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+.vlb__close{
+  appearance: none;
+  display: inline-flex; align-items: center; gap: 14px;
+  height: 44px;
+  padding: 0 18px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  line-height: 1;
+  flex: 0 0 auto;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.vlb__close svg{ width: 10px; height: 10px; display: block; flex: 0 0 auto; }
+.vlb__close:hover, .vlb__close:focus-visible{
+  background: var(--red, #E10600); color: #fff; border-color: var(--red, #E10600); outline: none;
+}
+.vlb__frame{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  box-shadow: 0 30px 120px rgba(0,0,0,.6);
+}
+.vlb__frame iframe{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+.vlb__frame > div{ position: absolute; inset: 0; }
+@media (max-width: 720px){
+  .vlb{ padding: 16px 12px; }
+  .vlb__inner{ gap: 12px; }
+  .vlb__close{ height: 40px; padding: 0 14px; font-size: 10px; }
+  .vlb__label{ font-size: 10px; }
+}
+body.vlb-open{ overflow: hidden; }
+</style>
+
+<div class="vlb" id="vlb" role="dialog" aria-modal="true" aria-label="Video player" tabindex="-1" hidden>
+  <div class="vlb__inner">
+    <div class="vlb__bar">
+      <span class="vlb__label" id="vlb-label"></span>
+      <button class="vlb__close" type="button" id="vlb-close" aria-label="Close video">
+        <span data-lang-only="uk">Закрити</span><span data-lang-only="en">Close</span>
+        <svg viewBox="0 0 10 10" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1">
+          <line x1="1" y1="1" x2="9" y2="9"/>
+          <line x1="9" y1="1" x2="1" y2="9"/>
+        </svg>
+      </button>
+    </div>
+    <div class="vlb__frame">
+      <div id="vlb-slot"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var modal = document.getElementById('vlb');
+  var slot  = document.getElementById('vlb-slot');
+  var label = document.getElementById('vlb-label');
+  var closeBtn = document.getElementById('vlb-close');
+  if(!modal || !slot) return;
+
+  function open(id, title){
+    label.textContent = title || '';
+    slot.innerHTML = '';
+    var iframe = document.createElement('iframe');
+    // youtube-nocookie.com works when the page is opened from file:// (no origin).
+    // Plain youtube.com/embed throws Error 153 in that case.
+    iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&playsinline=1';
+    iframe.title = title || 'YouTube video player';
+    iframe.setAttribute('frameborder','0');
+    iframe.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    iframe.setAttribute('allowfullscreen','');
+    slot.appendChild(iframe);
+    modal.hidden = false;
+    // force reflow then open for transition
+    void modal.offsetWidth;
+    modal.classList.add('is-open');
+    document.body.classList.add('vlb-open');
+    modal.focus({ preventScroll: true });
+  }
+
+  function close(){
+    modal.classList.remove('is-open');
+    document.body.classList.remove('vlb-open');
+    slot.innerHTML = ''; // stop playback
+    setTimeout(function(){ modal.hidden = true; }, 200);
+  }
+
+  document.querySelectorAll('[data-yt]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      // allow modifier-click / middle-click to open in new tab
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      e.preventDefault();
+      open(el.getAttribute('data-yt'), el.getAttribute('data-yt-title') || el.getAttribute('aria-label') || '');
+    });
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+})();
+</script>
+
+<script>
+/* Merch carousel */
+(function(){
+  document.querySelectorAll('[data-carousel]').forEach(function(root){
+    var slides = root.querySelectorAll('.carousel__slide');
+    var dots   = root.querySelectorAll('[data-carousel-go]');
+    var prev   = root.querySelector('[data-carousel-prev]');
+    var next   = root.querySelector('[data-carousel-next]');
+    var cur    = root.querySelector('[data-carousel-current]');
+    var total  = slides.length;
+    if (!total) return;
+    var i = 0;
+    var timer = null;
+    var AUTOPLAY_MS = 6000;
+
+    function go(n){
+      i = (n + total) % total;
+      slides.forEach(function(s, idx){ s.classList.toggle('is-active', idx === i); });
+      dots.forEach(function(d, idx){ d.classList.toggle('is-active', idx === i); });
+      if (cur) cur.textContent = String(i + 1);
+    }
+    function nextFn(){ go(i + 1); }
+    function prevFn(){ go(i - 1); }
+    function startAuto(){ stopAuto(); timer = setInterval(nextFn, AUTOPLAY_MS); }
+    function stopAuto(){ if (timer) { clearInterval(timer); timer = null; } }
+
+    if (next) next.addEventListener('click', function(){ nextFn(); startAuto(); });
+    if (prev) prev.addEventListener('click', function(){ prevFn(); startAuto(); });
+    dots.forEach(function(d){
+      d.addEventListener('click', function(){
+        go(parseInt(d.getAttribute('data-carousel-go'), 10) || 0);
+        startAuto();
+      });
+    });
+
+    // pause on hover
+    root.addEventListener('mouseenter', stopAuto);
+    root.addEventListener('mouseleave', startAuto);
+
+    // touch swipe
+    var sx = null;
+    root.addEventListener('touchstart', function(e){
+      sx = e.touches[0].clientX;
+      stopAuto();
+    }, { passive: true });
+    root.addEventListener('touchend', function(e){
+      if (sx == null) return;
+      var dx = (e.changedTouches[0].clientX - sx);
+      if (Math.abs(dx) > 40){ if (dx < 0) nextFn(); else prevFn(); }
+      sx = null;
+      startAuto();
+    });
+
+    startAuto();
+  });
+})();
+</script>
+
+</body>
+</html>
