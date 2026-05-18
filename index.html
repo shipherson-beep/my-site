@@ -15,6 +15,12 @@
 <!-- Preconnects only where strictly needed -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Spotify embed origins (warm the connection so taps feel instant) -->
+<link rel="preconnect" href="https://open.spotify.com" crossorigin />
+<link rel="preconnect" href="https://embed.spotify.com" crossorigin />
+<link rel="preconnect" href="https://i.scdn.co" crossorigin />
+<link rel="preconnect" href="https://p.scdn.co" crossorigin />
+<link rel="dns-prefetch" href="https://encore.scdn.co" />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
 <!-- React + Babel (for the Tweaks panel only — main site is JS-optional) -->
@@ -799,17 +805,40 @@ h1,h2,h3,h4,p{margin:0}
   background:#0a0a0a;
 }
 .cover--art[data-spotify]:hover .cover__embed,
-.cover--art[data-spotify]:focus-within .cover__embed{
+.cover--art[data-spotify]:focus-within .cover__embed,
+.cover--art[data-spotify].is-active .cover__embed{
   opacity:1;
   pointer-events:auto;
 }
 .cover--art[data-spotify]:hover .cover__img,
-.cover--art[data-spotify]:focus-within .cover__img{
+.cover--art[data-spotify]:focus-within .cover__img,
+.cover--art[data-spotify].is-active .cover__img{
   opacity:0;
 }
+/* On touch devices the Spotify embed itself is tall (~352px) — let the cover grow */
 @media (hover: none){
-  .cover--art[data-spotify] .cover__embed{ display:none; }
+  .cover--art[data-spotify].is-active{
+    aspect-ratio: auto;
+    height: 352px;
+  }
 }
+
+/* Close button — shows only while active on touch */
+.cover__close{
+  position:absolute;
+  top: 6px; right: 6px;
+  z-index: 2;
+  width: 28px; height: 28px;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,.72);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  font-family: var(--font-mono); font-size: 12px; line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.cover--art[data-spotify].is-active .cover__close{ display: flex; }
 
 .disc-item__row{
   display:grid; grid-template-columns: 1fr auto; align-items:end; gap: 14px;
@@ -2037,7 +2066,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </dl>
         <div class="merch-primary__price">
           <span>2300 ₴</span>
-          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#a5d6cdccd58bcdc0d78bd6cacbe5c2c8c4ccc98bc6cac8"><span class="__cf_email__" data-cfemail="cab9a2a3bae4a2afb8e4b9a5a48aada7aba3a6e4a9a5a7">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
+          <small><span data-lang-only="uk">для замовлення з автографом напишіть на <a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><br />або в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">for signed copies, write to <a href="/cdn-cgi/l/email-protection#ee9d86879ec0868b9cc09d8180ae89838f8782c08d8183"><span class="__cf_email__" data-cfemail="9ae9f2f3eab4f2ffe8b4e9f5f4dafdf7fbf3f6b4f9f5f7">[email&#160;protected]</span></a><br />or on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></small>
         </div>
         <a class="merch-primary__buy" href="https://surma.media/music/shipherson-soundtrack-do-poriadku-dennogo" target="_blank" rel="noopener noreferrer"><span><span data-lang-only="uk">КУПИТИ</span><span data-lang-only="en">BUY NOW</span></span><span>→</span></a>
       </div>
@@ -2538,6 +2567,12 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 <script>
 (function(){
   var covers = document.querySelectorAll('.cover--art[data-spotify]');
+  var isTouch = window.matchMedia('(hover: none)').matches;
+
+  function closeOthers(except){
+    covers.forEach(function(c){ if (c !== except) c.classList.remove('is-active'); });
+  }
+
   covers.forEach(function(cover){
     var iframe = cover.querySelector('iframe.cover__embed');
     if (!iframe) return;
@@ -2551,7 +2586,61 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     cover.addEventListener('mouseenter', load, { once: true });
     cover.addEventListener('focusin', load, { once: true });
     cover.addEventListener('touchstart', load, { once: true, passive: true });
+
+    // Preload: warm the embed in the background after the page is idle,
+    // so the first hover/tap reveals an already-loaded player.
+    cover.__preload = load;
+
+    // Inject a close button for the touch-tap state
+    var closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'cover__close';
+    closeBtn.setAttribute('aria-label', 'Close player');
+    closeBtn.textContent = '×';
+    cover.appendChild(closeBtn);
+    closeBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      cover.classList.remove('is-active');
+    });
+
+    // Tap-to-toggle on touch devices (image is on top until active)
+    cover.addEventListener('click', function(e){
+      if (e.target === closeBtn) return;
+      if (!isTouch) return;
+      // Ignore clicks that originate inside the iframe (Spotify controls)
+      if (cover.classList.contains('is-active')) return;
+      load();
+      closeOthers(cover);
+      cover.classList.add('is-active');
+    });
   });
+
+  // Re-evaluate on viewport changes (e.g. rotation, devtools)
+  try {
+    window.matchMedia('(hover: none)').addEventListener('change', function(e){
+      isTouch = e.matches;
+      if (!isTouch) closeOthers(null);
+    });
+  } catch(_){}
+
+  // Preload all embeds once the page is idle, staggered so we don't open six
+  // sockets to Spotify in the same tick.
+  function preloadAll(){
+    var i = 0;
+    covers.forEach(function(cover){
+      setTimeout(function(){ if (cover.__preload) cover.__preload(); }, i * 250);
+      i++;
+    });
+  }
+  function schedulePreload(){
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(preloadAll, { timeout: 4000 });
+    } else {
+      setTimeout(preloadAll, 1500);
+    }
+  }
+  if (document.readyState === 'complete') schedulePreload();
+  else window.addEventListener('load', schedulePreload, { once: true });
 })();
 </script>
 
