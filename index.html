@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://i.scdn.co" crossorigin />
 <link rel="preconnect" href="https://p.scdn.co" crossorigin />
 <link rel="dns-prefetch" href="https://encore.scdn.co" />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&display=swap" rel="stylesheet" />
 
 <!-- React + Babel (for the Tweaks panel only — main site is JS-optional) -->
 <script>
@@ -245,7 +245,7 @@ h1,h2,h3,h4,p{margin:0}
 .sitebar{
   position: fixed; top: 0; left: 0; right: 0; z-index: 60;
   background: transparent;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
   transition: background 200ms ease, border-color 200ms ease;
 }
 .sitebar.is-scrolled{
@@ -338,10 +338,12 @@ h1,h2,h3,h4,p{margin:0}
   position:absolute; inset:0;
   background:
     linear-gradient(180deg,
-      rgba(0,0,0,0.18) 0%,
-      rgba(0,0,0,0.18) 35%,
-      rgba(0,0,0,0.26) 55%,
-      rgba(0,0,0,0.38) 75%,
+      rgba(0,0,0,0.42) 0%,
+      rgba(0,0,0,0.28) 12%,
+      rgba(0,0,0,0.18) 28%,
+      rgba(0,0,0,0.18) 45%,
+      rgba(0,0,0,0.26) 60%,
+      rgba(0,0,0,0.38) 78%,
       rgba(0,0,0,0.52) 100%);
   pointer-events:none;
 }
@@ -441,6 +443,70 @@ h1,h2,h3,h4,p{margin:0}
   font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
   display:flex; align-items:center; gap: 14px;
   color: var(--fg);
+}
+
+/* Hero — poster-style acclaim strip (single row of all entries) */
+.hero__acclaim{
+  position: absolute;
+  top: clamp(92px, 11vh, 135px);
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.55);
+}
+.hero__acclaim-grid{
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1440px;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: clamp(10px, 1.2vw, 18px);
+  text-align: center;
+  justify-items: center;
+  align-items: start;
+}
+.hero__acclaim-item{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+.hero__acclaim-title{
+  font-family: "Playfair Display", "Times New Roman", Georgia, serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(10px, 0.82vw, 12.5px);
+  letter-spacing: 0.02em;
+  line-height: 1.18;
+  text-wrap: balance;
+}
+.hero__acclaim-src{
+  font-family: var(--font-mono);
+  font-size: clamp(7.5px, 0.55vw, 9px);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.3;
+}
+@media (max-width: 1100px){
+  .hero__acclaim-grid{ grid-template-columns: repeat(3, 1fr); gap: 14px 24px; max-width: 720px; }
+  .hero__acclaim-title{ font-size: 11px; }
+  .hero__acclaim-src{ font-size: 9px; letter-spacing: .2em; }
+}
+@media (max-width: 640px){
+  .hero__acclaim{ top: 96px; }
+  .hero__acclaim-grid{ grid-template-columns: repeat(2, 1fr); gap: 10px 16px; max-width: 100%; }
+  .hero__acclaim-grid > .hero__acclaim-item:last-child:nth-child(odd){
+    grid-column: 1 / -1;
+    max-width: 60%;
+    justify-self: center;
+  }
+  .hero__acclaim-title{ font-size: 10.5px; }
+  .hero__acclaim-src{ font-size: 8px; letter-spacing: .16em; }
 }
 .hero__overline::before{
   content:""; display:block; width: 24px; height:1px; background: var(--red);
@@ -1775,6 +1841,47 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
      ============================================================ -->
 <section class="hero" id="hero" data-variant="stacked" data-screen-label="01 Hero">
 
+  <div class="hero__acclaim" aria-label="Album acclaim">
+    <ul class="hero__acclaim-grid">
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Кращий альбом року</span><span data-lang-only="en">Best Album of the Year</span></span>
+        <span class="hero__acclaim-src">Gothica Magazine</span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Номінація «Кращий альбом»</span><span data-lang-only="en">Nominee «Best Album»</span></span>
+        <span class="hero__acclaim-src"><span data-lang-only="uk">Золота зоря · LiRoom</span><span data-lang-only="en">Zolota Zorya · LiRoom</span></span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Номінація «Альбом року»</span><span data-lang-only="en">Nominee «Album of the Year»</span></span>
+        <span class="hero__acclaim-src">Jäger Music Awards</span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі українські релізи</span><span data-lang-only="en">Best Ukrainian Releases</span></span>
+        <span class="hero__acclaim-src">Neformat.com.ua</span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі рок-альбоми року</span><span data-lang-only="en">Best Rock Albums of the Year</span></span>
+        <span class="hero__acclaim-src">The Rock Spectrum</span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі альбоми року</span><span data-lang-only="en">Best Albums of the Year</span></span>
+        <span class="hero__acclaim-src"><span data-lang-only="uk">Суспільне Культура</span><span data-lang-only="en">Suspilne Culture</span></span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Альтернативні альбоми року</span><span data-lang-only="en">Alternative Albums of the Year</span></span>
+        <span class="hero__acclaim-src"><span data-lang-only="uk">Ігор Панасов</span><span data-lang-only="en">Ihor Panasov</span></span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі українські релізи</span><span data-lang-only="en">Best Ukrainian Releases</span></span>
+        <span class="hero__acclaim-src">Тимчик</span>
+      </li>
+      <li class="hero__acclaim-item">
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Топ українських альбомів</span><span data-lang-only="en">Top Ukrainian Albums</span></span>
+        <span class="hero__acclaim-src">Did'ko Music</span>
+      </li>
+    </ul>
+  </div>
+
   <div class="hero__body">
     <div class="hero__type">
     </div>
@@ -2820,6 +2927,8 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
 })();
+/* Hero acclaim — static poster-style grid (no JS) */
+
 (function(){
   var photo = document.querySelector('.hero__photo');
   if (!photo || !('IntersectionObserver' in window)) return;
