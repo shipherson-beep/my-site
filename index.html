@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://i.scdn.co" crossorigin />
 <link rel="preconnect" href="https://p.scdn.co" crossorigin />
 <link rel="dns-prefetch" href="https://encore.scdn.co" />
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;700&family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,700&display=swap" rel="stylesheet" />
 
 <!-- React + Babel (for the Tweaks panel only — main site is JS-optional) -->
 <script>
@@ -459,9 +459,9 @@ h1,h2,h3,h4,p{margin:0}
 }
 .hero__acclaim-grid{
   list-style: none;
-  margin: 0 auto;
+  margin: 0;
   padding: 0;
-  max-width: 1440px;
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   gap: clamp(10px, 1.2vw, 18px);
@@ -476,10 +476,10 @@ h1,h2,h3,h4,p{margin:0}
   width: 100%;
 }
 .hero__acclaim-title{
-  font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-  font-weight: 700;
+  font-family: "Playfair Display SC", "Playfair Display", Georgia, "Times New Roman", serif;
+  font-weight: 400;
   text-transform: uppercase;
-  font-size: clamp(10px, 0.82vw, 12.5px);
+  font-size: clamp(11px, 0.9vw, 13.5px);
   letter-spacing: 0.02em;
   line-height: 1.18;
   text-wrap: balance;
@@ -1860,7 +1860,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         <span class="hero__acclaim-src">Neformat.com.ua</span>
       </li>
       <li class="hero__acclaim-item">
-        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі рок-альбоми року</span><span data-lang-only="en">Best Rock Albums of the Year</span></span>
+        <span class="hero__acclaim-title"><span data-lang-only="uk">Найкращі рок альбоми року</span><span data-lang-only="en">Best Rock Albums of the Year</span></span>
         <span class="hero__acclaim-src">The Rock Spectrum</span>
       </li>
       <li class="hero__acclaim-item">
