@@ -493,34 +493,42 @@ h1,h2,h3,h4,p{margin:0}
   line-height: 1.3;
 }
 @media (max-width: 1100px){
-  .hero__acclaim{ padding: 0; pointer-events: none; }
+  .hero__acclaim{
+    padding: 0;
+    pointer-events: none;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+  }
   .hero__acclaim-grid{
     display: flex;
     pointer-events: auto;
-    gap: clamp(20px, 4vw, 32px);
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    padding: 0 var(--gutter) 10px;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    flex-wrap: nowrap;
+    gap: 0;
+    width: max-content;
+    max-width: none;
+    padding: 0;
+    overflow: visible;
+    animation: heroAcclaimMarquee 80s linear infinite;
   }
-  .hero__acclaim-grid::-webkit-scrollbar{ display: none; }
+  .hero__acclaim-grid:hover{ animation-play-state: paused; }
   .hero__acclaim-item{
-    flex: 0 0 180px;
-    scroll-snap-align: start;
-    width: auto;
+    flex: 0 0 auto;
+    width: 200px;
+    padding-right: 40px;
   }
   .hero__acclaim-title{ font-size: 12px; }
   .hero__acclaim-src{ font-size: 9px; letter-spacing: .2em; }
 }
 @media (max-width: 640px){
   .hero__acclaim{ top: 96px; }
-  .hero__acclaim-item{ flex-basis: 160px; }
+  .hero__acclaim-item{ width: 170px; padding-right: 30px; }
   .hero__acclaim-title{ font-size: 11px; }
   .hero__acclaim-src{ font-size: 8.5px; letter-spacing: .18em; }
+}
+@keyframes heroAcclaimMarquee{
+  from{ transform: translateX(0); }
+  to{ transform: translateX(-50%); }
 }
 .hero__overline::before{
   content:""; display:block; width: 24px; height:1px; background: var(--red);
@@ -2942,6 +2950,31 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
   window.addEventListener('resize', update);
 })();
 /* Hero acclaim — static poster-style grid (no JS) */
+
+(function(){
+  var grid = document.querySelector('.hero__acclaim-grid');
+  if (!grid) return;
+  var mq = window.matchMedia('(max-width: 1100px)');
+  var originalHTML = grid.innerHTML;
+  var cloned = false;
+  function update(){
+    if (mq.matches && !cloned){
+      var items = Array.prototype.slice.call(grid.children);
+      items.forEach(function(item){
+        var clone = item.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        grid.appendChild(clone);
+      });
+      cloned = true;
+    } else if (!mq.matches && cloned){
+      grid.innerHTML = originalHTML;
+      cloned = false;
+    }
+  }
+  update();
+  if (mq.addEventListener){ mq.addEventListener('change', update); }
+  else if (mq.addListener){ mq.addListener(update); }
+})();
 
 (function(){
   var photo = document.querySelector('.hero__photo');
