@@ -1350,13 +1350,17 @@ details.disc-disclosure[open] summary::after{ content:"[—]"; }
 .carousel__dot.is-active{ background: var(--fg); }
 .merch-primary__body{
   display:flex; flex-direction:column; gap: 18px;
-  padding-top: 4px;
+  padding-top: 0;
 }
 .merch-primary__eyebrow{
   font-family: var(--font-mono);
   font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
-  display:flex; justify-content:space-between; align-items:baseline;
-  border-top: 1px solid currentColor; padding-top: 18px;
+  display:flex; justify-content:flex-start; align-items:baseline;
+}
+.merch-primary__eyebrow > span{
+  display:inline-flex; align-items:center;
+  background: var(--red); color: var(--fg);
+  padding: 5px 9px;
 }
 .merch-primary__name{
   font-family: var(--font-display); font-weight:700; text-transform:uppercase;
@@ -1456,6 +1460,75 @@ details.disc-disclosure[open] summary::after{ content:"[—]"; }
 }
 .merch-item__buy:hover{ background: var(--bg); color: var(--fg); border-color: var(--bg); }
 .merch-item:nth-child(odd) .merch-item__buy:hover{ color: var(--fg); }
+
+/* Photo-based t-shirt card */
+.merch-item__img--photo{
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  overflow: hidden;
+  background: #f3f3f1;
+  border: 0;
+  width: 100%;
+  display: block;
+  position: relative;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+.merch-item__img--photo img{
+  width:100%; height:100%; object-fit: cover; display:block;
+}
+/* Crisp cursor-follow magnifier (no transform blur — uses the full-res source) */
+.merch-item__lens{
+  position:absolute; inset:0; z-index:1;
+  background-repeat:no-repeat;
+  background-size:260%;
+  background-position: var(--lx,50%) var(--ly,50%);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .15s ease;
+  image-rendering:auto;
+}
+@media (hover: hover) and (pointer: fine){
+  .merch-item__img--photo:hover .merch-item__lens{ opacity:1; }
+  .merch-item__img--photo:hover .merch-item__tag{ opacity:0; }
+}
+.merch-item__img--photo:focus-visible{ outline: 2px solid var(--red); outline-offset: 3px; }
+.merch-item__tag{
+  position:absolute; top: 0; left: 0; z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.18em; text-transform:uppercase;
+  background: var(--bg); color: var(--fg);
+  padding: 5px 9px;
+  transition: opacity .15s ease;
+}
+
+/* Name + price row */
+.merch-item__price{
+  font-family: var(--font-display); font-weight:600;
+  font-size: 18px; letter-spacing:0; white-space: nowrap;
+}
+.merch-item__note{
+  margin: -4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+  line-height: 1.6; color: var(--bg); opacity: .7;
+}
+.merch-item__note a{
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.merch-item__note a:hover{ color: var(--red); }
+
+/* Size run */
+.merch-item__sizes{
+  display:flex; flex-wrap:wrap; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing:.1em; text-transform:uppercase;
+  color: var(--bg);
+}
+.merch-item__sizes li{
+  border: 1px solid var(--hairline-on-white);
+  padding: 6px 0; min-width: 38px; text-align:center;
+}
 
 /* =========================================================
    VIDEOS
@@ -2401,24 +2474,25 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     </div>
 
     <div class="tour" id="tour-list">
-      <div class="tour__row">
+      <div class="tour__row" data-date="2026-06-06">
         <span class="date">06.06.2026</span>
         <span class="city"><span data-lang-only="uk">Київ, UA</span><span data-lang-only="en">Kyiv, UA</span></span>
         <span class="venue"><span data-lang-only="uk">Фестиваль попкультури FANCON · МВЦ</span><span data-lang-only="en">FANCON pop-culture festival · IEC</span></span>
         <a class="tix" href="https://fancon.ua/prydbaty-kvytky-na-fancon/" target="_blank" rel="noopener noreferrer" aria-label="Tickets — FANCON, Kyiv, 2026.06.06"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
       </div>
-      <div class="tour__row">
+      <div class="tour__row" data-date="2026-06-26">
         <span class="date">26.06.2026</span>
         <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
         <span class="venue"><span data-lang-only="uk">!FESTREPUBLIC · на розігріві в Анни</span><span data-lang-only="en">!FESTREPUBLIC · supporting Anna</span></span>
         <a class="tix" href="https://smart.concert.ua/uk/faine-events/e/anna-lviv/booking" target="_blank" rel="noopener noreferrer" aria-label="Tickets — !FESTREPUBLIC, Lviv, 2026.06.26"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
       </div>
-      <div class="tour__row">
+      <div class="tour__row" data-date="2026-08-02">
         <span class="date">02.08.2026</span>
         <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
         <span class="venue"><span data-lang-only="uk">FAINE MISTO FESTIVAL · територія Арени Львів</span><span data-lang-only="en">FAINE MISTO FESTIVAL · Arena Lviv grounds</span></span>
         <a class="tix" href="https://fainemisto.com.ua/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets — Faine Misto Festival, Lviv, 2026.08.02"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
       </div>
+      <div class="tour__empty" id="tour-empty" hidden><span data-lang-only="uk">Наразі немає запланованих дат — слідкуйте за оновленнями</span><span data-lang-only="en">No scheduled dates right now — check back soon</span></div>
     </div>
 
   </div>
@@ -2452,7 +2526,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
       </div>
       <div class="merch-primary__body">
         <div class="merch-primary__eyebrow">
-          <span><span data-lang-only="uk">Лімітований тираж</span><span data-lang-only="en">Limited Edition</span></span>
+          <span><span data-lang-only="uk">У наявності</span><span data-lang-only="en">In stock</span></span>
         </div>
         <h3 class="merch-primary__name"><span data-lang-only="uk">Саундтрек до порядку денного <em>Purple / Amber Swirl Vinyl</em></span><span data-lang-only="en">Soundtrack to the Daily Agenda <em>Purple / Amber Swirl Vinyl</em></span></h3>
         <p class="merch-primary__desc"><span data-lang-only="uk">Перша повноформатна робота, яка записана повністю українською мовою. До створення долучилися паліндром, Антон Слєпаков, Євген Тимчик, Олександр Куц та Divuar. Реліз отримав широке визнання критиків, ставши найкращим альбомом року за версією Gothica Magazine та увійшовши до багатьох річних підсумків. Також робота була номінована на «Кращий альбом» премії «Золота зоря» від LiRoom та «Альбом року» на Jager Music Awards.
@@ -2469,38 +2543,53 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
       </div>
     </article>
 
-    <div class="merch" hidden>
+    <div class="merch">
       <article class="merch-item">
-        <div class="merch-item__img bg-red">
-          <span class="label">SHS<br />T-SHIRT<br />OVER-<br />SIZED</span>
-        </div>
+        <button type="button" class="merch-item__img merch-item__img--photo" data-zoom data-zoom-src="assets/merch/tee-club-27.jpg" data-zoom-label-uk="Футболка «Клуб 27»" data-zoom-label-en="Club 27 T-Shirt" aria-label="Клуб 27 — переглянути деталі / view details">
+          <img src="assets/merch/tee-club-27.jpg" alt="Ship Her Son — Клуб 27 t-shirt, black with spiral 27 print" loading="lazy" decoding="async" />
+          <span class="merch-item__lens" aria-hidden="true"></span>
+          <span class="merch-item__tag"><span data-lang-only="uk">Скоро в продажу</span><span data-lang-only="en">Coming soon</span></span>
+        </button>
         <div class="merch-item__row">
-          <span class="merch-item__name"><span data-lang-only="uk">Футболка SHS Wordmark</span><span data-lang-only="en">SHS Wordmark Tee</span></span>
-          <span>€ 25</span>
+          <span class="merch-item__name"><span data-lang-only="uk">Футболка «Клуб 27»</span><span data-lang-only="en">Club 27 T-Shirt</span></span>
+          <span class="merch-item__price">1000 ₴</span>
         </div>
-        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+        <p class="merch-item__note"><span data-lang-only="uk">Для передзамовлення пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">To pre-order, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></p>
+        <ul class="merch-item__sizes" aria-label="Sizes / Розміри">
+          <li>S</li><li>M</li><li>L</li><li>XL</li><li>XXL</li>
+        </ul>
       </article>
 
       <article class="merch-item">
-        <div class="merch-item__img bg-black">
-          <span class="label">САУНД<br />ТРЕК<br />12&quot;<br />VINYL</span>
-        </div>
+        <button type="button" class="merch-item__img merch-item__img--photo" data-zoom data-zoom-src="assets/merch/tee-soundtrack.jpg" data-zoom-label-uk="Футболка «Саундтрек»" data-zoom-label-en="Soundtrack T-Shirt" aria-label="Саундтрек — переглянути деталі / view details">
+          <img src="assets/merch/tee-soundtrack.jpg" alt="Ship Her Son — Саундтрек t-shirt, black with arched poster print" loading="lazy" decoding="async" />
+          <span class="merch-item__lens" aria-hidden="true"></span>
+          <span class="merch-item__tag"><span data-lang-only="uk">Скоро в продажу</span><span data-lang-only="en">Coming soon</span></span>
+        </button>
         <div class="merch-item__row">
-          <span class="merch-item__name">Саундтрек 12" LP</span>
-          <span>€ 28</span>
+          <span class="merch-item__name"><span data-lang-only="uk">Футболка «Саундтрек»</span><span data-lang-only="en">Soundtrack T-Shirt</span></span>
+          <span class="merch-item__price">1000 ₴</span>
         </div>
-        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+        <p class="merch-item__note"><span data-lang-only="uk">Для передзамовлення пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">To pre-order, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></p>
+        <ul class="merch-item__sizes" aria-label="Sizes / Розміри">
+          <li>S</li><li>M</li><li>L</li><li>XL</li><li>XXL</li>
+        </ul>
       </article>
 
       <article class="merch-item">
-        <div class="merch-item__img">
-          <span class="label">CASSETTE<br />— ESSEN<br />REPRESS</span>
-        </div>
+        <button type="button" class="merch-item__img merch-item__img--photo" data-zoom data-zoom-src="assets/merch/tee-logo.jpg" data-zoom-label-uk="Футболка «Лого»" data-zoom-label-en="Logo T-Shirt" aria-label="Лого — переглянути деталі / view details">
+          <img src="assets/merch/tee-logo.jpg" alt="Ship Her Son — Лого t-shirt, black with tally-mark roundel logo" loading="lazy" decoding="async" />
+          <span class="merch-item__lens" aria-hidden="true"></span>
+          <span class="merch-item__tag"><span data-lang-only="uk">Скоро в продажу</span><span data-lang-only="en">Coming soon</span></span>
+        </button>
         <div class="merch-item__row">
-          <span class="merch-item__name"><span data-lang-only="uk">Essen — касета</span><span data-lang-only="en">Essen — Cassette</span></span>
-          <span>€ 12</span>
+          <span class="merch-item__name"><span data-lang-only="uk">Футболка «Лого»</span><span data-lang-only="en">Logo T-Shirt</span></span>
+          <span class="merch-item__price">1000 ₴</span>
         </div>
-        <a class="merch-item__buy" href="#" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">КУПИТИ НА BANDCAMP →</span><span data-lang-only="en">BUY ON BANDCAMP →</span></a>
+        <p class="merch-item__note"><span data-lang-only="uk">Для передзамовлення пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">To pre-order, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></p>
+        <ul class="merch-item__sizes" aria-label="Sizes / Розміри">
+          <li>S</li><li>M</li><li>L</li><li>XL</li><li>XXL</li>
+        </ul>
       </article>
     </div>
   </div>
@@ -2704,7 +2793,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 
 <footer class="sitefoot" data-screen-label="Footer">
   <span class="sitefoot__left">© 2026 <span data-lang-only="uk">АНТОН ШИФЕРСОН</span><span data-lang-only="en">ANTON SHIFERSON</span> / SHIP HER SON</span>
-  <span class="sitefoot__right"><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a></span>
+  <span class="sitefoot__right"><!--email_off--><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><!--/email_off--></span>
 </footer>
 
 
@@ -3235,6 +3324,35 @@ body.vlb-open{ overflow: hidden; }
 </script>
 
 <script>
+/* Tour dates — auto-hide an event the day AFTER it happens.
+   A row stays visible while today <= event date; from the next day on it's removed.
+   When nothing remains, show the placeholder. */
+(function(){
+  var list = document.getElementById('tour-list');
+  if (!list) return;
+  var empty = document.getElementById('tour-empty');
+
+  // Today at local midnight, so the comparison is date-only (no time-of-day drift).
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  var visible = 0;
+  list.querySelectorAll('.tour__row[data-date]').forEach(function(row){
+    var parts = (row.getAttribute('data-date') || '').split('-');
+    if (parts.length !== 3) { visible++; return; }
+    var ev = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    if (ev < today){
+      row.remove();           // event is in the past → gone the next day
+    } else {
+      visible++;
+    }
+  });
+
+  if (empty) empty.hidden = visible > 0;
+})();
+</script>
+
+<script>
 /* Merch carousel */
 (function(){
   document.querySelectorAll('[data-carousel]').forEach(function(root){
@@ -3288,6 +3406,167 @@ body.vlb-open{ overflow: hidden; }
     });
 
     startAuto();
+  });
+})();
+</script>
+
+<!-- Merch t-shirt lightbox -->
+<style>
+.tlb{
+  position: fixed; inset: 0;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.92);
+  padding: clamp(16px, 3vw, 40px);
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.tlb.is-open{ display: flex; opacity: 1; }
+.tlb__inner{
+  width: 100%;
+  max-width: min(720px, calc(100vh - 130px));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.tlb__bar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+}
+.tlb__label{
+  color: #fff;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+.tlb__close{
+  appearance: none;
+  display: inline-flex; align-items: center; gap: 14px;
+  height: 44px;
+  padding: 0 18px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  line-height: 1;
+  flex: 0 0 auto;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.tlb__close svg{ width: 10px; height: 10px; display: block; flex: 0 0 auto; }
+.tlb__close:hover, .tlb__close:focus-visible{
+  background: var(--red, #E10600); color: #fff; border-color: var(--red, #E10600); outline: none;
+}
+.tlb__frame{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #f3f3f1;
+  box-shadow: 0 30px 120px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.tlb__frame img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 720px){
+  .tlb{ padding: 16px 12px; }
+  .tlb__inner{ gap: 12px; max-width: 100%; }
+  .tlb__close{ height: 40px; padding: 0 14px; font-size: 10px; }
+  .tlb__label{ font-size: 10px; }
+}
+body.tlb-open{ overflow: hidden; }
+</style>
+
+<div class="tlb" id="tlb" role="dialog" aria-modal="true" aria-label="T-shirt preview" tabindex="-1" hidden>
+  <div class="tlb__inner">
+    <div class="tlb__bar">
+      <span class="tlb__label" id="tlb-label"></span>
+      <button class="tlb__close" type="button" id="tlb-close" aria-label="Close preview">
+        <span data-lang-only="uk">Закрити</span><span data-lang-only="en">Close</span>
+        <svg viewBox="0 0 10 10" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1">
+          <line x1="1" y1="1" x2="9" y2="9"/>
+          <line x1="9" y1="1" x2="1" y2="9"/>
+        </svg>
+      </button>
+    </div>
+    <div class="tlb__frame">
+      <img id="tlb-img" alt="" />
+    </div>
+  </div>
+</div>
+
+<script>
+/* Merch t-shirt lightbox — click a card photo to inspect it enlarged */
+(function(){
+  var modal = document.getElementById('tlb');
+  var img   = document.getElementById('tlb-img');
+  var label = document.getElementById('tlb-label');
+  var closeBtn = document.getElementById('tlb-close');
+  if (!modal || !img) return;
+
+  function curLang(){
+    return document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'uk';
+  }
+
+  function open(trigger){
+    var src = trigger.getAttribute('data-zoom-src');
+    var lbl = trigger.getAttribute('data-zoom-label-' + curLang()) || trigger.getAttribute('data-zoom-label-uk') || '';
+    img.src = src;
+    img.alt = lbl;
+    label.textContent = lbl;
+    modal.hidden = false;
+    void modal.offsetWidth;
+    modal.classList.add('is-open');
+    document.body.classList.add('tlb-open');
+    modal.focus({ preventScroll: true });
+  }
+
+  function close(){
+    modal.classList.remove('is-open');
+    document.body.classList.remove('tlb-open');
+    setTimeout(function(){ modal.hidden = true; img.removeAttribute('src'); }, 200);
+  }
+
+  var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  document.querySelectorAll('.merch-item__img--photo[data-zoom]').forEach(function(btn){
+    btn.addEventListener('click', function(){ open(btn); });
+
+    // Crisp hover magnifier
+    if (fine){
+      var lens = btn.querySelector('.merch-item__lens');
+      var src  = btn.getAttribute('data-zoom-src');
+      if (lens && src){
+        lens.style.backgroundImage = "url('" + src + "')";
+        btn.addEventListener('mousemove', function(e){
+          var r = btn.getBoundingClientRect();
+          var x = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
+          var y = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
+          lens.style.setProperty('--lx', x + '%');
+          lens.style.setProperty('--ly', y + '%');
+        });
+      }
+    }
+  });
+
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', function(e){ if (e.target === modal) close(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
   });
 })();
 </script>
