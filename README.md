@@ -2,10 +2,12 @@
 
 ```
 api/
-  parse.js        ← розбір тексту/голосу + AI-аналіз (модель OpenAI)
-  data.js         ← спільне сховище бюджету (хмарна синхронізація через Vercel KV)
+  parse.js          ← розбір тексту/голосу + AI-аналіз (модель OpenAI)
+  data.js           ← спільне сховище бюджету (хмарна синхронізація через Vercel KV)
+  check-limits.js   ← щоденна перевірка лімітів + email-сповіщення (Resend)
 budget/
-  index.html      ← сам застосунок, відкривається на shipherson.com/budget/
+  index.html        ← сам застосунок, відкривається на shipherson.com/budget/
+vercel.json         ← розклад cron для check-limits
 package.json
 ```
 
@@ -34,6 +36,35 @@ package.json
 - (необовʼязково) `OPENAI_MODEL` = напр. `gpt-4o-mini`
 
 Після додавання — **Redeploy**.
+
+---
+
+## 4. Email-сповіщення про ліміти (Resend + cron)
+Щодня о ~10:00 за Києвом сервер перевіряє витрати поточного місяця по категоріях
+з лімітом (Продукти, Їжа поза домом, Благодійність/Подарунки, Особисті витрати)
+і шле лист, якщо якась перетнула **80%** (попередження) або **100%** (перевитрата) ліміту.
+
+**Settings → Environment Variables:**
+- `RESEND_API_KEY` = ваш ключ Resend `re_...` (обовʼязково)
+- (необовʼязково) `NOTIFY_EMAILS` = `ship.her.son@gmail.com, shiferson.julia@gmail.com`
+  — якщо не задати, ці дві адреси вже стоять за замовчуванням.
+- (необовʼязково) `NOTIFY_FROM` = `Сімейний бюджет <budget@shipherson.com>`
+  — за замовчуванням `onboarding@resend.dev`.
+
+> ⚠️ **Важливо про відправника.** Тестовий `onboarding@resend.dev` у Resend
+> може слати листи **лише на ту адресу, якою ви реєструвалися**. Щоб листи доходили
+> на ОБИДВІ Gmail-адреси, у Resend → **Domains** додайте і підтвердіть домен
+> `shipherson.com` (додати DNS-записи), і поставте `NOTIFY_FROM=budget@shipherson.com`.
+
+Після додавання змінних — **Redeploy** (cron і функція підхопляться).
+
+### Перевірка сповіщень
+- Cron вже описаний у `vercel.json` (`/api/check-limits`, щодня о 07:00 UTC ≈ 10:00 Київ).
+  Після деплою його видно у Vercel → **Settings → Cron Jobs**.
+- Ручний тест зараз: відкрийте
+  `shipherson.com/api/check-limits?code=2109&force=1`
+  — `force=1` ігнорує захист «раз на місяць» і шле лист одразу, якщо є що показати.
+  Без `force` кожен рівень (80% / 100%) спрацьовує максимум раз на категорію за місяць.
 
 ---
 
