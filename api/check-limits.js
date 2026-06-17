@@ -4,23 +4,25 @@
 // або вручну для тесту:  GET /api/check-limits?code=2109[&force=1]
 //
 // Що робить:
-//   1. читає весь бюджет із Redis (ключ "budget:main", той самий, що й /api/data);
+//   1. читає весь бюджет із Neon (рядок budget.id='main', той самий, що й /api/data);
 //   2. рахує витрати ПОТОЧНОГО місяця по категоріях з лімітом
 //      (Продукти, Їжа поза домом, Благодійність/Подарунки, Особисті витрати);
 //   3. якщо категорія перетнула 80% (попередження) або 100% (перевитрата) ліміту —
 //      шле один лист на адреси отримувачів;
 //   4. кожен рівень (80% / 100%) для кожної категорії спрацьовує МАКСИМУМ раз на місяць
-//      (стан тримається в Redis-ключі "budget:notified:<YYYY-MM>", сам очищується ~40 днів).
+//      (стан тримається в рядку budget.id='notified:<YYYY-MM>').
 //
 // Потрібні змінні середовища у Vercel:
-//   KV_REST_API_URL / KV_REST_API_TOKEN   (або UPSTASH_REDIS_REST_URL / _TOKEN) — сховище
+//   DATABASE_URL                            — підключення до Neon (сховище)
 //   RESEND_API_KEY                          — ключ Resend (обовʼязково)
 //   NOTIFY_FROM      (необовʼязково)        — відправник, дефолт "onboarding@resend.dev"
 //   NOTIFY_EMAILS    (необовʼязково)        — отримувачі через кому, дефолт нижче
 //   CRON_SECRET      (необовʼязково)        — Vercel сам шле його в Authorization для cron
 
+import { neon } from '@neondatabase/serverless';
+
 const PIN = '2109';
-const STORE_KEY = 'budget:main';
+const ROW_ID = 'main';
 
 // Категорії з лімітом: id у даних → людська назва + ключ ліміту в config.limits
 const LIMIT_CATS = [
@@ -58,10 +60,9 @@ function catTotal(month, catId) {
 }
 
 export default async function handler(req, res) {
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
-    return res.status(500).json({ error: 'Сховище не налаштовано (KV_REST_API_URL / KV_REST_API_TOKEN).' });
+  const conn = process.env.DATABASE_URL;
+  if (!conn) {
+    return res.status(500).json({ error: 'Сховище не налаштовано (DATABASE_URL).' });
   }
 
   // Захист: cron від Vercel надсилає Authorization: Bearer <CRON_SECRET>.
@@ -73,18 +74,10 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  const redis = async (cmd) => {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify(cmd),
-    });
-    const j = await r.json().catch(() => null);
-    if (!r.ok || (j && j.error)) throw new Error((j && j.error) || ('KV HTTP ' + r.status));
-    return j ? j.result : null;
-  };
+  const sql = neon(conn);
 
   try {
+    await sql`CREATE TABLE IF NOT EXISTS budget (id text PRIMARY KEY, data jsonb, updated_at timestamptz NOT NULL DEFAULT now())`;
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) return res.status(500).json({ error: 'RESEND_API_KEY не задано.' });
 
@@ -95,9 +88,8 @@ export default async function handler(req, res) {
       : DEFAULT_EMAILS);
 
     // 1. дані
-    const raw = await redis(['GET', STORE_KEY]);
-    let data = null;
-    if (raw) { try { data = JSON.parse(raw); } catch (e) { data = null; } }
+    const dataRows = await sql`SELECT data FROM budget WHERE id = ${ROW_ID}`;
+    const data = dataRows.length ? dataRows[0].data : null;
     if (!data || !data.config) return res.status(200).json({ ok: true, note: 'немає даних' });
 
     const mKey = monthKey();
@@ -105,11 +97,11 @@ export default async function handler(req, res) {
     const limits = (data.config.limits) || {};
 
     // 2+3. знаходимо категорії, що перетнули поріг і ще не сповіщені на цьому рівні
-    const notifKey = 'budget:notified:' + mKey;
+    const notifKey = 'notified:' + mKey;
     let notified = {};
     if (!force) {
-      const nraw = await redis(['GET', notifKey]);
-      if (nraw) { try { notified = JSON.parse(nraw) || {}; } catch (e) { notified = {}; } }
+      const nrows = await sql`SELECT data FROM budget WHERE id = ${notifKey}`;
+      if (nrows.length && nrows[0].data) notified = nrows[0].data || {};
     }
 
     const triggered = [];
@@ -178,9 +170,13 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Resend: ' + ((sendJson && (sendJson.message || sendJson.error)) || sendRes.status) });
     }
 
-    // зберігаємо стан сповіщень (40 днів), щоб не дублювати в межах місяця
+    // зберігаємо стан сповіщень, щоб не дублювати в межах місяця
     if (!force) {
-      await redis(['SET', notifKey, JSON.stringify(notified), 'EX', 3456000]);
+      await sql`
+        INSERT INTO budget (id, data, updated_at)
+        VALUES (${notifKey}, ${notified}, now())
+        ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+      `;
     }
 
     return res.status(200).json({ ok: true, month: mKey, sent: true, to: emails, categories: triggered.map((t) => ({ name: t.name, pct: t.pct })) });
