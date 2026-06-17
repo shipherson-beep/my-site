@@ -4,18 +4,26 @@
 // і повернути відповідь моделі. Ключ ніколи не потрапляє в браузер.
 //
 // Ключ зберігається в змінній середовища OPENAI_API_KEY (НЕ в коді!).
+// Доступ захищений сесією Google-користувача (Authorization: Bearer <token>) — див. api/_auth.js.
+
+import { authRequest } from './_auth.js';
 
 export default async function handler(req, res) {
   // Дозволяємо виклик з будь-якого домену (напр. ваш сайт shipherson.com
   // звертається до функції на Vercel). Можна звузити до свого домену.
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') {
     return res.status(204).end();
   }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Лише для авторизованих користувачів (захищає ключ OpenAI від чужих запитів).
+  if (!authRequest(req)) {
+    return res.status(401).json({ error: 'unauthorized' });
   }
 
   // На Vercel req.body вже розпарсений; підстраховка на випадок рядка.

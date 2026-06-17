@@ -1,7 +1,7 @@
 // api/check-limits.js — щоденна перевірка лімітів і email-сповіщення через Resend.
 //
 // Викликається автоматично за розкладом (Vercel Cron, див. vercel.json),
-// або вручну для тесту:  GET /api/check-limits?code=2109[&force=1]
+// або вручну для тесту:  GET /api/check-limits?key=<AUTH_SECRET>[&force=1]
 //
 // Що робить:
 //   1. читає весь бюджет із Neon (рядок budget.id='main', той самий, що й /api/data);
@@ -21,7 +21,6 @@
 
 import { neon } from '@neondatabase/serverless';
 
-const PIN = '2109';
 const ROW_ID = 'main';
 
 // Категорії з лімітом: id у даних → людська назва + ключ ліміту в config.limits
@@ -66,10 +65,11 @@ export default async function handler(req, res) {
   }
 
   // Захист: cron від Vercel надсилає Authorization: Bearer <CRON_SECRET>.
-  // Для ручного виклику дозволяємо ?code=2109.
+  // Для ручного виклику дозволяємо ?key=<AUTH_SECRET>.
   const cronSecret = process.env.CRON_SECRET;
   const authedAsCron = cronSecret && req.headers.authorization === 'Bearer ' + cronSecret;
-  const authedManually = (req.query && req.query.code) === PIN;
+  const authSecret = process.env.AUTH_SECRET;
+  const authedManually = authSecret && (req.query && req.query.key) === authSecret;
   if (!authedAsCron && !authedManually) {
     return res.status(401).json({ error: 'unauthorized' });
   }
