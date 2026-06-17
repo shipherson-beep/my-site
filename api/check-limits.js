@@ -23,12 +23,20 @@ import { neon } from '@neondatabase/serverless';
 
 const ROW_ID = 'main';
 
-// Категорії з лімітом: id у даних → людська назва + ключ ліміту в config.limits
+// Усі категорії застосунку: id у даних → людська назва + ключ ліміту в config.limits.
+// Сповіщення спрацьовує лише для тих, де в config.limits заданий ліміт > 0.
 const LIMIT_CATS = [
-  { id: 'products',  name: 'Продукти',                 limitKey: 'products' },
-  { id: 'eatingOut', name: 'Їжа поза домом',           limitKey: 'eatingOut' },
+  { id: 'products',  name: 'Продукти',                  limitKey: 'products' },
+  { id: 'eatingOut', name: 'Їжа поза домом',            limitKey: 'eatingOut' },
+  { id: 'home',      name: 'Дім',                       limitKey: 'home' },
+  { id: 'subs',      name: 'Підписки / сервіси',        limitKey: 'subs' },
+  { id: 'family',    name: 'Сім’я',                     limitKey: 'family' },
+  { id: 'health',    name: 'Здоров’я',                  limitKey: 'health' },
+  { id: 'work',      name: 'Робота / Навчання / Податки', limitKey: 'work' },
+  { id: 'transport', name: 'Транспорт',                 limitKey: 'transport' },
+  { id: 'leisure',   name: 'Дозвілля / Подорожі',       limitKey: 'leisure' },
   { id: 'charity',   name: 'Благодійність / Подарунки', limitKey: 'charity' },
-  { id: 'personal',  name: 'Особисті витрати',         limitKey: 'personal' },
+  { id: 'personal',  name: 'Особисті витрати',          limitKey: 'personal' },
 ];
 
 const WARN_PCT = 80;   // поріг попередження
