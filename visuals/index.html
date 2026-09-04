@@ -1,0 +1,2468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap&subset=latin,latin-ext,cyrillic,cyrillic-ext" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#08080a;color:#e4e4e7;font-family:"JetBrains Mono",ui-monospace,monospace;-webkit-font-smoothing:antialiased;overflow:hidden}
+  *{box-sizing:border-box}
+  input,select,button,textarea{font-family:inherit}
+  a{color:#ff2b18;text-decoration:none}
+  a:hover{color:#ff6a58}
+  input[type=range]{-webkit-appearance:none;appearance:none;background:#26262b;height:2px;border-radius:0}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:14px;background:#e4e4e7;border-radius:1px;cursor:ew-resize}
+  input[type=range]:hover::-webkit-slider-thumb{background:#ff2b18}
+  ::-webkit-scrollbar{width:7px;height:7px}
+  ::-webkit-scrollbar-thumb{background:#26262b}
+  ::-webkit-scrollbar-track{background:#0d0d10}
+  ::selection{background:#ff2b18;color:#000}
+</style>
+</helmet>
+<div style="display:flex;flex-direction:column;height:100vh;width:100vw;background:#08080a">
+
+  <div style="display:flex;align-items:center;gap:10px 14px;padding:4px 12px;min-height:42px;flex:none;flex-wrap:wrap;border-bottom:1px solid #1b1b1f;background:#0b0b0e">
+    <div style="display:flex;align-items:baseline;gap:7px">
+      <span style="font-family:Archivo,sans-serif;font-weight:900;font-size:13px;letter-spacing:.16em">SHIP HER SON</span>
+      <span style="font-size:8px;letter-spacing:.2em;color:#52525b">VISUAL SYNTHESIZER</span>
+    </div>
+    <div style="width:1px;height:20px;background:#1f1f24"></div>
+    <div style="display:flex;gap:4px">
+      <button onClick="{{ onPlay }}" style="background:#16161a;border:1px solid #2a2a30;color:#e4e4e7;font-size:9px;letter-spacing:.1em;padding:5px 12px;border-radius:2px;cursor:pointer">{{ playLabel }}</button>
+      <button onClick="{{ onStop }}" style="background:#16161a;border:1px solid #2a2a30;color:#a1a1aa;font-size:9px;letter-spacing:.1em;padding:5px 10px;border-radius:2px;cursor:pointer">STOP</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px">
+      <span style="font-size:8px;letter-spacing:.16em;color:#52525b">BPM</span>
+      <div style="display:flex;align-items:stretch;border:1px solid #26262b;border-radius:2px;overflow:hidden;background:#141417">
+        <button onClick="{{ onBpmDown }}" style="background:#16161a;border:none;border-right:1px solid #26262b;color:#a1a1aa;font-size:11px;padding:0 7px;cursor:pointer">−</button>
+        <input value="{{ bpmText }}" onInput="{{ onBpmType }}" onBlur="{{ onBpmCommit }}" onKeyDown="{{ onBpmKey }}" inputMode="decimal" style="width:52px;background:transparent;border:none;outline:none;color:#ff2b18;font-size:13px;font-weight:700;padding:3px 2px;text-align:center">
+        <button onClick="{{ onBpmUp }}" style="background:#16161a;border:none;border-left:1px solid #26262b;color:#a1a1aa;font-size:11px;padding:0 7px;cursor:pointer">+</button>
+      </div>
+      <select value="{{ bpmPick }}" onChange="{{ onBpmPick }}" style="width:34px;background:#141417;color:#71717a;border:1px solid #26262b;font-size:9px;padding:3px 1px;border-radius:2px;cursor:pointer">
+        <option value="">▾</option>
+        <option value="60">60</option>
+        <option value="70">70</option>
+        <option value="85">85</option>
+        <option value="96">96</option>
+        <option value="100">100</option>
+        <option value="108">108</option>
+        <option value="115">115</option>
+        <option value="120">120</option>
+        <option value="121">121</option>
+        <option value="124">124</option>
+        <option value="128">128</option>
+        <option value="132">132</option>
+        <option value="140">140</option>
+        <option value="150">150</option>
+        <option value="160">160</option>
+        <option value="174">174</option>
+      </select>
+      <button onClick="{{ onTap }}" style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.1em;padding:5px 9px;border-radius:2px;cursor:pointer">TAP</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums">
+      <span ref="{{ timeRef }}" style="font-size:14px;color:#e4e4e7;letter-spacing:.04em">0:00.0</span>
+      <span style="font-size:8px;color:#3f3f46">BAR.BEAT</span>
+      <span ref="{{ barRef }}" style="font-size:14px;color:#a1a1aa">1.1</span>
+      <span ref="{{ flashRef }}" style="width:10px;height:10px;background:#ff2b18;border-radius:1px;opacity:.15"></span>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:8px;flex:none;margin-left:auto">
+      <span ref="{{ fpsRef }}" style="font-size:9px;color:#3f3f46">60 FPS</span>
+      <button onClick="{{ onUndo }}" title="{{ undoTitle }}" style="background:#16161a;border:1px solid #2a2a30;color:{{ undoColor }};font-size:11px;padding:5px 7px;border-radius:2px;cursor:pointer;white-space:nowrap;flex:none">{{ undoLabel }}</button>
+      <button onClick="{{ onGenerate }}" style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.1em;padding:6px 10px;border-radius:2px;cursor:pointer;flex:none">GENERATE</button>
+      <button onClick="{{ onFullscreen }}" style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.1em;padding:6px 10px;border-radius:2px;cursor:pointer">FULLSCREEN</button>
+      <button onClick="{{ onExport }}" title="{{ exportTitle }}" style="background:{{ recBg }};border:1px solid #ff2b18;color:{{ recFg }};font-weight:700;font-size:9px;letter-spacing:.1em;padding:6px 12px;border-radius:2px;cursor:pointer;white-space:nowrap;flex:none">{{ recLabel }}</button>
+      <span style="font-size:8px;color:#71717a;letter-spacing:.06em;white-space:nowrap;flex:none">{{ exportMsg }}</span>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:0;min-height:38px;flex:none;padding:3px 8px;flex-wrap:wrap;border-bottom:1px solid #1b1b1f;background:#0a0a0c">
+    <span style="font-size:8px;letter-spacing:.16em;color:#ff2b18;padding-right:10px;flex:none">MACRO</span>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none;border-left:1px solid #17171b">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">INTENSITY</span>
+      <input type="range" min="0" max="100" value="{{ macros.intensity }}" onInput="{{ mh.intensity }}" style="width:64px">
+      <span style="font-size:9px;color:#a1a1aa;width:20px;text-align:right;font-variant-numeric:tabular-nums">{{ macros.intensity }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none;border-left:1px solid #17171b">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">DENSITY</span>
+      <input type="range" min="0" max="100" value="{{ macros.density }}" onInput="{{ mh.density }}" style="width:64px">
+      <span style="font-size:9px;color:#a1a1aa;width:20px;text-align:right;font-variant-numeric:tabular-nums">{{ macros.density }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none;border-left:1px solid #17171b">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">MOTION</span>
+      <input type="range" min="0" max="100" value="{{ macros.motion }}" onInput="{{ mh.motion }}" style="width:64px">
+      <span style="font-size:9px;color:#a1a1aa;width:20px;text-align:right;font-variant-numeric:tabular-nums">{{ macros.motion }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none;border-left:1px solid #17171b">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">DISTORTION</span>
+      <input type="range" min="0" max="100" value="{{ macros.distortion }}" onInput="{{ mh.distortion }}" style="width:64px">
+      <span style="font-size:9px;color:#a1a1aa;width:20px;text-align:right;font-variant-numeric:tabular-nums">{{ macros.distortion }}</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none;border-left:1px solid #17171b">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">AUDIO REACT</span>
+      <input type="range" min="0" max="100" value="{{ macros.audio }}" onInput="{{ mh.audio }}" style="width:64px">
+      <span style="font-size:9px;color:#a1a1aa;width:20px;text-align:right;font-variant-numeric:tabular-nums">{{ macros.audio }}</span>
+    </div>
+    <span style="font-size:8px;letter-spacing:.16em;color:#ff2b18;padding:0 10px 0 14px;flex:none;border-left:1px solid #17171b">POST</span>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">NOISE</span>
+      <input type="range" min="0" max="100" value="{{ fx.noise }}" onInput="{{ fh.noise }}" style="width:52px">
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">SCAN</span>
+      <input type="range" min="0" max="100" value="{{ fx.scan }}" onInput="{{ fh.scan }}" style="width:52px">
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">RGB</span>
+      <input type="range" min="0" max="100" value="{{ fx.rgb }}" onInput="{{ fh.rgb }}" style="width:52px">
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">JITTER</span>
+      <input type="range" min="0" max="100" value="{{ fx.jitter }}" onInput="{{ fh.jitter }}" style="width:52px">
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">SLICE</span>
+      <input type="range" min="0" max="100" value="{{ fx.slice }}" onInput="{{ fh.slice }}" style="width:52px">
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;padding:0 9px;flex:none">
+      <span style="font-size:8px;letter-spacing:.1em;color:#71717a">INVERT</span>
+      <input type="range" min="0" max="100" value="{{ fx.invert }}" onInput="{{ fh.invert }}" style="width:52px">
+    </div>
+  </div>
+
+  <div style="display:flex;flex:1;min-height:0">
+
+    <div style="width:224px;flex:none;border-right:1px solid #1b1b1f;background:#0b0b0e;display:flex;flex-direction:column;min-height:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 10px 5px;font-size:9px;letter-spacing:.14em;color:#ff2b18">
+        <span>LAYERS</span>
+        <span style="color:#3f3f46">{{ layerCount }}</span>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:60px">
+        <sc-for list="{{ layerRows }}" as="row" hint-placeholder-count="3">
+          <div onClick="{{ row.onSelect }}" style="display:flex;align-items:center;gap:7px;padding:5px 10px;cursor:pointer;border-bottom:1px solid #101014;background:{{ row.bg }}">
+            <span onClick="{{ row.onToggle }}" style="width:12px;height:12px;flex:none;border:1px solid #3f3f46;border-radius:1px;background:{{ row.dot }}"></span>
+            <span style="flex:1;font-size:10px;color:{{ row.fg }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.name }}</span>
+            <span style="font-size:8px;color:#3f3f46;letter-spacing:.08em">{{ row.type }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px;padding:7px 8px;border-top:1px solid #1b1b1f">
+        <select value="{{ addType }}" onChange="{{ onAddType }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:9px;padding:4px;border-radius:2px">
+          <option value="solid">SOLID</option>
+          <option value="line">LINE</option>
+          <option value="rect">RECTANGLE</option>
+          <option value="circle">CIRCLE</option>
+          <option value="dots">DOTS</option>
+          <option value="text">TEXT / SYMBOL</option>
+          <option value="image">IMAGE</option>
+          <option value="video">VIDEO / CLIP</option>
+        </select>
+        <button onClick="{{ onAdd }}" style="background:#ff2b18;border:1px solid #ff2b18;color:#000;font-weight:700;font-size:9px;padding:4px 9px;border-radius:2px;cursor:pointer">ADD</button>
+        <button onClick="{{ onDup }}" style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;padding:4px;border-radius:2px;cursor:pointer">DUPL</button>
+        <button onClick="{{ onDel }}" style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;padding:4px;border-radius:2px;cursor:pointer">DEL</button>
+        <button onClick="{{ onUp }}" style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;padding:4px;border-radius:2px;cursor:pointer">↑</button>
+        <button onClick="{{ onDown }}" style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;padding:4px;border-radius:2px;cursor:pointer">↓</button>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 10px 5px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f">
+        <span>PALETTE</span>
+      </div>
+      <div style="display:flex;gap:6px;padding:0 10px 8px">
+        <label style="flex:1;display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:8px;color:#52525b;letter-spacing:.1em">PRIMARY</span>
+          <input type="color" value="{{ palette.primary }}" onInput="{{ ph.primary }}" style="width:100%;height:18px;padding:0;border:1px solid #26262b;background:#141417">
+        </label>
+        <label style="flex:1;display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:8px;color:#52525b;letter-spacing:.1em">SECOND</span>
+          <input type="color" value="{{ palette.secondary }}" onInput="{{ ph.secondary }}" style="width:100%;height:18px;padding:0;border:1px solid #26262b;background:#141417">
+        </label>
+        <label style="flex:1;display:flex;flex-direction:column;gap:3px">
+          <span style="font-size:8px;color:#52525b;letter-spacing:.1em">ACCENT</span>
+          <input type="color" value="{{ palette.accent }}" onInput="{{ ph.accent }}" style="width:100%;height:18px;padding:0;border:1px solid #26262b;background:#141417">
+        </label>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 10px 5px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f">
+        <span>PRESETS</span>
+      </div>
+      <div style="max-height:150px;overflow-y:auto;flex:none">
+        <sc-for list="{{ presetRows }}" as="p" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:4px;padding:4px 10px;border-bottom:1px solid #101014">
+            <span onClick="{{ p.onLoad }}" style="flex:1;font-size:10px;color:#d4d4d8;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.name }}</span>
+            <span style="font-size:8px;color:#3f3f46">{{ p.tag }}</span>
+            <span onClick="{{ p.onDup }}" style="font-size:9px;color:#52525b;cursor:pointer;padding:0 2px">+</span>
+            <span onClick="{{ p.onDel }}" style="font-size:9px;color:#52525b;cursor:pointer;padding:0 2px">×</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:3px;padding:7px 8px;border-top:1px solid #1b1b1f">
+        <input value="{{ presetName }}" onChange="{{ onPresetName }}" placeholder="preset name" style="flex:1;min-width:0;background:#141417;border:1px solid #26262b;color:#e4e4e7;font-size:9px;padding:4px;border-radius:2px">
+        <button onClick="{{ onSavePreset }}" style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;padding:4px 8px;border-radius:2px;cursor:pointer">SAVE</button>
+      </div>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;background:#050506">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:16px;min-height:0">
+        <div ref="{{ stageRef }}" style="position:relative;width:100%;max-width:100%;max-height:100%;aspect-ratio:16/9;background:#000;border:1px solid #1f1f24;display:flex;align-items:center;justify-content:center;overflow:hidden">
+          <canvas ref="{{ canvasRef }}" style="width:100%;height:100%;display:block"></canvas>
+        </div>
+      </div>
+      <div style="flex:none;border-top:1px solid #1b1b1f;background:#0b0b0e">
+        <div style="display:flex;align-items:center;gap:10px;padding:5px 10px;flex-wrap:wrap">
+          <span style="font-size:8px;letter-spacing:.16em;color:#ff2b18">AUDIO</span>
+          <label style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.08em;padding:4px 9px;border-radius:2px;cursor:pointer">
+            LOAD FILE
+            <input type="file" accept="audio/*" onChange="{{ onFile }}" style="display:none">
+          </label>
+          <span style="font-size:9px;color:#71717a;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ audioName }}</span>
+          <button onClick="{{ onDetect }}" style="background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.08em;padding:4px 9px;border-radius:2px;cursor:pointer">DETECT BPM</button>
+          <button onClick="{{ onHalf }}" style="background:#16161a;border:1px solid #2a2a30;color:#a1a1aa;font-size:9px;padding:4px 7px;border-radius:2px;cursor:pointer">÷2</button>
+          <button onClick="{{ onDouble }}" style="background:#16161a;border:1px solid #2a2a30;color:#a1a1aa;font-size:9px;padding:4px 7px;border-radius:2px;cursor:pointer">×2</button>
+          <button onClick="{{ onNudgeGrid }}" style="background:#16161a;border:1px solid #2a2a30;color:#a1a1aa;font-size:9px;letter-spacing:.08em;padding:4px 7px;border-radius:2px;cursor:pointer">ALIGN GRID</button>
+          <span onClick="{{ onApplyDetected }}" title="apply detected tempo" style="font-size:9px;color:#ff2b18;cursor:pointer;letter-spacing:.06em">{{ detectedLabel }}</span>
+          <div style="flex:1;min-width:8px"></div>
+          <span style="font-size:8px;color:#52525b;letter-spacing:.1em">LEVEL</span>
+          <div style="width:80px;height:5px;background:#17171b;overflow:hidden">
+            <div ref="{{ levelRef }}" style="height:100%;width:0%;background:#ff2b18"></div>
+          </div>
+          <span style="font-size:8px;color:#52525b;letter-spacing:.1em">LOW MID HIGH</span>
+          <div style="display:flex;gap:2px;align-items:flex-end;height:14px">
+            <div ref="{{ lowRef }}" style="width:8px;height:2px;background:#e4e4e7"></div>
+            <div ref="{{ midRef }}" style="width:8px;height:2px;background:#a1a1aa"></div>
+            <div ref="{{ highRef }}" style="width:8px;height:2px;background:#71717a"></div>
+          </div>
+        </div>
+        <canvas ref="{{ waveRef }}" onMouseDown="{{ onSeek }}" style="display:block;width:100%;height:92px;cursor:crosshair;background:#070709;border-top:1px solid #17171b"></canvas>
+      </div>
+    </div>
+
+    <div style="width:286px;flex:none;border-left:1px solid #1b1b1f;background:#0b0b0e;overflow-y:auto">
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="padding:9px 10px 6px;border-bottom:1px solid #17171b">
+            <input value="{{ sel.name }}" onChange="{{ h.name }}" style="width:100%;background:transparent;border:none;color:#e4e4e7;font-size:12px;font-weight:700;letter-spacing:.06em;padding:0;outline:none">
+            <div style="font-size:8px;letter-spacing:.18em;color:#52525b;padding-top:3px">{{ selTypeLabel }}</div>
+          </div>
+
+          <div style="padding:9px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18">GEOMETRY</div>
+          <sc-if value="{{ notSolid }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">POSITION X</span>
+                <input type="range" min="-20" max="120" value="{{ sel.x }}" onInput="{{ h.x }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.x }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">POSITION Y</span>
+                <input type="range" min="-20" max="120" value="{{ sel.y }}" onInput="{{ h.y }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.y }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">ROTATION</span>
+                <input type="range" min="-180" max="180" value="{{ sel.rot }}" onInput="{{ h.rot }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.rot }}</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isLine }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">LENGTH</span>
+                <input type="range" min="1" max="140" value="{{ sel.len }}" onInput="{{ h.len }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.len }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">THICKNESS</span>
+                <input type="range" min="1" max="60" value="{{ sel.thick }}" onInput="{{ h.thick }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.thick }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">ANGLE</span>
+                <input type="range" min="0" max="180" value="{{ sel.angle }}" onInput="{{ h.angle }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.angle }}</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isRect }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">WIDTH</span>
+                <input type="range" min="1" max="140" value="{{ sel.w }}" onInput="{{ h.w }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.w }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">HEIGHT</span>
+                <input type="range" min="1" max="140" value="{{ sel.h }}" onInput="{{ h.h }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.h }}</span>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isCircle }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+              <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">RADIUS</span>
+              <input type="range" min="1" max="120" value="{{ sel.r }}" onInput="{{ h.r }}" style="flex:1">
+              <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.r }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isDots }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">AMOUNT</span>
+                <input type="range" min="1" max="400" value="{{ sel.dotCount }}" onInput="{{ h.dotCount }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.dotCount }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SPREAD</span>
+                <input type="range" min="2" max="140" value="{{ sel.dotSpread }}" onInput="{{ h.dotSpread }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.dotSpread }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">DOT RADIUS</span>
+                <input type="range" min="1" max="40" value="{{ sel.dotRadius }}" onInput="{{ h.dotRadius }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.dotRadius }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">DISTRIB</span>
+                <select value="{{ sel.dotDist }}" onChange="{{ h.dotDist }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="grid">GRID</option>
+                  <option value="row">ROW</option>
+                  <option value="ring">RING</option>
+                  <option value="cross">CROSS</option>
+                  <option value="diag">DIAGONAL</option>
+                  <option value="random">MIRRORED SCATTER</option>
+                </select>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ isText }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">CONTENT</span>
+                <input value="{{ sel.text }}" onChange="{{ h.text }}" style="flex:1;min-width:0;background:#141417;border:1px solid #26262b;color:#e4e4e7;font-size:10px;padding:3px 5px;border-radius:2px">
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TYPEFACE</span>
+                <select value="{{ sel.font }}" onChange="{{ h.font }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="mono">MONO — JETBRAINS</option>
+                  <option value="plex">MONO — IBM PLEX</option>
+                  <option value="pixel">PIXEL — HANDJET</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">FONT SIZE</span>
+                <input type="range" min="12" max="520" value="{{ sel.fontSize }}" onInput="{{ h.fontSize }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fontSize }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">WEIGHT</span>
+                <input type="range" min="400" max="900" step="100" value="{{ sel.weight }}" onInput="{{ h.weight }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.weight }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TRACKING</span>
+                <input type="range" min="-20" max="120" value="{{ sel.tracking }}" onInput="{{ h.tracking }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.tracking }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">ALIGN</span>
+                <select value="{{ sel.align }}" onChange="{{ h.align }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="center">CENTER</option>
+                  <option value="left">LEFT</option>
+                  <option value="right">RIGHT</option>
+                </select>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isImage }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SOURCE</span>
+                <label style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.08em;padding:4px 7px;border-radius:2px;cursor:pointer;text-align:center">
+                  LOAD IMAGE
+                  <input type="file" accept="image/*" onChange="{{ onImage }}" style="display:none">
+                </label>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:1px 10px 3px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a"></span>
+                <span style="flex:1;font-size:9px;color:#52525b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sel.imgName }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">FIT</span>
+                <select value="{{ sel.imgFit }}" onChange="{{ h.imgFit }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="contain">CONTAIN</option>
+                  <option value="cover">FULL BLEED</option>
+                  <option value="stretch">STRETCH</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SCALE</span>
+                <input type="range" min="4" max="140" value="{{ sel.imgScale }}" onInput="{{ h.imgScale }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.imgScale }}</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isVideo }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SOURCE</span>
+                <label style="flex:1;background:#16161a;border:1px solid #2a2a30;color:#d4d4d8;font-size:9px;letter-spacing:.08em;padding:4px 7px;border-radius:2px;cursor:pointer;text-align:center">
+                  LOAD CLIP
+                  <input type="file" accept="video/*" onChange="{{ onVideo }}" style="display:none">
+                </label>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:1px 10px 3px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a"></span>
+                <span style="flex:1;font-size:9px;color:#52525b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ sel.vidName }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">FIT</span>
+                <select value="{{ sel.imgFit }}" onChange="{{ h.imgFit }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="cover">FULL BLEED</option>
+                  <option value="contain">CONTAIN</option>
+                  <option value="stretch">STRETCH</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SCALE</span>
+                <input type="range" min="4" max="140" value="{{ sel.imgScale }}" onInput="{{ h.imgScale }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.imgScale }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SPEED %</span>
+                <input type="range" min="10" max="300" value="{{ sel.vidSpeed }}" onInput="{{ h.vidSpeed }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.vidSpeed }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SYNC</span>
+                <select value="{{ sel.vidSync }}" onChange="{{ h.vidSync }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="free">FREE LOOP</option>
+                  <option value="bar">RESTART / BAR</option>
+                  <option value="4bar">RESTART / 4 BARS</option>
+                  <option value="beat">RESTART / BEAT</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TRIM IN s</span>
+                <input type="range" min="0" max="60" step="0.5" value="{{ sel.vidIn }}" onInput="{{ h.vidIn }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.vidIn }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">CLIP AUDIO</span>
+                <select value="{{ sel.vidAudio }}" onChange="{{ h.vidAudio }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="mute">MUTED</option>
+                  <option value="on">PLAY WITH TRANSPORT</option>
+                </select>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ notSolid }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">MIRROR</span>
+                <select value="{{ sel.mirror }}" onChange="{{ h.mirror }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="none">OFF</option>
+                  <option value="x">HORIZONTAL</option>
+                  <option value="y">VERTICAL</option>
+                  <option value="quad">4-WAY</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">REPEAT</span>
+                <input type="range" min="1" max="16" value="{{ sel.rep }}" onInput="{{ h.rep }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.rep }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">REP GAP</span>
+                <input type="range" min="1" max="40" step="0.5" value="{{ sel.repGap }}" onInput="{{ h.repGap }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.repGap }}</span>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">APPEARANCE</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">COLOR</span>
+            <select value="{{ sel.colorRef }}" onChange="{{ h.colorRef }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="primary">PRIMARY</option>
+              <option value="secondary">SECONDARY</option>
+              <option value="accent">ACCENT</option>
+              <option value="custom">CUSTOM</option>
+            </select>
+            <input type="color" value="{{ sel.color }}" onInput="{{ h.color }}" style="width:26px;height:20px;padding:0;border:1px solid #26262b;background:#141417">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">OPACITY</span>
+            <input type="range" min="0" max="100" value="{{ sel.opacity }}" onInput="{{ h.opacity }}" style="flex:1">
+            <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.opacity }}</span>
+          </div>
+          <sc-if value="{{ hasStroke }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">STYLE</span>
+                <label style="display:flex;align-items:center;gap:5px;font-size:9px;color:#a1a1aa;cursor:pointer">
+                  <input type="checkbox" checked="{{ sel.fill }}" onChange="{{ h.fill }}" style="accent-color:#ff2b18">
+                  FILLED
+                </label>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">STROKE</span>
+                <input type="range" min="1" max="40" value="{{ sel.stroke }}" onInput="{{ h.stroke }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.stroke }}</span>
+              </div>
+            </div>
+          </sc-if>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">BLEND</span>
+            <select value="{{ sel.blend }}" onChange="{{ h.blend }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="source-over">NORMAL</option>
+              <option value="screen">SCREEN</option>
+              <option value="lighter">ADD</option>
+              <option value="multiply">MULTIPLY</option>
+              <option value="difference">DIFFERENCE</option>
+              <option value="exclusion">EXCLUSION</option>
+              <option value="overlay">OVERLAY</option>
+              <option value="hard-light">HARD LIGHT</option>
+              <option value="color-dodge">COLOR DODGE</option>
+              <option value="color-burn">COLOR BURN</option>
+              <option value="lighten">LIGHTEN</option>
+              <option value="darken">DARKEN</option>
+              <option value="luminosity">LUMINOSITY</option>
+            </select>
+          </div>
+
+          <sc-if value="{{ isMedia }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">MEDIA PROCESSING</div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">MONOCHROME</span>
+                <input type="range" min="0" max="100" value="{{ sel.fxMono }}" onInput="{{ h.fxMono }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxMono }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">CONTRAST</span>
+                <input type="range" min="-100" max="100" value="{{ sel.fxContrast }}" onInput="{{ h.fxContrast }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxContrast }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TINT</span>
+                <input type="range" min="0" max="100" value="{{ sel.fxTintAmt }}" onInput="{{ h.fxTintAmt }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxTintAmt }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:0 10px 4px">
+                <span style="width:76px;flex:none;font-size:8px;letter-spacing:.06em;color:#3f3f46">USES LAYER COLOR</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">THRESHOLD</span>
+                <input type="range" min="0" max="100" value="{{ sel.fxThresh }}" onInput="{{ h.fxThresh }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxThresh }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">DITHER</span>
+                <select value="{{ sel.fxDither }}" onChange="{{ h.fxDither }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+                  <option value="off">OFF</option>
+                  <option value="bayer4">ORDERED 4×4</option>
+                  <option value="bayer2">ORDERED 2×2</option>
+                  <option value="noise">NOISE / GRAIN</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">PIXEL SIZE</span>
+                <input type="range" min="1" max="48" value="{{ sel.fxPixel }}" onInput="{{ h.fxPixel }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxPixel }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">POSTERIZE</span>
+                <input type="range" min="0" max="8" value="{{ sel.fxPost }}" onInput="{{ h.fxPost }}" style="flex:1">
+                <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.fxPost }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:3px 10px 8px">
+                <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">NEGATIVE</span>
+                <label style="display:flex;align-items:center;gap:5px;font-size:9px;color:#a1a1aa;cursor:pointer">
+                  <input type="checkbox" checked="{{ sel.fxInvert }}" onChange="{{ h.fxInvert }}" style="accent-color:#ff2b18">
+                  INVERT
+                </label>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">RHYTHM</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TRIGGER</span>
+            <select value="{{ sel.trigger }}" onChange="{{ h.trigger }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="continuous">CONTINUOUS</option>
+              <option value="beat">EVERY BEAT</option>
+              <option value="2beat">EVERY 2 BEATS</option>
+              <option value="4beat">EVERY 4 BEATS</option>
+              <option value="bar">EVERY BAR</option>
+              <option value="2bar">EVERY 2 BARS</option>
+              <option value="4bar">EVERY 4 BARS</option>
+              <option value="offbeat">OFFBEAT</option>
+              <option value="random">RANDOM BEAT</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">DURATION</span>
+            <select value="{{ sel.dur }}" onChange="{{ h.dur }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="1/16">1/16 BEAT</option>
+              <option value="1/8">1/8 BEAT</option>
+              <option value="1/4">1/4 BEAT</option>
+              <option value="1/2">1/2 BEAT</option>
+              <option value="1">1 BEAT</option>
+              <option value="2">2 BEATS</option>
+              <option value="4">1 BAR</option>
+              <option value="2bar">2 BARS</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">OFFSET</span>
+            <select value="{{ sel.off }}" onChange="{{ h.off }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="0">0</option>
+              <option value="1/16">1/16 BEAT</option>
+              <option value="1/8">1/8 BEAT</option>
+              <option value="1/4">1/4 BEAT</option>
+              <option value="1/2">1/2 BEAT</option>
+              <option value="1">1 BEAT</option>
+              <option value="2">2 BEATS</option>
+            </select>
+          </div>
+
+          <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">ANIMATION</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">MODE</span>
+            <select value="{{ sel.anim }}" onChange="{{ h.anim }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="none">STATIC</option>
+              <option value="pulse">PULSE</option>
+              <option value="flash">FLASH</option>
+              <option value="flicker">FLICKER</option>
+              <option value="reveal">REVEAL</option>
+              <option value="move">MOVE</option>
+              <option value="rotate">ROTATE</option>
+              <option value="glitch">GLITCH</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">AMOUNT</span>
+            <input type="range" min="0" max="100" value="{{ sel.amount }}" onInput="{{ h.amount }}" style="flex:1">
+            <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.amount }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;padding:5px 10px 3px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">ENVELOPE</span>
+            <select value="{{ sel.envA }}" onChange="{{ h.envA }}" style="flex:1;min-width:0;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:9px;padding:3px;border-radius:2px">
+              <option value="0">A 0</option>
+              <option value="1/16">A 1/16</option>
+              <option value="1/8">A 1/8</option>
+              <option value="1/4">A 1/4</option>
+              <option value="1/2">A 1/2</option>
+              <option value="1">A 1</option>
+            </select>
+            <select value="{{ sel.envH }}" onChange="{{ h.envH }}" style="flex:1;min-width:0;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:9px;padding:3px;border-radius:2px">
+              <option value="0">H 0</option>
+              <option value="1/16">H 1/16</option>
+              <option value="1/8">H 1/8</option>
+              <option value="1/4">H 1/4</option>
+              <option value="1/2">H 1/2</option>
+              <option value="1">H 1</option>
+              <option value="4">H 1BAR</option>
+            </select>
+            <select value="{{ sel.envD }}" onChange="{{ h.envD }}" style="flex:1;min-width:0;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:9px;padding:3px;border-radius:2px">
+              <option value="0">D 0</option>
+              <option value="1/16">D 1/16</option>
+              <option value="1/8">D 1/8</option>
+              <option value="1/4">D 1/4</option>
+              <option value="1/2">D 1/2</option>
+              <option value="1">D 1</option>
+              <option value="2">D 2</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;padding:5px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">RANDOM</span>
+            <label style="display:flex;align-items:center;gap:4px;font-size:9px;color:#a1a1aa;cursor:pointer">
+              <input type="checkbox" checked="{{ sel.randX }}" onChange="{{ h.randX }}" style="accent-color:#ff2b18">X
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:9px;color:#a1a1aa;cursor:pointer">
+              <input type="checkbox" checked="{{ sel.randY }}" onChange="{{ h.randY }}" style="accent-color:#ff2b18">Y
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:9px;color:#a1a1aa;cursor:pointer">
+              <input type="checkbox" checked="{{ sel.randRot }}" onChange="{{ h.randRot }}" style="accent-color:#ff2b18">ROT
+            </label>
+          </div>
+
+          <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">AUDIO REACTIVITY</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">SOURCE</span>
+            <select value="{{ sel.audSrc }}" onChange="{{ h.audSrc }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="none">NONE</option>
+              <option value="amp">AMPLITUDE</option>
+              <option value="low">LOW</option>
+              <option value="mid">MID</option>
+              <option value="high">HIGH</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">TARGET</span>
+            <select value="{{ sel.audTgt }}" onChange="{{ h.audTgt }}" style="flex:1;background:#141417;color:#e4e4e7;border:1px solid #26262b;font-size:10px;padding:3px;border-radius:2px">
+              <option value="opacity">OPACITY</option>
+              <option value="scale">SCALE</option>
+              <option value="bright">BRIGHTNESS</option>
+              <option value="dist">DISTORTION</option>
+              <option value="pos">POSITION</option>
+              <option value="thick">LINE THICKNESS</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">AMOUNT</span>
+            <input type="range" min="-100" max="100" value="{{ sel.audAmt }}" onInput="{{ h.audAmt }}" style="flex:1">
+            <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.audAmt }}</span>
+          </div>
+
+          <div style="padding:11px 10px 4px;font-size:9px;letter-spacing:.14em;color:#ff2b18;border-top:1px solid #1b1b1f;margin-top:8px">DISTORTION</div>
+          <div style="display:flex;align-items:center;gap:8px;padding:3px 10px 18px">
+            <span style="width:76px;flex:none;font-size:9px;letter-spacing:.08em;color:#71717a">LAYER GLITCH</span>
+            <input type="range" min="0" max="100" value="{{ sel.distAmt }}" onInput="{{ h.distAmt }}" style="flex:1">
+            <span style="width:30px;text-align:right;font-size:9px;color:#a1a1aa;font-variant-numeric:tabular-nums">{{ sel.distAmt }}</span>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noSel }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px 12px;font-size:10px;color:#52525b;line-height:1.7">NO LAYER SELECTED.<br>SELECT A LAYER TO EDIT ITS RHYTHM, ANIMATION AND DISTORTION.</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;paletteAccent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff2b18&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#ff2b18&quot;,&quot;#ff0055&quot;,&quot;#00e5ff&quot;,&quot;#e8ff00&quot;],&quot;section&quot;:&quot;Palette&quot;}}">
+class Component extends DCLogic {
+  static MV = {'0':0,'1/16':0.0625,'1/8':0.125,'1/4':0.25,'1/2':0.5,'1':1,'2':2,'4':4,'2bar':8};
+  static TRIG = {continuous:0,beat:1,'2beat':2,'4beat':4,bar:4,'2bar':8,'4bar':16,offbeat:1,random:1};
+  static NUM = ['x','y','rot','len','thick','angle','w','h','r','opacity','stroke','fontSize','weight','tracking','dotCount','dotSpread','dotRadius','amount','audAmt','distAmt','rep','repGap','imgScale','vidSpeed','vidIn','fxMono','fxContrast','fxPost','fxThresh','fxPixel','fxTintAmt'];
+  static STR = ['name','colorRef','color','blend','text','align','font','dotDist','trigger','dur','off','anim','envA','envH','envD','audSrc','audTgt','mirror','imgFit','imgName','vidName','vidSync','vidAudio','fxDither'];
+  static FONTS = {mono:'"JetBrains Mono", monospace', plex:'"IBM Plex Mono", monospace', pixel:'Handjet, "JetBrains Mono", monospace'};
+  static BOOL = ['fill','randX','randY','randRot','fxInvert'];
+  static BAYER = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+  static W = 1920;
+  static H = 1080;
+
+  constructor(props){
+    super(props);
+    this.canvasRef = React.createRef();
+    this.waveRef = React.createRef();
+    this.stageRef = React.createRef();
+    this.timeRef = React.createRef();
+    this.barRef = React.createRef();
+    this.flashRef = React.createRef();
+    this.fpsRef = React.createRef();
+    this.levelRef = React.createRef();
+    this.lowRef = React.createRef();
+    this.midRef = React.createRef();
+    this.highRef = React.createRef();
+    this._hc = {};
+    this.beats = 0;
+    this.beatOffset = 0;
+    this.elapsed = 0;
+    this.startElapsed = 0;
+    this.aud = {level:0, low:0, mid:0, high:0};
+    this.peaks = null;
+    this.images = {};
+    this.videos = {};
+    const demo = this.buildPreset('Minimal Pulse');
+    this.state = {
+      bpm: 121,
+      bpmText: '121',
+      bpmPick: '',
+      playing: false,
+      layers: this.demoScene(),
+      selId: 2,
+      addType: 'line',
+      macros: {intensity:55, density:35, motion:40, distortion:10, audio:60},
+      fx: {noise:22, scan:18, rgb:8, jitter:10, slice:12, invert:0},
+      palette: {primary:'#000000', secondary:'#ffffff', accent: this.props.paletteAccent || '#ff2b18'},
+      audioName: 'no file loaded',
+      detected: null,
+      histLen: 0,
+      exportSecs: '30',
+      recording: false,
+      exportMsg: '',
+      presetName: '',
+      userPresets: [],
+      tick: 0
+    };
+    void demo;
+  }
+
+  /* ---------- model ---------- */
+
+  mkLayer(type, over){
+    const id = Math.floor(Math.random()*1e9);
+    const base = {
+      id, type, name: type.toUpperCase(), visible: true,
+      x:50, y:50, rot:0, opacity:100,
+      len:70, thick:3, angle:90,
+      w:24, h:10, r:8,
+      colorRef: type==='solid' ? 'accent' : 'secondary', color:'#ffffff',
+      fill:true, stroke:3, blend:'source-over',
+      text:'NO SIGNAL', font:'mono', fontSize:150, weight:700, tracking:14, align:'center',
+      dotCount:40, dotSpread:70, dotRadius:2, dotDist:'grid',
+      mirror:'none', rep:1, repGap:8,
+      imgFit: type==='video' ? 'cover' : 'contain', imgScale: type==='video' ? 100 : 60, imgName:'no image loaded',
+      vidName:'no clip loaded', vidSpeed:100, vidSync:'free', vidIn:0, vidAudio:'mute',
+      fxMono:0, fxContrast:0, fxPost:0, fxThresh:0, fxDither:'off', fxPixel:1, fxTintAmt:0, fxInvert:false,
+      // media layers read as stills/footage first — a beat-gated envelope would hide them
+      trigger: (type==='image'||type==='video') ? 'continuous' : 'beat', dur:'1/4', off:'0',
+      anim: type==='solid' ? 'flash' : ((type==='image'||type==='video') ? 'none' : 'reveal'), amount:50,
+      envA:'1/16', envH:'1/16', envD:'1/4',
+      randX:false, randY:false, randRot:false,
+      audSrc:'none', audTgt:'opacity', audAmt:0,
+      distAmt:0, seed: Math.floor(Math.random()*99999)
+    };
+    return Object.assign(base, over||{});
+  }
+
+  demoScene(){
+    return [
+      this.mkLayer('solid', {id:1, name:'BACKDROP', colorRef:'primary', anim:'none', trigger:'continuous', opacity:100}),
+      this.mkLayer('line', {id:2, name:'BEAT LINE', colorRef:'secondary', angle:90, len:100, thick:3, trigger:'beat', dur:'1/4', anim:'reveal', amount:60, randX:true, mirror:'x', envA:'1/16', envH:'1/16', envD:'1/8'}),
+      this.mkLayer('dots', {id:6, name:'GRID', colorRef:'secondary', dotCount:96, dotSpread:104, dotRadius:1.6, dotDist:'grid', opacity:30, trigger:'bar', dur:'4', anim:'flicker', amount:18, envA:'0', envH:'4', envD:'0'}),
+      this.mkLayer('rect', {id:3, name:'RED MARK', colorRef:'accent', w:2, h:3.6, x:8.33, y:83.33, mirror:'x', fill:true, trigger:'4beat', dur:'1/2', anim:'flash', amount:100, envA:'0', envH:'1/16', envD:'1/4', audSrc:'low', audTgt:'opacity', audAmt:40}),
+      this.mkLayer('text', {id:4, name:'NO SIGNAL', text:'NO SIGNAL', font:'mono', weight:500, colorRef:'secondary', fontSize:96, tracking:34, y:50, trigger:'4bar', dur:'1', anim:'glitch', amount:55, envA:'0', envH:'1/2', envD:'1/2', distAmt:45})
+    ];
+  }
+
+  /* ---------- lifecycle ---------- */
+
+  componentDidMount(){
+    const W = Component.W, H = Component.H;
+    const c = this.canvasRef.current;
+    if(c){ c.width = W; c.height = H; this.g = c.getContext('2d'); }
+    this.sc = document.createElement('canvas'); this.sc.width = W; this.sc.height = H;
+    this.scx = this.sc.getContext('2d');
+    this.tA = document.createElement('canvas'); this.tA.width = W; this.tA.height = H; this.tAx = this.tA.getContext('2d');
+    this.tB = document.createElement('canvas'); this.tB.width = W; this.tB.height = H; this.tBx = this.tB.getContext('2d');
+    this.initFX();
+    this.last = performance.now();
+    this.frames = 0; this.fpsT = this.last;
+    this.loop = this.loop.bind(this);
+    this.raf = requestAnimationFrame(this.loop);
+    this.onKey = (e) => {
+      if(e.code === 'Space' && !/input|select|textarea/i.test((e.target.tagName||''))){ e.preventDefault(); this.togglePlay(); }
+      else if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z'){ e.preventDefault(); this.undo(); }
+    };
+    window.addEventListener('keydown', this.onKey);
+    try {
+      const raw = localStorage.getItem('signal.presets.v1');
+      if(raw) this.setState({userPresets: JSON.parse(raw)});
+    } catch(e){}
+    this.loadCanvasFonts();
+    this.resizeWave();
+    this.onResize = () => this.resizeWave();
+    window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount(){
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('resize', this.onResize);
+    this.stopSource();
+    if(this.recTimer) clearInterval(this.recTimer);
+    if(this.rec && this.rec.state !== 'inactive'){ try { this.rec.stop(); } catch(e){} }
+    Object.keys(this.videos || {}).forEach(k => { try { this.videos[k].pause(); } catch(e){} });
+  }
+
+  loadCanvasFonts(){
+    // canvas text never triggers a font fetch on its own — request every face explicitly.
+    // The Google stylesheet is cross-origin, so its @font-face rules may not be in the
+    // CSSOM yet: wait for document.fonts.ready, then retry until the faces resolve.
+    if(!document.fonts || !document.fonts.load) return;
+    const sample = 'НЕМА СИГНАЛУ ЄІЇҐ NO SIGNAL 01/X';
+    const specs = [];
+    ['400','700','900'].forEach(w => specs.push(w + ' 220px Handjet'));
+    ['400','500','700'].forEach(w => {
+      specs.push(w + ' 96px "IBM Plex Mono"');
+      specs.push(w + ' 96px "JetBrains Mono"');
+    });
+    specs.push('800 96px "JetBrains Mono"');
+    let tries = 0;
+    const attempt = () => {
+      tries++;
+      const pending = specs.filter(s => !document.fonts.check(s, sample));
+      if(!pending.length){ this.fontsReady = true; return; }
+      Promise.all(pending.map(s => document.fonts.load(s, sample).catch(() => null)))
+        .then(() => {
+          const left = specs.filter(s => !document.fonts.check(s, sample));
+          if(!left.length){ this.fontsReady = true; return; }
+          if(tries < 12) setTimeout(attempt, 350);
+        });
+    };
+    const kick = () => { attempt(); };
+    if(document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(kick, kick);
+    else kick();
+    setTimeout(kick, 600);
+  }
+
+  ensureFont(L){
+    if(!document.fonts || !document.fonts.load) return;
+    const spec = L.weight + ' 100px ' + (Component.FONTS[L.font] || Component.FONTS.mono);
+    const text = (L.text || 'A') + ' НЕМА ЄІЇҐ';
+    if(!this._fq) this._fq = {};
+    if(this._fq[spec] === 'ok') return;
+    if(document.fonts.check(spec, text)){ this._fq[spec] = 'ok'; return; }
+    if(this._fq[spec] === 'pending') return;
+    const t = this._fq[spec];
+    if(typeof t === 'number' && performance.now() - t < 800) return;   // throttle retries
+    this._fq[spec] = 'pending';
+    document.fonts.load(spec, text)
+      .then(faces => { this._fq[spec] = (faces && faces.length) ? 'ok' : performance.now(); })
+      .catch(() => { this._fq[spec] = performance.now(); });
+  }
+
+  initFX(){
+    this.noiseTiles = [];
+    for(let k=0;k<4;k++){
+      const n = document.createElement('canvas'); n.width = 256; n.height = 256;
+      const nx = n.getContext('2d');
+      const img = nx.createImageData(256,256);
+      for(let i=0;i<img.data.length;i+=4){
+        const v = Math.random()*255|0;
+        img.data[i]=v; img.data[i+1]=v; img.data[i+2]=v; img.data[i+3]=255;
+      }
+      nx.putImageData(img,0,0);
+      this.noiseTiles.push(n);
+    }
+    const s = document.createElement('canvas'); s.width = 4; s.height = 4;
+    const sx = s.getContext('2d');
+    sx.fillStyle = '#ffffff'; sx.fillRect(0,0,4,4);
+    sx.fillStyle = '#000000'; sx.fillRect(0,0,4,2);
+    this.scanPat = this.g ? this.g.createPattern(s,'repeat') : null;
+  }
+
+  /* ---------- musical clock ---------- */
+
+  hash(a,b){
+    let t = Math.imul(a|0, 374761393) + Math.imul(b|0, 668265263);
+    t = Math.imul(t ^ (t>>>13), 1274126177);
+    return ((t ^ (t>>>16))>>>0) / 4294967295;
+  }
+  beatDuration(bpm){ return 60/bpm; }
+  subdivisionDuration(bpm, sub){ return this.beatDuration(bpm) * (Component.MV[sub]||1); }
+  currentBeat(){ return Math.floor(this.beats); }
+  currentBar(){ return Math.floor(this.beats/4); }
+  beatPhase(){ return this.beats - Math.floor(this.beats); }
+  barPhase(){ const b = this.beats/4; return b - Math.floor(b); }
+
+  timing(L, beats){
+    const off = Component.MV[L.off] || 0;
+    const cyc = Component.MV[L.dur] || 1;
+    let interval = Component.TRIG[L.trigger];
+    let b = beats - off;
+    if(L.trigger === 'offbeat') b -= 0.5;
+    if(!interval) interval = Math.max(cyc, 0.0625);
+    const idx = Math.floor(b/interval);
+    const t = b - idx*interval;
+    let gate = 1;
+    if(L.trigger === 'random') gate = this.hash(L.seed, idx) > 0.5 ? 1 : 0;
+    return {idx, t, interval, cyc, gate};
+  }
+
+  envelope(L, t){
+    const a = Component.MV[L.envA] || 0;
+    const h = Component.MV[L.envH] || 0;
+    const d = Component.MV[L.envD] || 0;
+    if(t < 0) return 0;
+    if(a > 0 && t < a) return t/a;
+    if(t < a + h) return 1;
+    if(d > 0 && t < a + h + d){ const k = 1 - (t - a - h)/d; return k*k; }
+    return (a + h + d) === 0 ? 1 : 0;
+  }
+
+  /* ---------- render loop ---------- */
+
+  loop(now){
+    this.raf = requestAnimationFrame(this.loop);
+    if(this.rendering){ this.last = now; return; }   // offline render owns the canvas
+    const dt = Math.min(0.1, (now - this.last)/1000);
+    this.last = now;
+    const S = this.state;
+    if(S.playing){
+      if(this.src && this.actx){
+        this.elapsed = this.startElapsed + (this.actx.currentTime - this.startCtx);
+        this.beats = Math.max(0, this.elapsed - this.beatOffset) * S.bpm/60;
+      }
+      else { this.beats += dt * S.bpm/60; }
+    }
+    this.syncVideos();
+    this.readAudio();
+    if(this.g){
+      this.drawScene(this.scx, this.beats);
+      this.applyFX(this.g, this.sc, this.beats);
+    }
+    this.drawWave();
+    // chrome readouts (no react state per frame)
+    const secs = this.beats * 60 / S.bpm;
+    if(this.timeRef.current){
+      const m = Math.floor(secs/60), s = secs - m*60;
+      this.timeRef.current.textContent = m + ':' + (s<10?'0':'') + s.toFixed(1);
+    }
+    if(this.barRef.current) this.barRef.current.textContent = (this.currentBar()+1) + '.' + (Math.floor(this.beats)%4 + 1);
+    if(this.flashRef.current){
+      const bp = this.beatPhase();
+      this.flashRef.current.style.opacity = String(0.12 + 0.88*Math.pow(1-bp, 6));
+    }
+    if(this.levelRef.current) this.levelRef.current.style.width = (this.aud.level*100).toFixed(0) + '%';
+    if(this.lowRef.current) this.lowRef.current.style.height = (2 + this.aud.low*12).toFixed(0) + 'px';
+    if(this.midRef.current) this.midRef.current.style.height = (2 + this.aud.mid*12).toFixed(0) + 'px';
+    if(this.highRef.current) this.highRef.current.style.height = (2 + this.aud.high*12).toFixed(0) + 'px';
+    this.frames++;
+    if(now - this.fpsT > 700){
+      if(this.fpsRef.current) this.fpsRef.current.textContent = Math.round(this.frames*1000/(now-this.fpsT)) + ' FPS';
+      this.frames = 0; this.fpsT = now;
+    }
+  }
+
+  resolveColor(L){
+    const P = this.state.palette;
+    if(L.colorRef === 'custom') return L.color || '#ffffff';
+    return P[L.colorRef] || '#ffffff';
+  }
+
+  audioMod(L){
+    if(L.audSrc === 'none' || !L.audAmt) return 0;
+    const v = L.audSrc === 'amp' ? this.aud.level : this.aud[L.audSrc] || 0;
+    return v * (L.audAmt/100) * (this.state.macros.audio/100);
+  }
+
+  drawScene(ctx, beats){
+    const W = Component.W, H = Component.H, S = this.state;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<S.layers.length;i++){
+      const L = S.layers[i];
+      if(L.visible) this.drawLayer(ctx, L, beats);
+    }
+  }
+
+  drawLayer(ctx, L, beats){
+    const W = Component.W, H = Component.H, M = this.state.macros;
+    const tm = this.timing(L, beats);
+    const env = L.anim === 'none' ? 1 : this.envelope(L, tm.t) * tm.gate;
+    const inten = M.intensity/100, motion = M.motion/100;
+    const am = (L.amount/100);
+    const mod = this.audioMod(L);
+
+    let alpha = L.opacity/100;
+    let sx = 1, sy = 1, dx = 0, dy = 0, rot = L.rot, thick = L.thick, bright = 0;
+    let px = (L.x/100)*W, py = (L.y/100)*H;
+
+    // structured randomness: snap to a musical grid rather than free jitter
+    const COLS = 12, ROWS = 6;
+    if(L.randX){ const c = Math.floor(this.hash(L.seed+11, tm.idx)*COLS); px = ((c + 0.5)/COLS)*W; }
+    if(L.randY){ const r = Math.floor(this.hash(L.seed+22, tm.idx)*ROWS); py = ((r + 0.5)/ROWS)*H; }
+    if(L.randRot){ const steps = [0,45,90,-45]; rot += steps[Math.floor(this.hash(L.seed+33, tm.idx)*4)]; }
+
+    switch(L.anim){
+      case 'pulse': { const k = 1 + 0.6*am*inten*env; sx *= k; sy *= k; alpha *= (0.35 + 0.65*env); break; }
+      case 'flash': alpha *= Math.pow(env,1.4) * (0.4 + 0.6*inten); break;
+      case 'flicker': {
+        const q = Math.floor(beats*24);
+        const f = this.hash(L.seed+7, q);
+        alpha *= (env > 0 ? 1 : 0.15) * (f > (0.35*am + 0.1) ? 1 : 0.08);
+        break;
+      }
+      case 'reveal': {
+        if(L.type === 'line'){ sx = 0.02 + 0.98*env; } else { sy = 0.02 + 0.98*env; }
+        alpha *= Math.min(1, env*2.2);
+        break;
+      }
+      case 'move': {
+        const d = 340 * am * motion;
+        const ph = tm.t / tm.interval;
+        dx += Math.cos(rot*Math.PI/180) * d * ph;
+        dy += Math.sin(rot*Math.PI/180) * d * ph * 0.4;
+        break;
+      }
+      case 'rotate': rot += (tm.t / tm.interval) * 360 * (0.25 + am); break;
+      case 'glitch': {
+        const q = Math.floor(beats*32);
+        const j = env * am * (0.4 + 0.6*(this.state.macros.distortion/100 + 0.4));
+        const stepX = Component.W/48;
+        dx += (Math.floor(this.hash(L.seed+55,q)*7) - 3) * stepX * j;
+        dy += (Math.floor(this.hash(L.seed+66,q)*3) - 1) * 18 * j;
+        alpha *= (this.hash(L.seed+77,q) > 0.12 ? 1 : 0.2) * Math.min(1, env*3);
+        break;
+      }
+      default: break;
+    }
+
+    if(mod){
+      if(L.audTgt === 'opacity') alpha *= (1 + mod);
+      else if(L.audTgt === 'scale'){ sx *= (1 + mod); sy *= (1 + mod); }
+      else if(L.audTgt === 'bright') bright = Math.max(0, mod);
+      else if(L.audTgt === 'pos'){ dx += mod * 300; }
+      else if(L.audTgt === 'thick') thick *= (1 + mod*2);
+      else if(L.audTgt === 'dist'){
+        const q = Math.floor(beats*32);
+        dx += (this.hash(L.seed+99,q)-0.5) * 200 * mod;
+      }
+    }
+
+    alpha = Math.max(0, Math.min(1, alpha));
+    if(alpha <= 0.002) return;
+
+    const color = this.resolveColor(L);
+    const glitchSplit = (L.distAmt/100) * (0.35 + this.state.macros.distortion/100) * (L.anim === 'glitch' ? env : 1);
+
+    // repeat array + mirror -> symmetric instances of the same element
+    const W2 = Component.W, H2 = Component.H;
+    const pts = [];
+    if(L.type === 'solid'){
+      pts.push({x: px + dx, y: py + dy, rot});
+    } else {
+      const rep = Math.max(1, Math.round(L.rep || 1));
+      const gap = ((L.repGap || 8)/100)*W2;
+      const alongY = L.type === 'line' && Math.abs(((L.angle % 180) + 180) % 180) < 45;
+      for(let i=0;i<rep;i++){
+        const o = (i - (rep-1)/2)*gap;
+        pts.push({x: px + dx + (alongY ? 0 : o), y: py + dy + (alongY ? o*0.56 : 0), rot});
+      }
+      const m = L.mirror || 'none';
+      if(m !== 'none'){
+        const base = pts.slice();
+        const add = (p) => { if(!pts.some(q => Math.abs(q.x-p.x) < 1.5 && Math.abs(q.y-p.y) < 1.5)) pts.push(p); };
+        base.forEach(p => {
+          if(m === 'x' || m === 'quad') add({x: W2 - p.x, y: p.y, rot: -p.rot});
+          if(m === 'y' || m === 'quad') add({x: p.x, y: H2 - p.y, rot: -p.rot});
+          if(m === 'quad') add({x: W2 - p.x, y: H2 - p.y, rot: p.rot});
+        });
+      }
+    }
+
+    const paint = (col, ox, oy, a, comp) => {
+      for(let i=0;i<pts.length;i++){
+        const p = pts[i];
+        ctx.save();
+        ctx.globalCompositeOperation = comp || L.blend;
+        ctx.globalAlpha = a;
+        ctx.translate(p.x + ox, p.y + oy);
+        ctx.rotate(p.rot*Math.PI/180);
+        ctx.scale(Math.max(0.001,sx), Math.max(0.001,sy));
+        ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = L.stroke;
+        this.drawShape(ctx, L, thick, col);
+        ctx.restore();
+      }
+    };
+
+    if(glitchSplit > 0.04 && L.type !== 'solid'){
+      const off = glitchSplit * 26;
+      paint('#00e5ff', -off, 0, alpha*0.85, 'lighter');
+      paint('#ff1a00', off, 0, alpha*0.85, 'lighter');
+      paint(color, 0, 0, alpha*0.9, 'lighter');
+    } else {
+      paint(color, 0, 0, alpha);
+      if(bright > 0.01) paint('#ffffff', 0, 0, Math.min(0.9, bright*0.8), 'lighter');
+    }
+  }
+
+  // per-layer media processing chain for image/video sources.
+  // runs on a downscaled buffer (fast, and the coarse grid is the look)
+  mediaFX(src, srcW, srcH, L){
+    const px = Math.max(1, L.fxPixel || 1);
+    const pixel = px > 1;
+    const dith = L.fxDither && L.fxDither !== 'off';
+    const active = (L.fxMono>0) || (L.fxContrast!==0) || (L.fxPost>0) || (L.fxThresh>0) || dith || (L.fxTintAmt>0) || L.fxInvert || pixel;
+    if(!active) return {img: src, smooth: true};
+    if(!this.mfx) this.mfx = {};
+    let m = this.mfx[L.id];
+    if(!m){
+      const c = document.createElement('canvas');
+      m = this.mfx[L.id] = {c, x: c.getContext('2d', {willReadFrequently:true})};
+    }
+    const cap = 1000;
+    let pw = Math.max(8, Math.round(Math.min(cap, srcW)/px));
+    let ph = Math.max(8, Math.round(pw*srcH/srcW));
+    if(m.c.width !== pw || m.c.height !== ph){ m.c.width = pw; m.c.height = ph; }
+    const x = m.x;
+    x.imageSmoothingEnabled = true;
+    x.clearRect(0,0,pw,ph);
+    x.drawImage(src, 0, 0, pw, ph);
+
+    const needsPixelPass = (L.fxMono>0) || (L.fxContrast!==0) || (L.fxPost>0) || (L.fxThresh>0) || dith || (L.fxTintAmt>0) || L.fxInvert;
+    if(needsPixelPass){
+      const d = x.getImageData(0,0,pw,ph);
+      const p = d.data;
+      const mono = (L.fxMono||0)/100;
+      const k = 1 + ((L.fxContrast||0)/100)*2;
+      const post = L.fxPost|0;
+      const th = (L.fxThresh||0)/100*255;
+      const tintAmt = (L.fxTintAmt||0)/100;
+      let tr=255, tg=255, tb=255;
+      if(tintAmt > 0){
+        const hex = this.resolveColor(L).replace('#','');
+        const h6 = hex.length === 3 ? hex.split('').map(c=>c+c).join('') : hex;
+        tr = parseInt(h6.slice(0,2),16)||0; tg = parseInt(h6.slice(2,4),16)||0; tb = parseInt(h6.slice(4,6),16)||0;
+      }
+      const B = Component.BAYER;
+      const seed = (L.seed|0) + Math.floor(performance.now()/60);
+      for(let i=0, n=p.length; i<n; i+=4){
+        let r = p[i], g = p[i+1], b = p[i+2];
+        if(L.fxInvert){ r = 255-r; g = 255-g; b = 255-b; }
+        if(k !== 1){
+          r = (r-128)*k+128; g = (g-128)*k+128; b = (b-128)*k+128;
+        }
+        let lum = 0.2126*r + 0.7152*g + 0.0722*b;
+        if(mono > 0){ r += (lum-r)*mono; g += (lum-g)*mono; b += (lum-b)*mono; }
+        if(post >= 2){
+          const q = 255/(post-1);
+          r = Math.round(r/q)*q; g = Math.round(g/q)*q; b = Math.round(b/q)*q;
+        }
+        if(dith || th > 0){
+          lum = 0.2126*r + 0.7152*g + 0.0722*b;
+          let cut = th > 0 ? th : 128;
+          if(dith){
+            const pi = i>>2;
+            const px4 = pi % pw, py4 = (pi/pw)|0;
+            if(L.fxDither === 'noise'){
+              cut += (this.hash(pi, seed) - 0.5)*150;
+            } else {
+              const step = L.fxDither === 'bayer2' ? 2 : 4;
+              const bi = step === 2 ? ((py4%2)*2 + (px4%2))*4 : ((py4%4)*4 + (px4%4));
+              const bv = step === 2 ? [0,8,12,4][((py4%2)*2 + (px4%2))] : B[bi];
+              cut += (bv/16 - 0.5)*140;
+            }
+          }
+          const v = lum >= cut ? 255 : 0;
+          r = v; g = v; b = v;
+        }
+        if(tintAmt > 0){
+          const tl = (0.2126*r + 0.7152*g + 0.0722*b)/255;
+          r += (tr*tl - r)*tintAmt; g += (tg*tl - g)*tintAmt; b += (tb*tl - b)*tintAmt;
+        }
+        p[i] = r < 0 ? 0 : (r > 255 ? 255 : r);
+        p[i+1] = g < 0 ? 0 : (g > 255 ? 255 : g);
+        p[i+2] = b < 0 ? 0 : (b > 255 ? 255 : b);
+      }
+      x.putImageData(d, 0, 0);
+    }
+    return {img: m.c, smooth: !pixel && !dith};
+  }
+
+  drawShape(ctx, L, thick, col){
+    const W = Component.W, H = Component.H;
+    if(L.type === 'solid'){ ctx.fillRect(-W, -H, W*3, H*3); return; }
+    if(L.type === 'line'){
+      const len = (L.len/100)*W;
+      ctx.save();
+      ctx.rotate((L.angle-0)*Math.PI/180);
+      ctx.fillRect(-len/2, -thick/2, len, Math.max(0.5,thick));
+      ctx.restore();
+      return;
+    }
+    if(L.type === 'rect'){
+      const w = (L.w/100)*W, h = (L.h/100)*H;
+      if(L.fill) ctx.fillRect(-w/2, -h/2, w, h);
+      else ctx.strokeRect(-w/2, -h/2, w, h);
+      return;
+    }
+    if(L.type === 'circle'){
+      const r = Math.max(0.5,(L.r/100)*(H/2));
+      ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+      if(L.fill) ctx.fill(); else ctx.stroke();
+      return;
+    }
+    if(L.type === 'dots'){
+      const dens = 0.35 + (this.state.macros.density/100)*1.3;
+      const n = Math.max(1, Math.round(L.dotCount * dens));
+      const sw = (L.dotSpread/100)*W, sh = (L.dotSpread/100)*H;
+      // dots must survive the preview downscale — map to a visible radius at 1080p
+      const r = Math.max(4, (L.dotRadius/100)*(H/2));
+      if(L.dotDist === 'grid'){
+        const cols = Math.max(1, Math.round(Math.sqrt(n*16/9)));
+        const rows = Math.max(1, Math.ceil(n/cols));
+        for(let i=0;i<n;i++){
+          const cx = (i%cols)/(cols>1?cols-1:1) - 0.5;
+          const cy = Math.floor(i/cols)/(rows>1?rows-1:1) - 0.5;
+          ctx.beginPath(); ctx.arc(cx*sw, cy*sh, r, 0, Math.PI*2); ctx.fill();
+        }
+      } else if(L.dotDist === 'row'){
+        for(let i=0;i<n;i++){
+          const cx = (i/(n>1?n-1:1) - 0.5)*sw;
+          ctx.beginPath(); ctx.arc(cx, 0, r, 0, Math.PI*2); ctx.fill();
+        }
+      } else if(L.dotDist === 'ring'){
+        for(let i=0;i<n;i++){
+          const a = (i/n)*Math.PI*2;
+          ctx.beginPath(); ctx.arc(Math.cos(a)*sw/2, Math.sin(a)*sh/2, r, 0, Math.PI*2); ctx.fill();
+        }
+      } else if(L.dotDist === 'cross'){
+        const half = Math.max(1, Math.floor(n/2));
+        for(let i=0;i<half;i++){
+          const k = (i/(half>1?half-1:1) - 0.5);
+          ctx.beginPath(); ctx.arc(k*sw, 0, r, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(0, k*sh, r, 0, Math.PI*2); ctx.fill();
+        }
+      } else if(L.dotDist === 'diag'){
+        const half = Math.max(1, Math.floor(n/2));
+        for(let i=0;i<half;i++){
+          const k = (i/(half>1?half-1:1) - 0.5);
+          ctx.beginPath(); ctx.arc(k*sw, k*sh, r, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(k*sw, -k*sh, r, 0, Math.PI*2); ctx.fill();
+        }
+      } else {
+        // mirrored scatter: cells picked in one quadrant, then reflected 4 ways — always symmetric
+        const gc = 12, gr = 6;
+        const q = Math.max(1, Math.ceil(n/4));
+        for(let i=0;i<q;i++){
+          const cx = ((Math.floor(this.hash(L.seed+i, 3)*gc) + 0.5)/gc)*0.5*sw;
+          const cy = ((Math.floor(this.hash(L.seed+i, 9)*gr) + 0.5)/gr)*0.5*sh;
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(-cx, cy, r, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx, -cy, r, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(-cx, -cy, r, 0, Math.PI*2); ctx.fill();
+        }
+      }
+      return;
+    }
+    if(L.type === 'image'){
+      const img = this.images && this.images[L.id];
+      if(!img || !img.complete || !img.naturalWidth){
+        const w = (L.imgScale/100)*W, h = w*0.5625;
+        ctx.lineWidth = 3; ctx.strokeRect(-w/2, -h/2, w, h);
+        ctx.beginPath(); ctx.moveTo(-w/2,-h/2); ctx.lineTo(w/2,h/2); ctx.moveTo(w/2,-h/2); ctx.lineTo(-w/2,h/2); ctx.stroke();
+        return;
+      }
+      const ar = img.naturalWidth/img.naturalHeight;
+      let dw, dh;
+      if(L.imgFit === 'cover'){ dw = W; dh = W/ar; if(dh < H){ dh = H; dw = H*ar; } }
+      else if(L.imgFit === 'stretch'){ dw = (L.imgScale/100)*W; dh = (L.imgScale/100)*H; }
+      else { dw = (L.imgScale/100)*W; dh = dw/ar; }
+      const mi = this.mediaFX(img, img.naturalWidth, img.naturalHeight, L);
+      ctx.imageSmoothingEnabled = mi.smooth;
+      ctx.drawImage(mi.img, -dw/2, -dh/2, dw, dh);
+      ctx.imageSmoothingEnabled = true;
+      return;
+    }
+    if(L.type === 'video'){
+      const v = this.videos && this.videos[L.id];
+      if(!v || v.readyState < 2 || !v.videoWidth){
+        const w = (L.imgScale/100)*W, h = w*0.5625;
+        ctx.lineWidth = 3; ctx.strokeRect(-w/2, -h/2, w, h);
+        ctx.beginPath(); ctx.moveTo(-w/2,-h/2); ctx.lineTo(w/2,h/2); ctx.moveTo(w/2,-h/2); ctx.lineTo(-w/2,h/2); ctx.stroke();
+        return;
+      }
+      const ar = v.videoWidth/v.videoHeight;
+      let dw, dh;
+      if(L.imgFit === 'cover'){ dw = W; dh = W/ar; if(dh < H){ dh = H; dw = H*ar; } }
+      else if(L.imgFit === 'stretch'){ dw = (L.imgScale/100)*W; dh = (L.imgScale/100)*H; }
+      else { dw = (L.imgScale/100)*W; dh = dw/ar; }
+      const mv = this.mediaFX(v, v.videoWidth, v.videoHeight, L);
+      ctx.imageSmoothingEnabled = mv.smooth;
+      ctx.drawImage(mv.img, -dw/2, -dh/2, dw, dh);
+      ctx.imageSmoothingEnabled = true;
+      return;
+    }
+    if(L.type === 'text'){
+      this.ensureFont(L);
+      ctx.font = L.weight + ' ' + L.fontSize + 'px ' + (Component.FONTS[L.font] || Component.FONTS.mono);
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      const chars = String(L.text || '').split('');
+      const tr = L.tracking;
+      let total = 0;
+      const ws = chars.map(ch => { const w = ctx.measureText(ch).width + tr; total += w; return w; });
+      total -= tr;
+      let x = L.align === 'left' ? 0 : (L.align === 'right' ? -total : -total/2);
+      for(let i=0;i<chars.length;i++){ ctx.fillText(chars[i], x, 0); x += ws[i]; }
+      return;
+    }
+  }
+
+  applyFX(g, src, beats){
+    const W = Component.W, H = Component.H;
+    const F = this.state.fx, dm = 0.25 + (this.state.macros.distortion/100)*1.4;
+    g.setTransform(1,0,0,1,0,0);
+    g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    g.fillStyle = '#000'; g.fillRect(0,0,W,H);
+
+    const q = Math.floor(beats*24);
+    const jm = (F.jitter/100)*dm*44;
+    const jx = jm ? (this.hash(1,q)-0.5)*jm : 0;
+    const jy = jm ? (this.hash(2,q)-0.5)*jm*0.35 : 0;
+    const rs = (F.rgb/100)*dm*26;
+
+    if(rs > 0.4){
+      this.tAx.setTransform(1,0,0,1,0,0); this.tAx.globalCompositeOperation='source-over';
+      this.tAx.clearRect(0,0,W,H); this.tAx.drawImage(src,0,0);
+      this.tAx.globalCompositeOperation='multiply'; this.tAx.fillStyle='#ff0000'; this.tAx.fillRect(0,0,W,H);
+      this.tBx.setTransform(1,0,0,1,0,0); this.tBx.globalCompositeOperation='source-over';
+      this.tBx.clearRect(0,0,W,H); this.tBx.drawImage(src,0,0);
+      this.tBx.globalCompositeOperation='multiply'; this.tBx.fillStyle='#00ffff'; this.tBx.fillRect(0,0,W,H);
+      g.globalCompositeOperation = 'lighter';
+      g.drawImage(this.tA, jx+rs, jy);
+      g.drawImage(this.tB, jx-rs, jy);
+      g.globalCompositeOperation = 'source-over';
+    } else {
+      g.drawImage(src, jx, jy);
+    }
+
+    const bands = Math.round((F.slice/100)*dm*7);
+    for(let i=0;i<bands;i++){
+      const y = this.hash(100+i, q) * H;
+      const bh = 14 + this.hash(200+i, q)*140;
+      const ox = (this.hash(300+i, q)-0.5)*dm*260;
+      g.drawImage(src, 0, y, W, bh, ox, y, W, bh);
+    }
+
+    if(F.noise > 0){
+      const a = (F.noise/100)*0.16;
+      g.globalCompositeOperation = 'lighter';
+      g.globalAlpha = a;
+      const tile = this.noiseTiles[Math.floor(performance.now()/40)%4];
+      for(let y=0;y<H;y+=256) for(let x=0;x<W;x+=256) g.drawImage(tile, x, y);
+      g.globalAlpha = 1;
+      g.globalCompositeOperation = 'source-over';
+    }
+
+    if(F.scan > 0){
+      if(!this.scanPat) this.initFX();
+      if(this.scanPat){
+        g.globalCompositeOperation = 'multiply';
+        g.globalAlpha = (F.scan/100)*0.5;
+        g.fillStyle = this.scanPat;
+        g.fillRect(0,0,W,H);
+        g.globalAlpha = 1;
+        g.globalCompositeOperation = 'source-over';
+      }
+    }
+
+    if(F.invert > 0){
+      g.globalCompositeOperation = 'difference';
+      g.fillStyle = 'rgba(255,255,255,' + (F.invert/100) + ')';
+      g.fillRect(0,0,W,H);
+      g.globalCompositeOperation = 'source-over';
+    }
+  }
+
+  setBpm(v, markEdited){
+    const n = Math.max(40, Math.min(220, Math.round(v*10)/10));
+    if(markEdited !== false) this.bpmEdited = true;
+    this.setState({bpm: n, bpmText: String(n), bpmPick: ''});
+    return n;
+  }
+  commitBpm(){
+    const v = parseFloat(String(this.state.bpmText).replace(',', '.'));
+    if(isNaN(v)) this.setState({bpmText: String(this.state.bpm)});
+    else this.setBpm(v);
+  }
+  tapTempo(){
+    const now = performance.now();
+    if(!this.taps || now - this.taps[this.taps.length-1] > 2200) this.taps = [];
+    this.taps.push(now);
+    if(this.taps.length > 6) this.taps.shift();
+    if(this.taps.length < 2) return;
+    let sum = 0;
+    for(let i=1;i<this.taps.length;i++) sum += this.taps[i]-this.taps[i-1];
+    const avg = sum/(this.taps.length-1);
+    if(avg > 200) this.setBpm(60000/avg);
+  }
+
+  /* ---------- transport ---------- */
+
+  startSource(){
+    if(!this.buffer || !this.actx) return;
+    this.stopSource();
+    const s = this.actx.createBufferSource();
+    s.buffer = this.buffer;
+    s.loop = true;                                  // gapless loop, handled by the audio graph
+    s.connect(this.analyser);
+    s.start(0, this.elapsed % this.buffer.duration);
+    this.src = s;
+    this.startCtx = this.actx.currentTime;
+    this.startElapsed = this.elapsed;
+  }
+  stopSource(){
+    if(this.src){
+      try { this.src.stop(); } catch(e){}
+      try { this.src.disconnect(); } catch(e){}
+      this.src = null;
+    }
+  }
+  /* ---------- video layers ---------- */
+
+  ensureAudio(){
+    if(!this.actx) this.actx = new (window.AudioContext || window.webkitAudioContext)();
+    if(!this.analyser){
+      this.analyser = this.actx.createAnalyser();
+      this.analyser.fftSize = 1024;
+      this.analyser.smoothingTimeConstant = 0.75;
+      this.freq = new Uint8Array(this.analyser.frequencyBinCount);
+      this.time = new Uint8Array(this.analyser.fftSize);
+      this.analyser.connect(this.actx.destination);
+    }
+    return this.actx;
+  }
+
+  loadVideo(id, file){
+    const old = this.videos[id];
+    if(old){ try { old.pause(); URL.revokeObjectURL(old.src); } catch(e){} }
+    const v = document.createElement('video');
+    v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+    v.crossOrigin = 'anonymous';
+    v.src = URL.createObjectURL(file);
+    v.onloadeddata = () => { this.setState(s => ({tick: s.tick + 1})); };
+    this.videos[id] = v;
+    v.play().catch(() => {});
+  }
+
+  // one video element per layer, driven by the same transport the visuals run on
+  syncVideos(){
+    const S = this.state;
+    for(let i=0;i<S.layers.length;i++){
+      const L = S.layers[i];
+      if(L.type !== 'video') continue;
+      const v = this.videos[L.id];
+      if(!v) continue;
+      const rate = Math.max(0.1, Math.min(4, (L.vidSpeed||100)/100));
+      if(Math.abs(v.playbackRate - rate) > 0.01) { try { v.playbackRate = rate; } catch(e){} }
+      const wantAudio = L.vidAudio === 'on';
+      if(v.muted === wantAudio) v.muted = !wantAudio;
+      if(wantAudio && !v._tapped && v.readyState >= 1){
+        try {
+          this.ensureAudio();
+          const node = this.actx.createMediaElementSource(v);
+          node.connect(this.analyser);
+          v._tapped = true;
+        } catch(e){ v._tapped = true; }
+      }
+      if(!L.visible || !S.playing){ if(!v.paused) v.pause(); continue; }
+      if(v.paused) v.play().catch(() => {});
+      const sync = L.vidSync || 'free';
+      if(sync !== 'free' && v.duration){
+        const per = sync === 'beat' ? 1 : (sync === 'bar' ? 4 : 16);
+        const idx = Math.floor(this.beats / per);
+        if(v._idx !== idx){
+          v._idx = idx;
+          const start = Math.min(Math.max(0, L.vidIn || 0), Math.max(0, v.duration - 0.05));
+          try { v.currentTime = start; } catch(e){}
+        }
+      }
+    }
+  }
+
+  /* ---------- MP4 export (1920×1080) ---------- */
+
+  pickMime(){
+    const list = [
+      'video/mp4;codecs="avc1.640028,mp4a.40.2"',
+      'video/mp4;codecs="avc1.42E01E,mp4a.40.2"',
+      'video/mp4;codecs=avc1',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm'
+    ];
+    if(typeof MediaRecorder === 'undefined') return null;
+    for(let i=0;i<list.length;i++) if(MediaRecorder.isTypeSupported(list[i])) return list[i];
+    return '';
+  }
+
+  // export length is the track itself — no manual arming, no manual stop
+  exportLength(){ return this.buffer ? this.buffer.duration : 30; }
+  exportLenLabel(){
+    const t = this.exportLength();
+    const m = Math.floor(t/60), s = Math.round(t - m*60);
+    const clock = m + ':' + String(s).padStart(2,'0');
+    return this.buffer ? ('FULL TRACK ' + clock) : 'NO AUDIO — 0:30';
+  }
+
+  nowMs(){ return this.renderTime != null ? this.renderTime : performance.now(); }
+
+  loadScript(url){
+    return new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = url; s.async = true;
+      s.onload = res; s.onerror = () => rej(new Error('load failed'));
+      document.head.appendChild(s);
+    });
+  }
+  async ensureMuxer(){
+    if(window.Mp4Muxer) return window.Mp4Muxer;
+    const urls = [
+      'https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.5/build/mp4-muxer.min.js',
+      'https://cdn.jsdelivr.net/npm/mp4-muxer@5/build/mp4-muxer.js',
+      'https://unpkg.com/mp4-muxer@5/build/mp4-muxer.js'
+    ];
+    for(let i=0;i<urls.length;i++){
+      try { await this.loadScript(urls[i]); } catch(e){}
+      if(window.Mp4Muxer) return window.Mp4Muxer;
+    }
+    return null;
+  }
+
+  // per-frame band energies precomputed from the decoded buffer, so an offline
+  // render reacts to the music exactly like the live analyser does
+  async analyzeOffline(fps, total){
+    if(!this.buffer) return null;
+    const b = this.buffer, sr = b.sampleRate;
+    const n = Math.ceil(total*fps);
+    const specs = [
+      {key:'low',  type:'lowpass',  freq:220},
+      {key:'mid',  type:'bandpass', freq:1400},
+      {key:'high', type:'highpass', freq:4200}
+    ];
+    const out = {level:new Float32Array(n), low:new Float32Array(n), mid:new Float32Array(n), high:new Float32Array(n)};
+    const rms = (ch, arr) => {
+      const win = Math.max(64, Math.round(sr/fps));
+      for(let i=0;i<n;i++){
+        const s0 = Math.min(ch.length-1, Math.round(i*sr/fps));
+        const s1 = Math.min(ch.length, s0+win);
+        let acc = 0, c = 0;
+        for(let j=s0;j<s1;j+=2){ const v = ch[j]; acc += v*v; c++; }
+        arr[i] = c ? Math.sqrt(acc/c) : 0;
+      }
+      let mx = 0;
+      for(let i=0;i<n;i++) if(arr[i] > mx) mx = arr[i];
+      if(mx > 0) for(let i=0;i<n;i++) arr[i] = Math.min(1, arr[i]/mx);
+      // match the live analyser's smoothing so strobes feel the same
+      let s = 0;
+      for(let i=0;i<n;i++){ s += (arr[i]-s)*0.45; arr[i] = s; }
+    };
+    rms(b.getChannelData(0), out.level);
+    for(let k=0;k<specs.length;k++){
+      const sp = specs[k];
+      const oc = new OfflineAudioContext(1, b.length, sr);
+      const src = oc.createBufferSource(); src.buffer = b;
+      const f = oc.createBiquadFilter(); f.type = sp.type; f.frequency.value = sp.freq; f.Q.value = 1;
+      src.connect(f); f.connect(oc.destination); src.start();
+      const rendered = await oc.startRendering();
+      rms(rendered.getChannelData(0), out[sp.key]);
+    }
+    return out;
+  }
+
+  async seekVideosTo(t){
+    const S = this.state, jobs = [];
+    for(let i=0;i<S.layers.length;i++){
+      const L = S.layers[i];
+      if(L.type !== 'video' || !L.visible) continue;
+      const v = this.videos[L.id];
+      if(!v || !v.duration) continue;
+      if(!v.paused) v.pause();
+      const rate = Math.max(0.1, (L.vidSpeed||100)/100);
+      const inPt = Math.min(Math.max(0, L.vidIn||0), Math.max(0, v.duration-0.05));
+      const sync = L.vidSync || 'free';
+      let local;
+      if(sync === 'free'){ local = inPt + ((t*rate) % Math.max(0.05, v.duration - inPt)); }
+      else {
+        const per = sync === 'beat' ? 1 : (sync === 'bar' ? 4 : 16);
+        const beatSec = 60/this.state.bpm;
+        const phase = (t - Math.floor(t/(per*beatSec))*per*beatSec) * rate;
+        local = inPt + Math.min(phase, Math.max(0.05, v.duration - inPt));
+      }
+      if(Math.abs(v.currentTime - local) < 0.004) continue;
+      jobs.push(new Promise(res => {
+        let done = false;
+        const fin = () => { if(done) return; done = true; v.removeEventListener('seeked', fin); res(); };
+        v.addEventListener('seeked', fin);
+        try { v.currentTime = local; } catch(e){ fin(); }
+        setTimeout(fin, 300);
+      }));
+    }
+    if(jobs.length) await Promise.all(jobs);
+  }
+
+  // deterministic render: one authored frame at a time, encoded straight to MP4.
+  // machine speed changes how long it takes, never what the file looks like.
+  async renderOffline(){
+    const MX = await this.ensureMuxer();
+    if(!MX || typeof VideoEncoder === 'undefined'){
+      this.setState({exportMsg: 'OFFLINE UNAVAILABLE — SCREEN CAPTURE'});
+      return this.startCapture();
+    }
+    const W = Component.W, H = Component.H;
+    const fps = 60;
+    const total = this.exportLength();
+    const frames = Math.round(total*fps);
+    this.cancelRender = false;
+    this.rendering = true;
+    this.stop();
+    this.setState({recording:true, exportMsg: 'ANALYSING AUDIO…'});
+    if(this.buffer && typeof AudioEncoder === 'undefined') this.setState({exportMsg: 'NO AAC ENCODER — RENDERING SILENT'});
+    await new Promise(r => setTimeout(r, 30));
+
+    let bands = null;
+    try { bands = await this.analyzeOffline(fps, total); } catch(e){ bands = null; }
+
+    const muxCfg = {
+      target: new (MX.ArrayBufferTarget || MX.BufferTarget)(),
+      video: {codec:'avc', width:W, height:H, frameRate:fps},
+      fastStart: 'in-memory'
+    };
+    const chans = this.buffer ? Math.min(2, this.buffer.numberOfChannels) : 0;
+    const canAudio = !!this.buffer && typeof AudioEncoder !== 'undefined';
+    const silent = !!this.buffer && !canAudio;   // track loaded but no AAC encoder here
+    if(canAudio) muxCfg.audio = {codec:'aac', numberOfChannels: chans, sampleRate: this.buffer.sampleRate};
+    const muxer = new MX.Muxer(muxCfg);
+
+    const codecs = ['avc1.640028','avc1.4D0028','avc1.42E028'];
+    let vcfg = null;
+    for(let i=0;i<codecs.length;i++){
+      const cfg = {codec: codecs[i], width:W, height:H, bitrate: 16000000, framerate: fps, latencyMode:'quality'};
+      try {
+        const sup = await VideoEncoder.isConfigSupported(cfg);
+        if(sup && sup.supported){ vcfg = cfg; break; }
+      } catch(e){}
+    }
+    if(!vcfg){
+      this.rendering = false;
+      this.setState({recording:false, exportMsg: 'NO H.264 ENCODER'});
+      return;
+    }
+    let encErr = null;
+    const venc = new VideoEncoder({
+      output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+      error: (e) => { encErr = e; }
+    });
+    venc.configure(vcfg);
+
+    const canvas = this.canvasRef.current;
+    for(let i=0;i<frames;i++){
+      if(this.cancelRender || encErr) break;
+      const t = i/fps;
+      this.renderTime = t*1000;
+      this.elapsed = t;
+      this.beats = Math.max(0, t - this.beatOffset)*this.state.bpm/60;
+      if(bands){
+        this.aud.level = bands.level[i] || 0;
+        this.aud.low = bands.low[i] || 0;
+        this.aud.mid = bands.mid[i] || 0;
+        this.aud.high = bands.high[i] || 0;
+      }
+      await this.seekVideosTo(t);
+      this.drawScene(this.scx, this.beats);
+      this.applyFX(this.g, this.sc, this.beats);
+      const frame = new VideoFrame(canvas, {timestamp: Math.round(i*1e6/fps), duration: Math.round(1e6/fps)});
+      venc.encode(frame, {keyFrame: i % (fps*5) === 0});
+      frame.close();
+      while(venc.encodeQueueSize > 6) await new Promise(r => setTimeout(r, 0));
+      if(i % 6 === 0){
+        const pct = Math.round((i/frames)*100);
+        this.setState({exportMsg: 'RENDER ' + pct + '% · ' + i + '/' + frames});
+        await new Promise(r => requestAnimationFrame(r));
+      }
+    }
+    await venc.flush();
+    venc.close();
+
+    if(canAudio && !this.cancelRender && !encErr){
+      this.setState({exportMsg: 'ENCODING AUDIO…'});
+      await new Promise(r => setTimeout(r, 20));
+      try { await this.encodeAudio(muxer, chans, total); } catch(e){}
+    }
+
+    this.renderTime = null;
+    this.rendering = false;
+    if(this.cancelRender || encErr){
+      try { muxer.finalize(); } catch(e){}
+      this.setState({recording:false, exportMsg: encErr ? 'ENCODER ERROR' : 'CANCELLED'});
+      return;
+    }
+    muxer.finalize();
+    const blob = new Blob([muxer.target.buffer], {type:'video/mp4'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'signal-1080p60.mp4';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    const mb = (blob.size/1048576).toFixed(0);
+    this.setState({recording:false, exportMsg: silent
+      ? ('MP4 SAVED · ' + mb + ' MB · SILENT — NO AAC ENCODER, ADD THE TRACK YOURSELF')
+      : ('MP4 SAVED · ' + mb + ' MB')});
+    setTimeout(() => { if(!this.state.recording) this.setState({exportMsg: ''}); }, silent ? 14000 : 6000);
+  }
+
+  async encodeAudio(muxer, chans, total){
+    const b = this.buffer, sr = b.sampleRate;
+    const aenc = new AudioEncoder({
+      output: (chunk, meta) => muxer.addAudioChunk(chunk, meta),
+      error: () => {}
+    });
+    aenc.configure({codec:'mp4a.40.2', sampleRate: sr, numberOfChannels: chans, bitrate: 192000});
+    const nFrames = Math.min(b.length, Math.round(total*sr));
+    const block = 4096;
+    const planes = [];
+    for(let c=0;c<chans;c++) planes.push(b.getChannelData(c));
+    for(let off=0; off<nFrames; off+=block){
+      if(this.cancelRender) break;
+      const len = Math.min(block, nFrames-off);
+      const data = new Float32Array(len*chans);
+      for(let c=0;c<chans;c++) data.set(planes[c].subarray(off, off+len), c*len);
+      const ad = new AudioData({
+        format:'f32-planar', sampleRate: sr, numberOfFrames: len,
+        numberOfChannels: chans, timestamp: Math.round(off/sr*1e6), data
+      });
+      aenc.encode(ad);
+      ad.close();
+      if(aenc.encodeQueueSize > 12) await new Promise(r => setTimeout(r, 0));
+    }
+    await aenc.flush();
+    aenc.close();
+  }
+
+  startExport(){
+    if(this.state.recording){ this.cancelRender = true; this.finishExport(); return; }
+    this.renderOffline();
+  }
+
+  startCapture(){
+    if(this.state.recording){ this.finishExport(); return; }
+    const c = this.canvasRef.current;
+    if(!c) return;
+    const mime = this.pickMime();
+    if(mime === null){ this.setState({exportMsg: 'NO RECORDER'}); return; }
+    let stream;
+    try { stream = c.captureStream(60); }
+    catch(e){ this.setState({exportMsg: 'CAPTURE FAILED'}); return; }
+    // route the same audio the analyser hears into the file
+    if(this.actx && this.analyser){
+      try {
+        if(!this.tap){ this.tap = this.actx.createMediaStreamDestination(); this.analyser.connect(this.tap); }
+        this.tap.stream.getAudioTracks().forEach(t => stream.addTrack(t));
+      } catch(e){}
+    }
+    let rec;
+    try { rec = new MediaRecorder(stream, mime ? {mimeType: mime, videoBitsPerSecond: 14000000} : {videoBitsPerSecond: 14000000}); }
+    catch(e){ this.setState({exportMsg: 'REC UNAVAILABLE'}); return; }
+    this.recChunks = [];
+    rec.ondataavailable = (e) => { if(e.data && e.data.size) this.recChunks.push(e.data); };
+    rec.onstop = () => {
+      const type = (mime || 'video/webm').split(';')[0];
+      const blob = new Blob(this.recChunks, {type});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const ext = type.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+      a.href = url;
+      a.download = 'signal-1080p.' + ext;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      this.setState({recording:false, exportMsg: ext.toUpperCase() + ' SAVED'});
+      setTimeout(() => { if(!this.state.recording) this.setState({exportMsg: ''}); }, 4000);
+    };
+    // always record from the top of the track so exports are repeatable
+    this.stop();
+    setTimeout(() => {
+      if(this.actx && this.actx.state === 'suspended') this.actx.resume();
+      if(this.buffer && this.actx) this.startSource();
+      this.setState({playing:true});
+      const total = this.exportLength();
+      this.recEnd = performance.now() + total*1000;
+      rec.start(1000);
+      this.rec = rec;
+      this.setState({recording:true, exportMsg: 'REC 0%'});
+      this.recTimer = setInterval(() => {
+        const left = Math.max(0, (this.recEnd - performance.now())/1000);
+        const pct = Math.min(100, Math.round((1 - left/total)*100));
+        this.setState({exportMsg: 'REC ' + pct + '% · ' + left.toFixed(0) + 's LEFT'});
+        if(left <= 0) this.finishExport();
+      }, 200);
+    }, 120);
+  }
+
+  finishExport(){
+    if(this.recTimer){ clearInterval(this.recTimer); this.recTimer = null; }
+    if(this.rec && this.rec.state !== 'inactive'){ try { this.rec.stop(); } catch(e){} }
+    this.rec = null;
+    this.setState({exportMsg: 'WRITING…'});
+  }
+
+  togglePlay(){
+    const p = !this.state.playing;
+    if(this.buffer && this.actx){
+      if(p){ if(this.actx.state === 'suspended') this.actx.resume(); this.startSource(); }
+      else { this.elapsed = this.startElapsed + (this.actx.currentTime - this.startCtx); this.stopSource(); }
+    }
+    this.setState({playing:p});
+  }
+  stop(){
+    this.stopSource();
+    this.elapsed = 0; this.startElapsed = 0;
+    this.beats = 0;
+    this.setState({playing:false});
+  }
+
+  /* ---------- audio ---------- */
+
+  async loadFile(file){
+    if(!file) return;
+    this.ensureAudio();
+    this.stopSource();
+    this.setState({audioName: file.name + ' — decoding…', detected: null});
+    const raw = await file.arrayBuffer();
+    try {
+      this.buffer = await this.actx.decodeAudioData(raw);
+    } catch(e){
+      this.setState({audioName: file.name + ' (decode failed)'});
+      return;
+    }
+    this.peaks = this.computePeaks(this.buffer, 2400);
+    this.elapsed = 0; this.startElapsed = 0; this.beatOffset = 0;
+    this.audioReady = true;
+    this.setState({audioName: file.name});
+    if(this.state.playing){ if(this.actx.state === 'suspended') this.actx.resume(); this.startSource(); }
+    setTimeout(() => this.detectBPM('auto'), 60);
+  }
+
+  computePeaks(buf, n){
+    const ch = buf.getChannelData(0);
+    const step = Math.floor(ch.length/n) || 1;
+    const out = new Float32Array(n);
+    for(let i=0;i<n;i++){
+      let mx = 0;
+      const s = i*step, e = Math.min(ch.length, s+step);
+      for(let j=s;j<e;j+=2){ const v = Math.abs(ch[j]); if(v>mx) mx = v; }
+      out[i] = mx;
+    }
+    return out;
+  }
+
+  onsetEnvelope(){
+    const b = this.buffer, sr = b.sampleRate;
+    const a = b.getChannelData(0);
+    const c = b.numberOfChannels > 1 ? b.getChannelData(1) : null;
+    const maxSamp = Math.min(a.length, Math.floor(sr*120));
+    const hop = Math.max(128, Math.round(sr/90));       // ~90 fps envelope
+    const n = Math.floor(maxSamp/hop);
+    const env = new Float32Array(n);
+    let f = 0;
+    for(let i=0;i<n;i++){
+      let peak = 0;
+      const s0 = i*hop, s1 = s0 + hop;
+      for(let j=s0;j<s1;j+=2){
+        let v = a[j] || 0;
+        if(c) v = (v + (c[j]||0))*0.5;
+        f += (Math.abs(v) - f)*0.2;                     // envelope follower
+        if(f > peak) peak = f;
+      }
+      env[i] = peak;
+    }
+    // half-wave rectified difference, local-mean subtracted (spectral-flux-like onsets)
+    const on = new Float32Array(n);
+    for(let i=1;i<n;i++){ const d = env[i]-env[i-1]; on[i] = d > 0 ? d : 0; }
+    const win = Math.round(90*0.5);
+    for(let i=0;i<n;i++){
+      let s = 0, cnt = 0;
+      for(let j=Math.max(0,i-win); j<Math.min(n,i+win); j++){ s += on[j]; cnt++; }
+      const m = cnt ? s/cnt : 0;
+      on[i] = Math.max(0, on[i] - m);
+    }
+    return {on, n, fps: sr/hop};
+  }
+
+  detectBPM(apply){
+    if(!this.buffer) return;
+    const {on, n, fps} = this.onsetEnvelope();
+    if(n < 64) return;
+    const ac = (lag) => {
+      const l = Math.round(lag);
+      if(l < 2 || l >= n-2) return 0;
+      let s = 0, c = 0;
+      for(let i=0;i+l<n;i++){ s += on[i]*on[i+l]; c++; }
+      return c ? s/c : 0;
+    };
+    let best = 120, bestScore = -1;
+    for(let bpm=60; bpm<=200; bpm+=0.5){
+      const lag = 60/bpm*fps;
+      // comb over beat, 2-beat and bar lags — periodic pulses score, isolated hits don't
+      let sc = ac(lag) + 0.6*ac(lag*2) + 0.4*ac(lag*4);
+      sc *= 1 - Math.abs(Math.log2(bpm/130))*0.16;      // slight mid-tempo preference only
+      if(sc > bestScore){ bestScore = sc; best = bpm; }
+    }
+    // octave fold, wide enough to keep drum & bass / fast tempos intact
+    while(best < 70) best *= 2;
+    while(best > 200) best /= 2;
+    // refine to 0.1 around the winner
+    let refined = best, rs = -1;
+    for(let bpm=best-1.2; bpm<=best+1.2; bpm+=0.1){
+      const lag = 60/bpm*fps;
+      const sc = ac(lag) + 0.6*ac(lag*2) + 0.4*ac(lag*4);
+      if(sc > rs){ rs = sc; refined = bpm; }
+    }
+    const bpm = Math.round(refined*10)/10;
+    // downbeat phase: slide the grid across one beat and keep the strongest alignment
+    const lag = 60/bpm*fps;
+    let bestOff = 0, bestSum = -1;
+    for(let o=0; o<lag; o+=0.5){
+      let s = 0;
+      for(let k=0; o+k*lag < n; k++) s += on[Math.round(o+k*lag)] || 0;
+      if(s > bestSum){ bestSum = s; bestOff = o; }
+    }
+    this.beatOffset = bestOff/fps;
+    this.setState({detected: bpm});
+    // decide at APPLY time, not at schedule time: a slow analysis must never overwrite
+    // a tempo the user typed, tapped or picked while it was running
+    const doApply = apply === true || (apply === 'auto' && !this.bpmEdited);
+    if(doApply) this.setBpm(bpm, false);
+  }
+
+  readAudio(){
+    if(!this.analyser || !this.state.playing) {
+      this.aud.level *= 0.9; this.aud.low *= 0.9; this.aud.mid *= 0.9; this.aud.high *= 0.9;
+      return;
+    }
+    this.analyser.getByteTimeDomainData(this.time);
+    let sum = 0;
+    for(let i=0;i<this.time.length;i+=2){ const v = (this.time[i]-128)/128; sum += v*v; }
+    const rms = Math.sqrt(sum/(this.time.length/2));
+    this.analyser.getByteFrequencyData(this.freq);
+    const N = this.freq.length;
+    const band = (a,b) => { let s = 0; const s0 = Math.floor(N*a), s1 = Math.floor(N*b); for(let i=s0;i<s1;i++) s += this.freq[i]; return s/((s1-s0)*255); };
+    const L = band(0,0.06), M = band(0.06,0.25), Hi = band(0.25,0.7);
+    const k = 0.28;
+    this.aud.level += (Math.min(1, rms*2.6) - this.aud.level)*k;
+    this.aud.low += (Math.min(1, L*1.5) - this.aud.low)*k;
+    this.aud.mid += (Math.min(1, M*1.8) - this.aud.mid)*k;
+    this.aud.high += (Math.min(1, Hi*2.2) - this.aud.high)*k;
+  }
+
+  resizeWave(){
+    const c = this.waveRef.current;
+    if(!c) return;
+    const r = c.getBoundingClientRect();
+    c.width = Math.max(200, Math.floor(r.width));
+    c.height = 92;
+    this.wavedirty = true;
+  }
+
+  drawWave(){
+    const c = this.waveRef.current;
+    if(!c) return;
+    const w = c.width, h = c.height;
+    if(Math.abs(c.getBoundingClientRect().width - w) > 2) this.resizeWave();
+    const ctx = this.wctx || (this.wctx = c.getContext('2d'));
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.fillStyle = '#070709'; ctx.fillRect(0,0,w,h);
+    const bpm = this.state.bpm;
+    const dur = this.buffer ? this.buffer.duration : Math.max(16, this.beats*60/bpm + 8);
+    // beat grid + bars
+    const beatSec = 60/bpm;
+    const totalBeats = Math.floor(dur/beatSec);
+    const pxPerBeat = w/(dur/beatSec);
+    const offPx = (this.beatOffset/dur)*w;
+    if(pxPerBeat > 2.5){
+      for(let b=0;b<=totalBeats;b++){
+        const x = offPx + b*pxPerBeat;
+        if(x > w) break;
+        const bar = b%4 === 0;
+        ctx.fillStyle = bar ? '#2e2e35' : '#191920';
+        ctx.fillRect(Math.floor(x), bar?0:h*0.72, 1, bar?h:h*0.28);
+      }
+    }
+    if(this.peaks){
+      ctx.fillStyle = '#3f3f46';
+      const n = this.peaks.length;
+      for(let x=0;x<w;x++){
+        const i = Math.floor(x/w*n);
+        const v = this.peaks[i] || 0;
+        const bh = Math.max(1, v*(h*0.78));
+        ctx.fillRect(x, (h-bh)/2, 1, bh);
+      }
+    } else {
+      ctx.fillStyle = '#1c1c22';
+      ctx.font = '9px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#3f3f46';
+      ctx.fillText('NO AUDIO — INTERNAL CLOCK · ' + bpm + ' BPM', 10, h/2);
+    }
+    const t = this.buffer ? ((this.elapsed || 0) % dur) : this.beats*60/bpm;
+    const px = (t/dur)*w;
+    ctx.fillStyle = '#ff2b18';
+    ctx.fillRect(Math.floor(px), 0, 1, h);
+    ctx.fillRect(Math.floor(px)-2, 0, 5, 3);
+  }
+
+  /* ---------- layer ops ---------- */
+
+  /* ---------- undo history ---------- */
+
+  snapshot(){
+    const S = this.state;
+    return {
+      layers: S.layers.map(l => Object.assign({}, l)),
+      macros: Object.assign({}, S.macros),
+      fx: Object.assign({}, S.fx),
+      palette: Object.assign({}, S.palette),
+      selId: S.selId
+    };
+  }
+  // structural moves push immediately; slider drags coalesce into one step
+  pushHistory(coalesce){
+    if(!this.hist) this.hist = [];
+    const now = performance.now();
+    if(coalesce && this.lastPush && now - this.lastPush < 700) return;
+    this.lastPush = now;
+    this.hist.push(this.snapshot());
+    if(this.hist.length > 60) this.hist.shift();
+    if(this.state.histLen !== this.hist.length) this.setState({histLen: this.hist.length});
+  }
+  undo(){
+    if(!this.hist || !this.hist.length) return;
+    const s = this.hist.pop();
+    this.lastPush = 0;
+    this.setState({
+      layers: s.layers, macros: s.macros, fx: s.fx, palette: s.palette,
+      selId: s.selId, histLen: this.hist.length
+    });
+  }
+
+  sel(){ return this.state.layers.find(l => l.id === this.state.selId); }
+  patch(field, val){
+    this.pushHistory(true);
+    this.setState(s => ({layers: s.layers.map(l => l.id === s.selId ? Object.assign({}, l, {[field]: val}) : l)}));
+  }
+  bind(field, kind){
+    const key = kind + ':' + field;
+    if(!this._hc[key]){
+      this._hc[key] = (e) => {
+        const t = e.target;
+        this.patch(field, kind === 'num' ? parseFloat(t.value) : (kind === 'bool' ? t.checked : t.value));
+      };
+    }
+    return this._hc[key];
+  }
+  macroBind(k){
+    const key = 'macro:'+k;
+    if(!this._hc[key]) this._hc[key] = (e) => { const v = parseFloat(e.target.value); this.pushHistory(true); this.setState(s => ({macros: Object.assign({}, s.macros, {[k]: v})})); };
+    return this._hc[key];
+  }
+  fxBind(k){
+    const key = 'fx:'+k;
+    if(!this._hc[key]) this._hc[key] = (e) => { const v = parseFloat(e.target.value); this.pushHistory(true); this.setState(s => ({fx: Object.assign({}, s.fx, {[k]: v})})); };
+    return this._hc[key];
+  }
+  palBind(k){
+    const key = 'pal:'+k;
+    if(!this._hc[key]) this._hc[key] = (e) => { const v = e.target.value; this.pushHistory(true); this.setState(s => ({palette: Object.assign({}, s.palette, {[k]: v})})); };
+    return this._hc[key];
+  }
+
+  /* ---------- presets ---------- */
+
+  buildPreset(name){
+    const P = {primary:'#000000', secondary:'#ffffff', accent:'#ff2b18'};
+    const black = () => this.mkLayer('solid', {name:'BLACK', colorRef:'primary', anim:'none', trigger:'continuous'});
+    if(name === 'Minimal Pulse') return {
+      name, bpm:121, palette:P, macros:{intensity:40,density:25,motion:25,distortion:6,audio:50},
+      fx:{noise:14,scan:12,rgb:0,jitter:0,slice:0,invert:0},
+      layers: this.demoScene()
+    };
+    if(name === 'Symmetry') return {
+      name, bpm:120, palette:P, macros:{intensity:50,density:45,motion:30,distortion:10,audio:55},
+      fx:{noise:16,scan:16,rgb:4,jitter:0,slice:0,invert:0},
+      layers: [
+        black(),
+        this.mkLayer('line', {name:'V ARRAY', angle:90, len:100, thick:3, x:50, y:50, rep:9, repGap:11, mirror:'x', anim:'reveal', trigger:'beat', dur:'1/4', envA:'1/16', envH:'1/16', envD:'1/8'}),
+        this.mkLayer('line', {name:'H ARRAY', angle:0, len:100, thick:2, x:50, y:50, rep:5, repGap:16, mirror:'y', opacity:45, anim:'reveal', trigger:'bar', dur:'1/2', envA:'1/16', envH:'1/2', envD:'1/4'}),
+        this.mkLayer('dots', {name:'RING', colorRef:'accent', dotCount:36, dotSpread:66, dotRadius:3, dotDist:'ring', anim:'rotate', trigger:'2bar', dur:'2bar', amount:30}),
+        this.mkLayer('rect', {name:'FRAME', fill:false, stroke:3, w:83.3, h:66.6, x:50, y:50, opacity:26, anim:'pulse', trigger:'bar', dur:'2', amount:8, envA:'1/8', envH:'1/4', envD:'1'})
+      ]
+    };
+    if(name === 'Red Strobe') return {
+      name, bpm:128, palette:P, macros:{intensity:95,density:20,motion:40,distortion:24,audio:70},
+      fx:{noise:20,scan:8,rgb:14,jitter:10,slice:8,invert:0},
+      layers: [
+        black(),
+        this.mkLayer('solid', {name:'RED FLASH', colorRef:'accent', anim:'flash', trigger:'beat', dur:'1/8', envA:'0', envH:'1/16', envD:'1/8', amount:100, audSrc:'low', audTgt:'opacity', audAmt:35}),
+        this.mkLayer('solid', {name:'WHITE STROBE', colorRef:'secondary', anim:'flash', trigger:'4beat', dur:'1/16', envA:'0', envH:'1/16', envD:'1/16', amount:100, off:'1/2'}),
+        this.mkLayer('rect', {name:'CENTER BAR', colorRef:'primary', w:100, h:16.66, x:50, y:50, fill:true, anim:'reveal', trigger:'bar', dur:'1/2', amount:100, envA:'1/16', envH:'1/2', envD:'1/4', blend:'multiply'})
+      ]
+    };
+    if(name === 'Industrial Lines') return {
+      name, bpm:124, palette:P, macros:{intensity:55,density:50,motion:30,distortion:12,audio:60},
+      fx:{noise:18,scan:22,rgb:6,jitter:4,slice:6,invert:0},
+      layers: [
+        black(),
+        this.mkLayer('dots', {name:'GRID FIELD', dotCount:120, dotSpread:104, dotRadius:1.4, dotDist:'grid', opacity:34, anim:'flicker', trigger:'bar', dur:'4', amount:20, envH:'4', envD:'0'}),
+        this.mkLayer('line', {name:'V ARRAY', angle:90, len:100, thick:4, x:50, y:50, rep:6, repGap:16, mirror:'x', anim:'reveal', trigger:'beat', dur:'1/4', envA:'1/16', envH:'1/16', envD:'1/8'}),
+        this.mkLayer('line', {name:'H RED', colorRef:'accent', angle:0, len:100, thick:6, x:50, y:50, rep:2, repGap:33, mirror:'y', anim:'reveal', trigger:'2bar', dur:'1/2', envA:'1/16', envH:'1/2', envD:'1/4'}),
+        this.mkLayer('rect', {name:'FRAME', fill:false, stroke:3, w:66.6, h:66.6, x:50, y:50, opacity:30, anim:'pulse', trigger:'bar', dur:'2', amount:10, envA:'1/8', envH:'1/4', envD:'1'})
+      ]
+    };
+    if(name === 'No Signal') return {
+      name, bpm:96, palette:P, macros:{intensity:60,density:20,motion:20,distortion:55,audio:45},
+      fx:{noise:38,scan:46,rgb:22,jitter:14,slice:26,invert:0},
+      layers: [
+        black(),
+        this.mkLayer('text', {name:'NO SIGNAL', text:'NO SIGNAL', font:'pixel', weight:700, fontSize:220, tracking:10, y:46, anim:'glitch', trigger:'bar', dur:'1', amount:60, distAmt:60, envA:'0', envH:'1/2', envD:'1/2'}),
+        this.mkLayer('text', {name:'СИГНАЛ', text:'НЕМА СИГНАЛУ', font:'mono', weight:500, fontSize:40, tracking:18, y:60, colorRef:'accent', anim:'flicker', trigger:'beat', dur:'1', amount:50, envH:'1', envD:'0'}),
+        this.mkLayer('dots', {name:'CROSS', dotCount:40, dotSpread:120, dotRadius:2, dotDist:'cross', opacity:30, anim:'flicker', trigger:'bar', dur:'4', amount:40, envH:'4', envD:'0'}),
+        this.mkLayer('line', {name:'RAILS', angle:90, len:100, thick:2, x:12.5, y:50, mirror:'x', opacity:30, anim:'flash', trigger:'2beat', dur:'1/4', envA:'0', envH:'1/8', envD:'1/8'}),
+        this.mkLayer('line', {name:'SCAN BAR', angle:0, len:100, thick:22, opacity:14, anim:'move', trigger:'2bar', dur:'2bar', amount:100, rot:90, blend:'lighter'})
+      ]
+    };
+    if(name === 'Night Drive') return {
+      name, bpm:108, palette:P, macros:{intensity:25,density:35,motion:60,distortion:5,audio:55},
+      fx:{noise:16,scan:10,rgb:3,jitter:0,slice:0,invert:0},
+      layers: [
+        black(),
+        this.mkLayer('dots', {name:'FIELD', dotCount:140, dotSpread:112, dotRadius:1.4, dotDist:'grid', opacity:30, anim:'move', trigger:'2bar', dur:'2bar', amount:40, rot:0}),
+        this.mkLayer('line', {name:'HORIZON', angle:0, len:100, thick:2, y:58.33, opacity:50, anim:'pulse', trigger:'bar', dur:'2', amount:15, envA:'1/4', envH:'1/4', envD:'1'}),
+        this.mkLayer('line', {name:'GUIDES', angle:90, len:33.3, thick:2, x:25, y:58.33, rep:3, repGap:8, mirror:'x', opacity:34, anim:'reveal', trigger:'2beat', dur:'1/2', envA:'1/16', envH:'1/4', envD:'1/4'}),
+        this.mkLayer('rect', {name:'RED MARK', colorRef:'accent', w:1.6, h:2.8, x:25, y:58.33, mirror:'x', fill:true, anim:'pulse', trigger:'4beat', dur:'1', amount:40, envA:'0', envH:'1/8', envD:'1/2', audSrc:'low', audTgt:'opacity', audAmt:35})
+      ]
+    };
+    return null;
+  }
+
+  applyPreset(p){
+    if(!p) return;
+    this.pushHistory();
+    this.bpmEdited = true;   // presets never touch tempo — that stays yours
+    this.setState({
+      palette: p.palette, macros: p.macros, fx: p.fx,
+      layers: p.layers.map(l => Object.assign({}, l)),
+      selId: p.layers.length > 1 ? p.layers[1].id : p.layers[0].id
+    });
+    this.beats = 0;
+  }
+
+  savePreset(){
+    const name = (this.state.presetName || '').trim() || ('SCENE ' + (this.state.userPresets.length+1));
+    const S = this.state;
+    const p = {name, bpm:S.bpm, palette:S.palette, macros:S.macros, fx:S.fx, layers:S.layers};
+    const list = this.state.userPresets.concat([p]);
+    this.persist(list);
+    this.setState({userPresets:list, presetName:''});
+  }
+  persist(list){
+    try { localStorage.setItem('signal.presets.v1', JSON.stringify(list)); } catch(e){}
+  }
+
+  generate(){
+    this.pushHistory();
+    const S = this.state, M = S.macros;
+    const dens = M.density/100, inten = M.intensity/100, dist = M.distortion/100;
+    const pick = (a) => a[Math.floor(Math.random()*a.length)];
+    const trig = () => pick(inten > 0.6 ? ['beat','beat','2beat','offbeat'] : ['2beat','4beat','bar','2bar']);
+    const dur  = () => pick(inten > 0.6 ? ['1/16','1/8','1/4','1/2'] : ['1/4','1/2','1','2']);
+    const layers = [this.mkLayer('solid', {name:'BLACK', colorRef:'primary', anim:'none', trigger:'continuous'})];
+
+    // 1 — a field, so the frame is never mostly empty
+    layers.push(this.mkLayer('dots', {
+      name:'FIELD',
+      dotDist: pick(['grid','grid','random','cross','diag','ring']),
+      dotCount: Math.round(40 + dens*180),
+      dotSpread: pick([96, 104, 112]),
+      dotRadius: pick([1.4,2,3]),
+      opacity: Math.round(24 + dens*30),
+      anim: pick(['flicker','pulse','move','rotate']),
+      trigger: pick(['bar','2bar']), dur: pick(['2','4','2bar']),
+      amount: Math.round(15 + inten*40), envA:'1/8', envH:'4', envD:'0'
+    }));
+
+    // 2 — symmetric line arrays
+    const arrays = 1 + Math.round(dens*2);
+    for(let i=0;i<arrays;i++){
+      const vertical = i % 2 === 0;
+      layers.push(this.mkLayer('line', {
+        name: (vertical ? 'V' : 'H') + ' ARRAY ' + (i+1),
+        colorRef: i === 1 ? 'accent' : 'secondary',
+        angle: vertical ? 90 : 0,
+        len: 100, thick: Math.round(2 + inten*5),
+        x: 50, y: 50,
+        rep: pick(vertical ? [3,5,6,9] : [2,3,5]),
+        repGap: pick(vertical ? [8,11,16] : [16,22,33]),
+        mirror: vertical ? 'x' : 'y',
+        opacity: Math.round(45 + Math.random()*55),
+        anim: pick(['reveal','flash','pulse']),
+        trigger: trig(), dur: dur(),
+        amount: Math.round(30 + inten*60),
+        envA:'1/16', envH:'1/16', envD: pick(['1/8','1/4','1/2']),
+        randX: vertical && Math.random() < 0.35,
+        randY: !vertical && Math.random() < 0.35
+      }));
+    }
+
+    // 3 — a centred geometric anchor
+    if(Math.random() < 0.75){
+      layers.push(Math.random() < 0.5
+        ? this.mkLayer('rect', {name:'FRAME', fill:false, stroke:pick([3,4,6]), w:pick([50,66.6,83.3]), h:pick([50,66.6]), x:50, y:50, opacity:Math.round(20+dens*30), anim:pick(['pulse','reveal','rotate']), trigger:'bar', dur:pick(['1/2','2']), amount:Math.round(8+inten*25), envA:'1/8', envH:'1/4', envD:'1'})
+        : this.mkLayer('circle', {name:'CIRCLE', fill:false, stroke:pick([3,5]), r:pick([12,20,28]), x:50, y:50, opacity:Math.round(25+dens*30), anim:pick(['pulse','reveal']), trigger:pick(['2beat','bar']), dur:pick(['1/2','1','2']), amount:Math.round(15+inten*40), envA:'1/16', envH:'1/8', envD:'1/2', audSrc:'low', audTgt:'scale', audAmt:35}));
+    }
+
+    // 4 — corner dot markers, 4-way mirrored
+    if(dens > 0.3){
+      layers.push(this.mkLayer('rect', {name:'MARKS', colorRef:'accent', w:1.6, h:2.8, x:pick([8.33,16.6,25]), y:pick([16.6,25,83.3]), mirror:'quad', fill:true, anim:'flash', trigger:pick(['beat','2beat','4beat']), dur:'1/4', envA:'0', envH:'1/16', envD:'1/8', amount:100}));
+    }
+
+    // 5 — typography, occasionally
+    if(Math.random() < 0.4){
+      layers.push(this.mkLayer('text', {
+        name:'TYPE', text: pick(['X','01','//','VOID','NO SIGNAL','ЄД','◼']),
+        font: Math.random() < 0.35 ? 'pixel' : 'mono', weight: pick([400,500,700]),
+        fontSize: pick([48,96,160,220]), tracking: pick([6,16,30]), x:50, y:50,
+        anim: pick(['glitch','flicker','reveal']), trigger: pick(['bar','2bar','4bar']), dur:'1',
+        amount: Math.round(40 + inten*50), distAmt: Math.round(dist*90),
+        envA:'0', envH:'1/2', envD:'1/2'
+      }));
+    }
+
+    // 6 — strobe on top when intensity is high
+    if(inten > 0.7){
+      layers.push(this.mkLayer('solid', {name:'FLASH', colorRef: Math.random() < 0.5 ? 'accent' : 'secondary', anim:'flash', trigger:pick(['4beat','bar']), dur:'1/16', envA:'0', envH:'1/16', envD:'1/16'}));
+    }
+
+    this.setState({layers, selId: layers[1].id});
+    return;
+  }
+
+  /* ---------- render vals ---------- */
+
+  renderVals(){
+    const S = this.state;
+    const sel = this.sel();
+    const builtin = ['Minimal Pulse','Symmetry','Red Strobe','Industrial Lines','No Signal','Night Drive'];
+    const h = {};
+    Component.NUM.forEach(f => { h[f] = this.bind(f,'num'); });
+    Component.STR.forEach(f => { h[f] = this.bind(f,'str'); });
+    Component.BOOL.forEach(f => { h[f] = this.bind(f,'bool'); });
+    const mh = {}; ['intensity','density','motion','distortion','audio'].forEach(k => mh[k] = this.macroBind(k));
+    const fh = {}; ['noise','scan','rgb','jitter','slice','invert'].forEach(k => fh[k] = this.fxBind(k));
+    const ph = {}; ['primary','secondary','accent'].forEach(k => ph[k] = this.palBind(k));
+
+    const layerRows = S.layers.map(l => ({
+      id: l.id, name: l.name, type: l.type.toUpperCase(),
+      bg: l.id === S.selId ? '#17171c' : 'transparent',
+      fg: l.visible ? (l.id === S.selId ? '#ffffff' : '#a1a1aa') : '#3f3f46',
+      dot: l.visible ? '#ff2b18' : 'transparent',
+      onSelect: () => this.setState({selId: l.id}),
+      onToggle: (e) => { e.stopPropagation(); this.setState(s => ({layers: s.layers.map(x => x.id === l.id ? Object.assign({}, x, {visible: !x.visible}) : x)})); }
+    }));
+
+    const presetRows = builtin.map(n => ({
+      name: n, tag: 'INIT',
+      onLoad: () => this.applyPreset(this.buildPreset(n)),
+      onDup: () => { const p = this.buildPreset(n); p.name = n + ' COPY'; const list = S.userPresets.concat([p]); this.persist(list); this.setState({userPresets:list}); },
+      onDel: () => {}
+    })).concat(S.userPresets.map((p,i) => ({
+      name: p.name, tag: 'USER',
+      onLoad: () => this.applyPreset(p),
+      onDup: () => { const c = JSON.parse(JSON.stringify(p)); c.name = p.name + ' COPY'; const list = S.userPresets.concat([c]); this.persist(list); this.setState({userPresets:list}); },
+      onDel: () => { const list = S.userPresets.filter((_,j) => j !== i); this.persist(list); this.setState({userPresets:list}); }
+    })));
+
+    return {
+      bpm: S.bpm, bpmText: S.bpmText, bpmPick: S.bpmPick, playing: S.playing, playLabel: S.playing ? 'PAUSE' : 'PLAY',
+      macros: S.macros, fx: S.fx, palette: S.palette,
+      layerRows, layerCount: S.layers.length, presetRows,
+      presetName: S.presetName, addType: S.addType,
+      audioName: S.audioName,
+      detectedLabel: S.detected ? ('DETECTED ' + S.detected + ' — APPLY') : '',
+      sel: sel || {}, hasSel: !!sel, noSel: !sel,
+      selTypeLabel: sel ? sel.type.toUpperCase() + ' LAYER' : '',
+      isLine: !!sel && sel.type === 'line',
+      isRect: !!sel && sel.type === 'rect',
+      isCircle: !!sel && sel.type === 'circle',
+      isDots: !!sel && sel.type === 'dots',
+      isText: !!sel && sel.type === 'text',
+      isImage: !!sel && sel.type === 'image',
+      isVideo: !!sel && sel.type === 'video',
+      isMedia: !!sel && (sel.type === 'image' || sel.type === 'video'),
+      exportMsg: S.exportMsg,
+      exportLenLabel: this.exportLenLabel(),
+      recLabel: S.recording ? '■ CANCEL' : '● EXPORT MP4',
+      recBg: S.recording ? '#16161a' : '#ff2b18',
+      recFg: S.recording ? '#ff2b18' : '#000000',
+      exportTitle: 'OFFLINE RENDER — 1920×1080 · 60 FPS · ' + this.exportLenLabel() + (this.buffer && typeof AudioEncoder === 'undefined' ? ' · SILENT: THIS BROWSER HAS NO AAC ENCODER, MUX THE AUDIO BACK IN YOURSELF' : ''),
+      onExport: () => this.startExport(),
+      notSolid: !!sel && sel.type !== 'solid',
+      hasStroke: !!sel && (sel.type === 'rect' || sel.type === 'circle'),
+      h, mh, fh, ph,
+      canvasRef: this.canvasRef, waveRef: this.waveRef, stageRef: this.stageRef,
+      timeRef: this.timeRef, barRef: this.barRef, flashRef: this.flashRef, fpsRef: this.fpsRef,
+      levelRef: this.levelRef, lowRef: this.lowRef, midRef: this.midRef, highRef: this.highRef,
+      onPlay: () => this.togglePlay(),
+      onStop: () => this.stop(),
+      onBpmType: (e) => this.setState({bpmText: e.target.value.replace(/[^0-9.,]/g,'')}),
+      onBpmCommit: () => this.commitBpm(),
+      onBpmKey: (e) => {
+        if(e.key === 'Enter'){ e.currentTarget.blur(); this.commitBpm(); }
+        else if(e.key === 'ArrowUp'){ e.preventDefault(); this.setBpm(this.state.bpm + (e.shiftKey ? 0.1 : 1)); }
+        else if(e.key === 'ArrowDown'){ e.preventDefault(); this.setBpm(this.state.bpm - (e.shiftKey ? 0.1 : 1)); }
+      },
+      onBpmUp: () => this.setBpm(this.state.bpm + 1),
+      onBpmDown: () => this.setBpm(this.state.bpm - 1),
+      onBpmPick: (e) => { const v = parseFloat(e.target.value); if(!isNaN(v)) this.setBpm(v); },
+      onTap: () => this.tapTempo(),
+      onAddType: (e) => this.setState({addType: e.target.value}),
+      onAdd: () => { this.pushHistory(); const L = this.mkLayer(S.addType); this.setState(s => ({layers: s.layers.concat([L]), selId: L.id})); },
+      onDup: () => { if(!sel) return; this.pushHistory(); const c = Object.assign({}, sel, {id: Math.floor(Math.random()*1e9), name: sel.name + ' 2', seed: Math.floor(Math.random()*99999)}); if(this.images[sel.id]) this.images[c.id] = this.images[sel.id]; if(this.videos[sel.id]) this.videos[c.id] = this.videos[sel.id]; this.setState(s => ({layers: s.layers.concat([c]), selId: c.id})); },
+      onImage: (e) => {
+        const f = e.target.files && e.target.files[0];
+        if(!f || !sel) return;
+        const img = new Image();
+        img.onload = () => { this.images[sel.id] = img; this.setState(s => ({tick: s.tick + 1})); };
+        img.src = URL.createObjectURL(f);
+        this.patch('imgName', f.name);
+      },
+      onVideo: (e) => {
+        const f = e.target.files && e.target.files[0];
+        if(!f || !sel) return;
+        this.loadVideo(sel.id, f);
+        this.patch('vidName', f.name);
+      },
+      onDel: () => { if(!sel) return; this.pushHistory(); this.setState(s => { const ls = s.layers.filter(l => l.id !== sel.id); return {layers: ls, selId: ls.length ? ls[ls.length-1].id : null}; }); },
+      onUndo: () => this.undo(),
+      canUndo: S.histLen > 0,
+      undoColor: S.histLen > 0 ? '#d4d4d8' : '#3f3f46',
+      undoLabel: S.histLen ? ('↩ ' + S.histLen) : '↩',
+      undoTitle: S.histLen ? ('UNDO — ⌘Z · ' + S.histLen + ' steps') : 'UNDO — ⌘Z · nothing to undo',
+      onUp: () => this.move(-1),
+      onDown: () => this.move(1),
+      onGenerate: () => this.generate(),
+      onFullscreen: () => { const el = this.stageRef.current; if(el && el.requestFullscreen) el.requestFullscreen().catch(()=>{}); },
+      onFile: (e) => { const f = e.target.files && e.target.files[0]; if(f) this.loadFile(f); },
+      onDetect: () => this.detectBPM(true),
+      onSeek: (e) => {
+        const c = this.waveRef.current; if(!c) return;
+        const r = c.getBoundingClientRect();
+        const frac = Math.max(0, Math.min(1, (e.clientX - r.left)/r.width));
+        const dur = this.buffer ? this.buffer.duration : 32;
+        const t = frac*dur;
+        this.elapsed = t; this.startElapsed = t;
+        if(this.src) this.startSource();
+        this.beats = Math.max(0, t - this.beatOffset)*this.state.bpm/60;
+      },
+      onHalf: () => this.setBpm(this.state.bpm/2),
+      onDouble: () => this.setBpm(this.state.bpm*2),
+      onApplyDetected: () => { if(S.detected) this.setBpm(S.detected); },
+      onNudgeGrid: () => {
+        // treat the current playhead as bar 1 / beat 1
+        const t = this.buffer ? (this.elapsed || 0) : this.beats*60/this.state.bpm;
+        this.beatOffset = Math.max(0, t);
+        this.beats = 0;
+      },
+      onPresetName: (e) => this.setState({presetName: e.target.value}),
+      onSavePreset: () => this.savePreset()
+    };
+  }
+
+  move(dir){
+    this.pushHistory();
+    this.setState(s => {
+      const i = s.layers.findIndex(l => l.id === s.selId);
+      const j = i + dir;
+      if(i < 0 || j < 0 || j >= s.layers.length) return {};
+      const ls = s.layers.slice();
+      const t = ls[i]; ls[i] = ls[j]; ls[j] = t;
+      return {layers: ls};
+    });
+  }
+}
+</script>
+</body>
+</html>
