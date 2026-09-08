@@ -310,6 +310,38 @@ h1,h2,h3,h4,p{margin:0}
 }
 
 /* =========================================================
+   HERO SLIDER — poster slide + editorial hero slide
+   ========================================================= */
+.heroslider{position:relative;height:100svh;min-height:480px;overflow:hidden;background:var(--bg);touch-action:pan-y}
+.heroslider__slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 620ms ease,visibility 620ms ease;z-index:0}
+.heroslider__slide.is-current{opacity:1;visibility:visible;z-index:1}
+.heroslider .hero{height:100%;min-height:0}
+.heroslider__slide.hposter{background:#e3e4df;display:block;position:absolute;inset:0}
+@media (max-width:899px){.heroslider__slide.hposter{background:#ebebe3}}
+.hposter__img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:block}
+@media (min-width:900px){.hposter__img{object-position:center center}}
+.heroslider__slide .hposter__body{position:absolute;inset:0;z-index:2;pointer-events:none;color:#14130f}
+.hposter__body .hero__cta{pointer-events:auto}
+@media (min-width:900px){.hposter__body .hero__bottom{justify-content:center}}
+.heroslider__slide .hposter__body .hero__cta{justify-content:center;width:100%;max-width:none}
+.hposter__body .btn--ghost{border-color:rgba(20,19,15,.32);color:#14130f}
+.hposter__body .btn--ghost:hover{background:#14130f;border-color:#14130f;color:#e3e4df}
+.heroslider__dots{position:absolute;z-index:4;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:4px;pointer-events:none}
+.heroslider__dot{width:34px;height:30px;border:0;padding:14px 4px;box-sizing:content-box;background:transparent;cursor:pointer;display:flex;align-items:flex-end;pointer-events:auto}
+.heroslider__dot::before{content:"";display:block;width:100%;height:2px;background:#fff;opacity:.32;transition:opacity 160ms ease}
+.heroslider__dot:hover::before{opacity:.7}
+.heroslider__dot.is-current::before{opacity:1}
+.heroslider.is-light .heroslider__dot::before{background:#14130f}
+.heroslider .hero__body{padding-bottom:46px}
+.sitebar:not(.is-scrolled).on-light{color:var(--fg)}
+.sitebar:not(.is-scrolled).on-light .sitebar__mark,.sitebar:not(.is-scrolled).on-light .sitebar__mark em,.sitebar:not(.is-scrolled).on-light .sitebar__social a{color:#14130f}
+.sitebar:not(.is-scrolled).on-light .sitebar__mark img{filter:brightness(0)}
+.sitebar:not(.is-scrolled).on-light .lang{border-color:rgba(20,19,15,.28)}
+.sitebar:not(.is-scrolled).on-light .lang button{color:#14130f;opacity:.8}
+.sitebar:not(.is-scrolled).on-light .lang button.is-active{background:#14130f;color:#eceae5}
+.sitebar:not(.is-scrolled).on-light .lang__sep{background:rgba(20,19,15,.28)}
+
+/* =========================================================
    HERO  — photo-led editorial split, fits one viewport
    ========================================================= */
 .hero{
@@ -1932,9 +1964,25 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 <main id="main">
 
 <!-- ============================================================
-     01 — HERO
+     01 — HERO SLIDER
      ============================================================ -->
-<section class="hero" id="hero" data-variant="stacked" data-screen-label="01 Hero">
+<div class="heroslider" id="hero-slider" aria-roledescription="carousel" aria-label="Ship Her Son">
+
+<section class="heroslider__slide hposter is-current" data-screen-label="01 Poster 10/10" aria-label="10/10 Ship Her Son with Friends — POPUP, Kyiv">
+  <picture>
+    <source media="(max-width: 899px)" srcset="assets/poster-1010-mobile.png" />
+    <img class="hposter__img" src="assets/poster-1010-desktop.png" alt="10/10 — Ship Her Son with Friends. Великий концерт до першої річниці альбому «Саундтрек до порядку денного». POPUP, Кирилівська 60." width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async" />
+  </picture>
+  <div class="hposter__body hero__body">
+    <div class="hero__bottom">
+      <div class="hero__cta">
+        <a class="btn btn--ghost btn--vinyl" href="https://concert.ua/widget/booking/ship-her-son/?promo=popup" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">Купити квитки ↗</span><span data-lang-only="en">Buy Tickets ↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero heroslider__slide" id="hero" data-variant="stacked" data-screen-label="02 Hero">
 
   <div class="hero__acclaim" aria-label="Album acclaim">
     <ul class="hero__acclaim-grid">
@@ -2015,6 +2063,9 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
          loading="eager" fetchpriority="high" decoding="async" />
   </div>
 </section>
+
+  <div class="heroslider__dots" role="tablist" aria-label="Slides"></div>
+</div>
 
 <!-- ============================================================
      02 — RELEASES / DISCOGRAPHY
@@ -3057,6 +3108,69 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
   window.addEventListener('resize', update);
 })();
 /* Hero acclaim — static poster-style grid (no JS) */
+
+/* Hero slider — poster slide + editorial hero slide */
+(function(){
+  var root = document.getElementById('hero-slider');
+  if (!root) return;
+  var slides = Array.prototype.slice.call(root.querySelectorAll('.heroslider__slide'));
+  var dots = root.querySelector('.heroslider__dots');
+  var bar = document.getElementById('sitebar');
+  var i = 0, timer = null, stopped = false;
+  slides.forEach(function(s, n){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'heroslider__dot';
+    b.setAttribute('aria-label', 'Slide ' + (n + 1));
+    b.addEventListener('click', function(){ stop(); go(n); });
+    dots.appendChild(b);
+  });
+  function go(n){
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function(s, k){ s.classList.toggle('is-current', k === i); });
+    Array.prototype.forEach.call(dots.children, function(d, k){ d.classList.toggle('is-current', k === i); });
+    var light = slides[i].classList.contains('hposter');
+    root.classList.toggle('is-light', light);
+    if (bar) bar.classList.toggle('on-light', light);
+  }
+  function stop(){ stopped = true; if (timer) { clearInterval(timer); timer = null; } }
+  root.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowLeft'){ stop(); go(i - 1); }
+    if (e.key === 'ArrowRight'){ stop(); go(i + 1); }
+  });
+  var x0 = null, y0 = null, px0 = null, py0 = null, dragging = false;
+  root.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, {passive:true});
+  root.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    x0 = null; y0 = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){ stop(); go(dx < 0 ? i + 1 : i - 1); }
+  });
+  root.addEventListener('pointerdown', function(e){
+    if (e.pointerType === 'touch' || e.button !== 0) return;
+    if (e.target.closest('a, button')) return;
+    px0 = e.clientX; py0 = e.clientY; dragging = true;
+  });
+  root.addEventListener('pointerup', function(e){
+    if (!dragging) return;
+    dragging = false;
+    var dx = e.clientX - px0, dy = e.clientY - py0;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)){ stop(); go(dx < 0 ? i + 1 : i - 1); }
+  });
+  root.addEventListener('pointercancel', function(){ dragging = false; });
+  root.addEventListener('dragstart', function(e){ e.preventDefault(); });
+  var wheelLock = false;
+  root.addEventListener('wheel', function(e){
+    if (Math.abs(e.deltaX) < 24 || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    if (wheelLock) return;
+    wheelLock = true; setTimeout(function(){ wheelLock = false; }, 700);
+    stop(); go(e.deltaX > 0 ? i + 1 : i - 1);
+  }, {passive:false});
+  go(0);
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    timer = setInterval(function(){ if (!stopped) go(i + 1); }, 8000);
+  }
+})();
 
 (function(){
   var grid = document.querySelector('.hero__acclaim-grid');
