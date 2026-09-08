@@ -1234,8 +1234,7 @@ details.disc-disclosure[open] summary::after{ content:"[—]"; }
   font-size: 22px; letter-spacing:0;
 }
 .tour__row .venue{ opacity:.75; }
-.tour__row[data-sold]{ opacity: .55; }
-.tour__row[data-sold] .venue::after{ content: " · SOLD OUT"; color: var(--red); }
+.tour__row[data-sold] .tix--sold{ opacity: 1; color: var(--red); border-color: var(--red); }
 
 .tour__empty{
   font-family: var(--font-display);
@@ -2493,6 +2492,24 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         <span class="venue"><span data-lang-only="uk">FAINE MISTO FESTIVAL · територія Арени Львів</span><span data-lang-only="en">FAINE MISTO FESTIVAL · Arena Lviv grounds</span></span>
         <a class="tix" href="https://fainemisto.com.ua/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets — Faine Misto Festival, Lviv, 2026.08.02"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
       </div>
+      <div class="tour__row" data-date="2026-09-11" data-sold>
+        <span class="date">11.09.2026</span>
+        <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">Малевич · на розігріві в Хейтспіч</span><span data-lang-only="en">Malevich · supporting Hatespeech</span></span>
+        <span class="tix tix--sold">Sold out</span>
+      </div>
+      <div class="tour__row" data-date="2026-10-02">
+        <span class="date">02.10.2026</span>
+        <span class="city"><span data-lang-only="uk">Львів, UA</span><span data-lang-only="en">Lviv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">Jam Factory · JAM MUSIC FEST</span><span data-lang-only="en">Jam Factory · JAM MUSIC FEST</span></span>
+        <a class="tix" href="https://secure.wayforpay.com/payment/sdcf0f094673d" target="_blank" rel="noopener noreferrer" aria-label="Tickets — JAM MUSIC FEST, Lviv, 2026.10.02"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
+      </div>
+      <div class="tour__row" data-date="2026-10-10">
+        <span class="date">10.10.2026</span>
+        <span class="city"><span data-lang-only="uk">Київ, UA</span><span data-lang-only="en">Kyiv, UA</span></span>
+        <span class="venue"><span data-lang-only="uk">POPUP · великий сольний концерт</span><span data-lang-only="en">POPUP · headline solo show</span></span>
+        <a class="tix" href="https://concert.ua/widget/booking/ship-her-son/?promo=popup" target="_blank" rel="noopener noreferrer" aria-label="Tickets — POPUP, Kyiv, 2026.10.10"><span data-lang-only="uk">Квитки ↗</span><span data-lang-only="en">Tickets ↗</span></a>
+      </div>
       <div class="tour__empty" id="tour-empty" hidden><span data-lang-only="uk">Наразі немає запланованих дат — слідкуйте за оновленнями</span><span data-lang-only="en">No scheduled dates right now — check back soon</span></div>
     </div>
 
@@ -2557,7 +2574,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <p class="merch-item__note"><span data-lang-only="uk">Для замовлення пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">To order, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></p>
         <ul class="merch-item__sizes" aria-label="Sizes / Розміри">
-          <li>S</li><li>M</li><li>L</li><li>XL</li><li>XXL</li>
+          <li>S</li><li>M</li><li>XXL</li>
         </ul>
       </article>
 
@@ -2573,7 +2590,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <p class="merch-item__note"><span data-lang-only="uk">Для замовлення пишіть в <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span><span data-lang-only="en">To order, message on <a href="https://www.instagram.com/ship.her.son" target="_blank" rel="noopener noreferrer">Instagram</a></span></p>
         <ul class="merch-item__sizes" aria-label="Sizes / Розміри">
-          <li>S</li><li>M</li><li>L</li><li>XL</li><li>XXL</li>
+          <li>S</li><li>M</li><li>L</li><li>XXL</li>
         </ul>
       </article>
 
@@ -2794,7 +2811,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 
 <footer class="sitefoot" data-screen-label="Footer">
   <span class="sitefoot__left">© 2026 <span data-lang-only="uk">АНТОН ШИФЕРСОН</span><span data-lang-only="en">ANTON SHIFERSON</span> / SHIP HER SON</span>
-  <span class="sitefoot__right"><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a></span>
+  <span class="sitefoot__right"><!--email_off--><a href="mailto:ship.her.son@gmail.com">ship.her.son@gmail.com</a><!--/email_off--></span>
 </footer>
 
 
