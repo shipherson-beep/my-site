@@ -45,7 +45,6 @@ export function createRoom(scene, renderer, tex) {
   const fb = (w, h, x, y) => { const m = mesh(new THREE.BoxGeometry(w, h, 0.03), frameMat, 'window_frame'); m.position.set(x, y, WALL_Z + 0.015); g.add(m); };
   fb(ww + 0.06, 0.03, wx, wy - wh / 2 - 0.015); fb(ww + 0.06, 0.03, wx, wy + wh / 2 + 0.015);
   fb(0.03, wh, wx - ww / 2 - 0.015, wy); fb(0.03, wh, wx + ww / 2 + 0.015, wy); fb(0.02, wh, wx, wy); fb(ww, 0.02, wx, wy + 0.08);
-  const sill = mesh(new THREE.BoxGeometry(ww + 0.1, 0.02, 0.07), frameMat, 'sill'); sill.position.set(wx, wy - wh / 2 - 0.035, WALL_Z + 0.035); g.add(sill);
   const curtMat = new THREE.MeshStandardMaterial({ name: 'curtain', color: 0x7a4a2a, roughness: 0.95, side: THREE.DoubleSide });
   for (const [cx, cw] of [[wx - ww / 2 - 0.02, 0.16], [wx + ww / 2 + 0.03, 0.14]]) {
     const geo = new THREE.PlaneGeometry(cw, 0.95, 40, 1), p = geo.attributes.position;

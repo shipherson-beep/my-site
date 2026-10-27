@@ -206,7 +206,7 @@ async function init() {
   const relF = (o, a, b) => { fo.p.copy(o.position).add(a); fo.l.copy(o.position).add(b); return fo; };
   const focusOf = f => f === 'case' ? relF(caseObj, V(0.03, 0.25, 0.265), V(0.005, 0, -0.01)) : f === 'player' ? relF(player, V(-0.025, 0.25, 0.275), V(-0.005, 0.008, -0.01)) : (FOCUS[f] || FOCUS.overview);
   const handLight = new THREE.PointLight(0xffd6a8, 0.05, 0.5, 2); handLight.position.set(0.05, 0.08, 0.02); camera.add(handLight); scene.add(camera); // soft light on whatever is held
-  const camP = FOCUS.overview.p.clone(), camL = FOCUS.overview.l.clone();
+  const camP = FOCUS.overview.p.clone(), camL = FOCUS.overview.l.clone(), swipeL = V(0, 0, 0);
   camera.position.copy(camP); camera.lookAt(camL);
 
   // ---------- actions ----------
@@ -412,8 +412,8 @@ async function init() {
     const tg = hit?.tag || 'void', it = hit?.item;
     if (S.pencil === 'held' && (tg === 'void' || tg === 'desk' || tg === 'pencil' || tg === 'cabinet' || tg === 'cabDoor' || tg === 'colCase' || (it && it.loc === 'cabinet'))) return returnPencil();
     if (tg === 'cabinet' || tg === 'cabDoor') return clickCabinet(hit);
-    if (it && it.loc === 'cabinet') { if (S.focus !== 'cabinet') { S.focus = 'cabinet'; return; } return pickItem(it); }
-    if (tg === 'colCase') { if (S.cassette === 'hand') return cassetteTo('table'); return clickColCase(it); }
+    if (it && it.loc === 'cabinet') return pickItem(it);
+    if (tg === 'colCase') { if (S.cassette === 'hand') return cassetteTo('table'); return pickItem(it); }
     if (tg === 'case' || tg === 'caseLid') return clickCase(tg);
     if (tg === 'cassette') return clickCassette();
     if (tg === 'pencil') return pickPencil();
@@ -475,6 +475,14 @@ async function init() {
   function endWind() { W.active = false; W.pending = 0; canvas.style.cursor = ''; }
 
   // ---------- input ----------
+  const swipe = { dx: 0 }, STRIP = ['cabinet', 'overview', 'player'];
+  const look = { on: false, zone: 0, t: 0, fired: false, nx: 0 }; // mouse: edge-dwell look
+  canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') look.on = false; });
+  function swipeTo(dir) { // dir −1 = look left (cabinet), +1 = look right (player)
+    const i = STRIP.indexOf(S.focus === 'case' ? 'overview' : S.focus); let j = THREE.MathUtils.clamp((i < 0 ? 1 : i) + dir, 0, 2);
+    if (STRIP[j] === 'player' && playerItem.loc !== 'desk' && playerItem.loc !== 'carry') j = 1;
+    if (STRIP[j] !== S.focus) { S.focus = STRIP[j]; S.lastAction = now(); S.idle = 0; }
+  }
   const drag = { on: false, mode: null, x: 0, y: 0, sx: 0, sy: 0, moved: false };
   canvas.addEventListener('contextmenu', e => e.preventDefault());
   canvas.addEventListener('pointerdown', e => {
@@ -485,6 +493,7 @@ async function init() {
     canvas.setPointerCapture(e.pointerId);
     Object.assign(drag, { on: true, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false, mode: null, t0: performance.now() });
     if (S.pencil === 'inserted') { drag.mode = 'wind'; beginWind(e.clientX, e.clientY); return; }
+    drag.mode = e.pointerType === 'mouse' ? null : 'swipe';
     if (S.carry) { if (S.carryMode === 'pick' && !S.carry.mv.moving && pick()?.item === S.carry) drag.mode = 'cinspect'; return; }
     if (S.cassette === 'hand' && !mv.cassette.moving) { const h = pick(); if (h?.tag === 'cassette') drag.mode = 'inspect'; return; }
     if (canHandle()) {
@@ -496,9 +505,11 @@ async function init() {
   });
   canvas.addEventListener('pointermove', e => {
     ptr.x = e.clientX; ptr.y = e.clientY; ptr.ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ptr.moved = true;
+    if (e.pointerType === 'mouse') look.on = true;
     if (!drag.on) return;
     if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 5) drag.moved = true;
     if (drag.mode === 'wind') moveWind(e.clientX, e.clientY);
+    if (drag.mode === 'swipe' && drag.moved) swipe.dx = e.clientX - drag.sx;
     if (drag.mode === 'cinspect' && drag.moved) {
       S.cyaw += (e.clientX - drag.x) * 0.011; S.cpitch = THREE.MathUtils.clamp(S.cpitch + (e.clientY - drag.y) * 0.011, -1.4, 1.4); canvas.style.cursor = 'grabbing';
     }
@@ -516,13 +527,14 @@ async function init() {
   });
   const up = e => {
     if (!drag.on) return; drag.on = false;
+    if (drag.mode === 'swipe') { const dx = e ? e.clientX - drag.sx : 0, dy = e ? e.clientY - drag.sy : 0; swipe.dx = 0; if (Math.abs(dx) > Math.min(70, innerWidth * 0.08) && Math.abs(dx) > Math.abs(dy) * 1.2) { swipeTo(dx > 0 ? -1 : 1); return; } }
     if (drag.mode === 'wind') { endWind(); if (e && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 12 && performance.now() - drag.t0 < 350) withdrawPencil(); return; }
     canvas.style.cursor = '';
     if (drag.mode === 'move' && S.carry === drag.item && S.carryMode === 'drag') { const h = S.hov || drag.item.desk; placeItem(drag.item, h.x, h.z, h.yaw, 0.16); S.lastAction = now(); return; }
     if (!drag.moved) handleClick(pick());
   };
   canvas.addEventListener('pointerup', up);
-  const cancel = () => { drag.on = false; endWind(); if (S.carry && S.carryMode === 'drag') { const it = S.carry, h = S.hov || it.desk; placeItem(it, h.x, h.z, h.yaw, 0.16); } };
+  const cancel = () => { drag.on = false; swipe.dx = 0; endWind(); if (S.carry && S.carryMode === 'drag') { const it = S.carry, h = S.hov || it.desk; placeItem(it, h.x, h.z, h.yaw, 0.16); } };
   canvas.addEventListener('pointercancel', cancel);
   addEventListener('blur', cancel);
   addEventListener('keydown', e => { if (e.key === 'Escape') back(); });
@@ -580,8 +592,16 @@ async function init() {
     player.userData.led.emissiveIntensity += ((S.playing ? 3 : 0) - player.userData.led.emissiveIntensity) * Math.min(1, dt * 10);
 
     // camera
+    const lookOK = look.on && !drag.on && S.cassette !== 'wind' && S.pencil !== 'inserted' && S.pencil !== 'hand' && S.pencil !== 'inserting';
+    if (lookOK) {
+      const nx = ptr.x / innerWidth * 2 - 1, z = nx < -0.84 ? -1 : nx > 0.84 ? 1 : 0;
+      if (z !== look.zone) { look.zone = z; look.t = 0; look.fired = false; }
+      else if (z && !look.fired && (look.t += dt) > 0.22) { look.fired = true; swipeTo(z); }
+    }
+    look.nx += ((lookOK ? THREE.MathUtils.clamp(ptr.x / innerWidth * 2 - 1, -1, 1) : 0) - look.nx) * (1 - Math.exp(-dt * 3));
     const F = focusOf(S.focus), kc = 1 - Math.exp(-dt * 2.2);
-    camP.lerp(F.p, kc); camL.lerp(F.l, kc);
+    swipeL.copy(F.l); swipeL.x -= THREE.MathUtils.clamp(swipe.dx, -200, 200) * 0.00035; swipeL.x += look.nx * 0.022; swipeL.y -= (ptr.y / innerHeight - 0.5) * (lookOK ? 0.012 : 0);
+    camP.lerp(F.p, kc); camL.lerp(swipeL, swipe.dx ? 1 - Math.exp(-dt * 8) : kc);
     camera.position.copy(camP); camera.position.y += Math.sin(time * 0.5) * 0.0008; camera.position.x += Math.sin(time * 0.31) * 0.0008;
     camera.lookAt(camL); camera.updateMatrixWorld();
 
