@@ -328,6 +328,7 @@ export function createPlayer(tex) {
   [['btnEject', 0.012], ['btnStop', 0.027], ['btnPlay', 0.042]].forEach(([name, x]) => {
     const k = tag(new THREE.Group(), name); k.name = name;
     k.add(mesh(box(0.0128, 0.0076, 0.008), keyM, name + '_cap'));
+    const hit = mesh(box(0.0148, 0.0155, 0.032), new THREE.MeshBasicMaterial({ visible: false }), name + '_hit', false, false); hit.position.set(0, -0.0002, 0.010); k.add(hit); // generous touch target
     let ic;
     if (name === 'btnPlay') ic = icon(tri('r'), iconPlay);
     else if (name === 'btnStop') ic = icon(rr(new THREE.Shape(), 0, 0, 0.003, 0.003, 0.0003), iconM);
