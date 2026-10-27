@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Жива істота — касета</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #060403; overflow: hidden; }
+  a { color: #e8dcc4; } a:hover { color: #fff; }
+  #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  #vignette { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 55%, rgba(0,0,0,0) 45%, rgba(8,4,2,.55) 100%); }
+  #grain { position: fixed; inset: 0; pointer-events: none; opacity: .06; mix-blend-mode: overlay; background-size: 200px 200px; }
+  #hint { position: fixed; left: 50%; bottom: 38px; transform: translate(-50%, 6px); max-width: 80vw; text-align: center; pointer-events: none;
+    font: 400 13px/1.5 "IBM Plex Mono", monospace; letter-spacing: .04em; color: #e8dcc4; opacity: 0; transition: opacity .6s, transform .6s; text-shadow: 0 1px 8px rgba(0,0,0,.8); text-wrap: pretty; }
+  #hint.on { opacity: .82; transform: translate(-50%, 0); }
+  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: #0b0806; transition: opacity 1.6s ease; z-index: 5; }
+  #loading.gone { opacity: 0; pointer-events: none; }
+  #reel { width: 56px; height: 56px; background: url(assets/loader.png) center / contain no-repeat; opacity: .55; animation: spin 2.4s linear infinite; }
+  #loading-text { display: none; }
+  #loading.ready #reel { animation-duration: 6s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #debug { position: fixed; left: 12px; top: 10px; font: 11px "IBM Plex Mono", monospace; color: #c9b9a4; display: none; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="vignette"></div>
+<div id="grain"></div>
+<div id="hint"></div>
+<div id="debug"></div>
+<div id="loading"><div id="reel"></div><div id="loading-text"></div></div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
