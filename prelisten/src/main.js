@@ -655,4 +655,4 @@ async function init() {
 let revealed = false;
 function revealDone() { if (revealed) return; revealed = true; loadingEl.classList.add('gone'); }
 
-init().catch(e => { console.error(e); setLoading('Помилка: ' + e.message); });
+init().catch(e => { console.error(e); window.__fail ? window.__fail('Помилка: ' + e.message) : setLoading('Помилка: ' + e.message); });
