@@ -12,14 +12,14 @@ const TXT = {
   uk: {
     loading: 'Готуємо кімнату…', track: 'Завантажуємо запис…', synth: 'Записуємо тимчасовий трек…', enter: 'Клацніть, щоб увійти',
     start: 'Відкрийте кейс із касетою', inspect: 'Тягніть, щоб роздивитися касету · олівець — на столі',
-    approach: 'Піднесіть олівець до котушки й клацніть', wind: 'Затисніть кнопку миші й ведіть по колу · ПКМ або Esc — вийняти олівець',
+    approach: 'Піднесіть олівець до котушки й клацніть', wind: 'Затисніть і ведіть по колу · клацніть ще раз — вийняти олівець',
     toPlayer: 'Тепер — плеєр праворуч', needCassette: 'Спершу дістаньте касету', lidOpen: 'Закрийте кришку плеєра',
     noCassette: 'У плеєрі немає касети', stopFirst: 'Спершу натисніть Stop', endOfTape: 'Кінець плівки', limit: 'Плівка закінчилась',
   },
   en: {
     loading: 'Setting up the room…', track: 'Loading the recording…', synth: 'Recording a placeholder track…', enter: 'Click to enter',
     start: 'Open the cassette case', inspect: 'Drag to look the cassette over · the pencil is on the desk',
-    approach: 'Bring the pencil to a reel and click', wind: 'Hold the mouse button and move in circles · Right-click or Esc to pull the pencil out',
+    approach: 'Bring the pencil to a reel and click', wind: 'Hold and move in circles · click again to pull the pencil out',
     toPlayer: 'Now the player, on the right', needCassette: 'Take the cassette out first', lidOpen: 'Close the player lid',
     noCassette: 'There is no cassette in the player', stopFirst: 'Press Stop first', endOfTape: 'End of tape', limit: 'End of tape',
   },
@@ -483,7 +483,7 @@ async function init() {
     if (e.button === 2) { back(); return; }
     if (e.button !== 0) return;
     canvas.setPointerCapture(e.pointerId);
-    Object.assign(drag, { on: true, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false, mode: null });
+    Object.assign(drag, { on: true, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false, mode: null, t0: performance.now() });
     if (S.pencil === 'inserted') { drag.mode = 'wind'; beginWind(e.clientX, e.clientY); return; }
     if (S.carry) { if (S.carryMode === 'pick' && !S.carry.mv.moving && pick()?.item === S.carry) drag.mode = 'cinspect'; return; }
     if (S.cassette === 'hand' && !mv.cassette.moving) { const h = pick(); if (h?.tag === 'cassette') drag.mode = 'inspect'; return; }
@@ -516,7 +516,7 @@ async function init() {
   });
   const up = e => {
     if (!drag.on) return; drag.on = false;
-    if (drag.mode === 'wind') { endWind(); return; }
+    if (drag.mode === 'wind') { endWind(); if (e && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 12 && performance.now() - drag.t0 < 350) withdrawPencil(); return; }
     canvas.style.cursor = '';
     if (drag.mode === 'move' && S.carry === drag.item && S.carryMode === 'drag') { const h = S.hov || drag.item.desk; placeItem(drag.item, h.x, h.z, h.yaw, 0.16); S.lastAction = now(); return; }
     if (!drag.moved) handleClick(pick());
