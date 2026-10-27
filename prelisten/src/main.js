@@ -509,7 +509,11 @@ async function init() {
     if (!drag.on) return;
     if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 5) drag.moved = true;
     if (drag.mode === 'wind') moveWind(e.clientX, e.clientY);
-    if (drag.mode === 'swipe' && drag.moved) swipe.dx = e.clientX - drag.sx;
+    if (drag.mode === 'swipe' && drag.moved) {
+      const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      if (Math.abs(dx) > Math.min(36, innerWidth * 0.045) && Math.abs(dx) > Math.abs(dy) * 0.9) { swipeTo(dx > 0 ? -1 : 1); drag.mode = 'swiped'; swipe.dx = 0; }
+      else swipe.dx = dx;
+    }
     if (drag.mode === 'cinspect' && drag.moved) {
       S.cyaw += (e.clientX - drag.x) * 0.011; S.cpitch = THREE.MathUtils.clamp(S.cpitch + (e.clientY - drag.y) * 0.011, -1.4, 1.4); canvas.style.cursor = 'grabbing';
     }
@@ -527,6 +531,7 @@ async function init() {
   });
   const up = e => {
     if (!drag.on) return; drag.on = false;
+    if (drag.mode === 'swiped') { swipe.dx = 0; return; }
     if (drag.mode === 'swipe') { const dx = e ? e.clientX - drag.sx : 0, dy = e ? e.clientY - drag.sy : 0; swipe.dx = 0; if (Math.abs(dx) > Math.min(70, innerWidth * 0.08) && Math.abs(dx) > Math.abs(dy) * 1.2) { swipeTo(dx > 0 ? -1 : 1); return; } }
     if (drag.mode === 'wind') { endWind(); if (e && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 12 && performance.now() - drag.t0 < 350) withdrawPencil(); return; }
     canvas.style.cursor = '';
