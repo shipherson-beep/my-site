@@ -381,7 +381,7 @@ async function init() {
   }
   function carryClick(hit) {
     const it = S.carry; if (it.mv.moving) return;
-    if (hit && hit.item === it) { hit = pick(it); if (!(hit && (hit.tag === 'cabinet' || hit.item?.loc === 'cabinet'))) return; }
+    if (hit && hit.item === it) hit = pick(it); // click on the carried item = click on whatever is behind it (cabinet or desk)
     if (hit && (hit.tag === 'cabinet' || hit.tag === 'cabDoor' || hit.item?.loc === 'cabinet')) {
       if (it.kind === 'case' && hit.point && hit.tag !== 'cabDoor') {
         const lp = cabinet.worldToLocal(hit.point.clone());

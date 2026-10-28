@@ -28,8 +28,8 @@ async function fileTex(url, w, h, mode, fill, rot = 0) {
     x.fillStyle = fill || '#000'; x.fillRect(0, 0, w, h);
     const turned = Math.abs(rot) % 180 === 90, iw = turned ? img.height : img.width, ih = turned ? img.width : img.height;
     x.save(); x.translate(w / 2, h / 2); x.rotate(rot * Math.PI / 180);
-    if (mode === 'contain') {
-      const s = Math.min(w / iw, h / ih), dw = img.width * s, dh = img.height * s;
+    if (mode === 'contain' || mode === 'cover') {
+      const s = (mode === 'cover' ? Math.max : Math.min)(w / iw, h / ih), dw = img.width * s, dh = img.height * s;
       x.drawImage(img, -dw / 2, -dh / 2, dw, dh);
     } else { const dw = turned ? h : w, dh = turned ? w : h; x.drawImage(img, -dw / 2, -dh / 2, dw, dh); }
     x.restore();
@@ -188,7 +188,7 @@ const COND = '"IBM Plex Sans Condensed", "IBM Plex Sans", Arial, sans-serif';
 const PAL = [['#1b1b1d', '#e9e2d2'], ['#6e2a20', '#f0e6d6'], ['#d8d2c4', '#1a1a1a'], ['#2f3b46', '#e8e0cf'], ['#4a4f2e', '#efe8d6'], ['#b08530', '#1a1612'], ['#55595f', '#f1ece2'], ['#a8a297', '#161616'], ['#3a2233', '#eadfd0'], ['#203a33', '#e9e2d2'], ['#c9c2b2', '#3a1a14'], ['#141414', '#c8c0b0']];
 function fitText(x, s, font, maxW, size) { let f = size; x.font = font.replace('{s}', f); while (x.measureText(s).width > maxW && f > 8) { f -= 2; x.font = font.replace('{s}', f); } return f; }
 function wear(x, w, h, seed) { const r = rng(seed); for (let i = 0; i < 26; i++) { x.strokeStyle = `rgba(255,255,255,${r() * 0.07})`; x.lineWidth = 0.6 + r(); x.beginPath(); const sx = r() * w, sy = r() * h; x.moveTo(sx, sy); x.lineTo(sx + (r() - .5) * 120, sy + (r() - .5) * 30); x.stroke(); } x.fillStyle = `rgba(0,0,0,${0.05 + r() * 0.08})`; x.fillRect(0, 0, w, 6); x.fillRect(0, h - 6, w, 6); }
-function landscapeFromPortrait(pc, w, h, rot) { const [c, x] = mk(w, h); x.save(); x.translate(w / 2, h / 2); x.rotate(rot * Math.PI / 180); const s = Math.min(w / pc.height, h / pc.width); x.drawImage(pc, -pc.width * s / 2, -pc.height * s / 2, pc.width * s, pc.height * s); x.restore(); return toTex(c); }
+function landscapeFromPortrait(pc, w, h, rot) { const [c, x] = mk(w, h); x.save(); x.translate(w / 2, h / 2); x.rotate(rot * Math.PI / 180); const s = Math.max(w / pc.height, h / pc.width); x.drawImage(pc, -pc.width * s / 2, -pc.height * s / 2, pc.width * s, pc.height * s); x.restore(); return toTex(c); }
 function phPanel(al, i, back) {
   const [bg, fg] = PAL[i % PAL.length], w = 640, h = 1004, [c, x] = mk(w, h);
   x.fillStyle = bg; x.fillRect(0, 0, w, h); grain(x, w, h, .07, 40 + i);
@@ -226,8 +226,8 @@ function phLabel(al, side, i) {
 export async function collectionTextures(al, i, dir, plainCol = '#0b0a09') {
   const f = k => al.files?.[k] ? `${dir}/${al.id}/${al.files[k]}` : null;
   const [front, back, spine, inside, sideA, sideB] = await Promise.all([
-    fileTex(f('front'), 1024, 626, 'contain', '#111', 90), fileTex(f('back'), 1024, 626, 'contain', '#111', 90),
-    fileTex(f('spine'), 1024, 146, 'stretch'), fileTex(f('inside'), 1024, 626, 'contain', '#111', 90),
+    fileTex(f('front'), 1024, 626, 'cover', '#111', 90), fileTex(f('back'), 1024, 626, 'cover', '#111', 90),
+    fileTex(f('spine'), 1024, 146, 'stretch'), fileTex(f('inside'), 1024, 626, 'cover', '#111', 90),
     fileTex(f('sideA'), 1000, 483, 'stretch'), fileTex(f('sideB'), 1000, 483, 'stretch'),
   ]);
   return {
@@ -245,9 +245,9 @@ export async function buildTextures(cfg) {
   const [sideA, sideB, coverFront, coverBack, jCard, spine] = await Promise.all([
     fileTex(T.sideA, 1000, 483, 'stretch'),
     fileTex(T.sideB, 1000, 483, 'stretch'),
-    fileTex(T.coverFront, 1024, 642, 'contain', T.coverFill, T.coverRotate || 0),
-    fileTex(T.coverBack, 1024, 642, 'contain', T.coverFill),
-    fileTex(T.jCard, 1024, 642, 'contain', T.coverFill),
+    fileTex(T.coverFront, 1024, 642, 'cover', T.coverFill, T.coverRotate || 0),
+    fileTex(T.coverBack, 1024, 642, 'cover', T.coverFill),
+    fileTex(T.jCard, 1024, 642, 'cover', T.coverFill),
     fileTex(T.spine, 1024, 126, 'contain', T.coverFill),
   ]);
   return {
