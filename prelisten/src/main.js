@@ -432,6 +432,7 @@ async function init() {
     if (S.carry) return carryClick(hit);
     if (S.pencil === 'inserting') return;
     if (S.pencil === 'hand') { if (S.cassette === 'wind' && S.snap) insertPencil(S.snap); else returnPencil(); return; }
+    if (S.cassette === 'hand' && hit?.tag === 'cassette') hit = pick('cassette'); // click on the held cassette = click on whatever is behind it
     const tg = hit?.tag || 'void', it = hit?.item;
     if (S.pencil === 'held' && (tg === 'void' || tg === 'desk' || tg === 'pencil' || tg === 'cabinet' || tg === 'cabDoor' || tg === 'colCase' || (it && it.loc === 'cabinet'))) return returnPencil();
     if (tg === 'cabinet' || tg === 'cabDoor') return clickCabinet(hit);
@@ -459,7 +460,7 @@ async function init() {
     for (const h of ray.intersectObjects(targets, true)) {
       let o = h.object, tg = null, tobj = null, item = null;
       while (o) { if (!tg && o.userData.tag) { tg = o.userData.tag; tobj = o; } if (o.userData.item) { item = o.userData.item; break; } o = o.parent; }
-      if (skip && item === skip) continue;
+      if (skip && (item === skip || (skip === 'cassette' && tg === 'cassette'))) continue;
       if (tg) {
         if (tg === 'cassette' && S.cassette === 'case') item = caseItem;
         if (tg === 'cassette' && S.cassette === 'player') item = playerItem;
