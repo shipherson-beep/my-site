@@ -12,14 +12,14 @@ const TXT = {
   uk: {
     loading: 'Готуємо кімнату…', track: 'Завантажуємо запис…', synth: 'Записуємо тимчасовий трек…', enter: 'Клацніть, щоб увійти',
     start: 'Відкрийте кейс із касетою', inspect: 'Тягніть, щоб роздивитися касету · олівець — на столі',
-    approach: 'Піднесіть олівець до котушки й клацніть', wind: 'Затисніть і ведіть по колу · клацніть ще раз — вийняти олівець',
+    approach: 'Піднесіть олівець до лівої котушки й клацніть', wind: 'Затисніть і ведіть по колу проти годинникової · клацніть ще раз — вийняти олівець',
     toPlayer: 'Тепер — плеєр праворуч', needCassette: 'Спершу дістаньте касету', lidOpen: 'Закрийте кришку плеєра',
     noCassette: 'У плеєрі немає касети', stopFirst: 'Спершу натисніть Stop', endOfTape: 'Кінець плівки', limit: 'Плівка закінчилась',
   },
   en: {
     loading: 'Setting up the room…', track: 'Loading the recording…', synth: 'Recording a placeholder track…', enter: 'Click to enter',
     start: 'Open the cassette case', inspect: 'Drag to look the cassette over · the pencil is on the desk',
-    approach: 'Bring the pencil to a reel and click', wind: 'Hold and move in circles · click again to pull the pencil out',
+    approach: 'Bring the pencil to the left reel and click', wind: 'Hold and circle counter-clockwise · click again to pull the pencil out',
     toPlayer: 'Now the player, on the right', needCassette: 'Take the cassette out first', lidOpen: 'Close the player lid',
     noCassette: 'There is no cassette in the player', stopFirst: 'Press Stop first', endOfTape: 'End of tape', limit: 'End of tape',
   },
@@ -175,7 +175,7 @@ async function init() {
     if (ray.ray.intersectPlane(plane, tmpV)) lastLocal.copy(cassette.worldToLocal(tmpV.clone()));
     const lx = THREE.MathUtils.clamp(lastLocal.x, -0.075, 0.075), ly = THREE.MathUtils.clamp(lastLocal.y, -0.05, 0.05);
     S.snap = null;
-    for (const s of ['L', 'R']) if (Math.hypot(lx - hubX(s), ly - CAS.HY) < 0.011) S.snap = s;
+    if (Math.hypot(lx - hubX('L'), ly - CAS.HY) < 0.011) S.snap = 'L'; // pencil only goes into the left (supply) reel
     const tip = S.snap ? V(hubX(S.snap), CAS.HY, 0.012) : V(lx, ly, 0.018);
     ap.p.copy(cassette.localToWorld(tip));
     ap.q.copy(cassette.quaternion).multiply(S.snap ? new THREE.Quaternion() : QE(-0.3, 0.22, 0)).multiply(ALONG_Z);
@@ -594,7 +594,9 @@ async function init() {
       W.pending -= step;
       if (!W.active) W.pending *= Math.exp(-dt * 10);
       const applied = tape.driveHub(S.side, step);
-      if (Math.abs(step) > 1e-4 && Math.abs(applied) < Math.abs(step) * 0.3) {
+      const slack = S.side === 'L' ? step < 0 : step > 0; // turning a hub the "push" way only pays out slack
+      if (slack) W.pending = 0;
+      else if (Math.abs(step) > 1e-4 && Math.abs(applied) < Math.abs(step) * 0.3) {
         W.pending = 0;
         if (time - W.strainT > 0.6) { W.strainT = time; sfx('strain'); hint('limit', { once: false, dur: 1500 }); }
       }
