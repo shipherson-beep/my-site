@@ -196,7 +196,7 @@ export class AudioEngine {
 }
 
 // Packed track: shuffled, reversed, keystream-masked chunks (no playable file on the server).
-const _P = ['1d2mlz', 'bpdv9k', 'm1p3x5', 'we0ckq', '16qbl8b', '1h2mtvw', '1rey2jh'];
+const _P = ['rrmipw4', 'gry4nd8', '9jwgz4', 'qyzr5i8', '4q6m6ai', '2j12jm', 't0z7b0z'];
 async function unpack() {
   const parts = await Promise.all(_P.map(async (n, i) => {
     const b = new Uint8Array(await (await fetch(`assets/audio/t/${n}.dat`)).arrayBuffer());

@@ -123,7 +123,8 @@ async function init() {
   const slots = cabinet.userData.slots.cases, fSlot = COL.featuredSlot ?? 7;
   const order = albums.map((_, i) => i); { let s = 11; for (let i = order.length - 1; i > 0; i--) { s = (s * 16807) % 2147483647; const j = s % (i + 1); [order[i], order[j]] = [order[j], order[i]]; } }
   const items = [], colObjs = [];
-  const caseItem = { id: 'featured', kind: 'case', featured: true, obj: caseObj, home: slotWorld(slots[fSlot]), loc: 'cabinet', desk: null };
+  const slotsW = slots.map(slotWorld), shelfOf = si => (slots[si].p.y > CAB.feet + CAB.shelfY ? 0 : 1);
+  const caseItem = { id: 'featured', kind: 'case', featured: true, obj: caseObj, slot: fSlot, home: slotsW[fSlot], loc: 'cabinet', desk: null };
   items.push(caseItem);
   let ai = 0;
   slots.forEach((s, si) => {
@@ -134,7 +135,7 @@ async function init() {
     const mini = createMiniCassette(tex, tx.sideA, tx.sideB, idx, ((idx * 37) % 100) / 100);
     mini.position.copy(obj.userData.cassetteLocal); mini.quaternion.copy(FLAT); obj.add(mini);
     scene.add(obj); colObjs.push(obj);
-    const it = { id: al.id, album: al, kind: 'case', featured: false, obj, home: slotWorld(s), loc: 'cabinet', desk: null, lid: { a: 0, v: 0, target: 0 }, yaw0: Math.PI / 2 + (((idx * 0.137) % 0.16) - 0.08) };
+    const it = { id: al.id, album: al, kind: 'case', featured: false, obj, slot: si, home: slotsW[si], loc: 'cabinet', desk: null, lid: { a: 0, v: 0, target: 0 }, yaw0: Math.PI / 2 + (((idx * 0.137) % 0.16) - 0.08) };
     obj.userData.item = it; items.push(it);
   });
   const playerItem = { id: 'player', kind: 'player', obj: player, home: slotWorld(cabinet.userData.slots.player), loc: 'cabinet', desk: null };
@@ -287,7 +288,7 @@ async function init() {
   const DESK = { x0: -0.78, x1: 0.78, z0: -0.315, z1: 0.325 };
   const KIND = {
     case: { hx: 0.055, hz: 0.0345, cx: 0, y: 0, off: V(0, -0.004, -0.235), iq: new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(V(0, 1, 0), V(0, 0, 1), V(1, 0, 0))), pick: 'casePick', place: 'casePlace' },
-    player: { hx: 0.057, hz: 0.044, cx: 0, y: 0, off: V(0, -0.012, -0.26), iq: QE(Math.PI / 2 - 0.3, 0, 0), pick: 'heavyPick', place: 'heavyPlace' },
+    player: { hx: 0.060, hz: 0.042, cx: 0, y: 0, off: V(0, -0.012, -0.26), iq: QE(Math.PI / 2 - 0.3, 0, 0), pick: 'heavyPick', place: 'heavyPlace' },
     pencil: { hx: 0.0945, hz: 0.0042, cx: 0.0945, y: pencil.userData.flatY, off: V(-0.095, -0.012, -0.25), iq: QE(0.5, 0, 0.06), pick: 'pencilPick', place: 'pencilDown' },
     cassette: { hx: 0.0505, hz: 0.0322, cx: 0, y: CAS.T / 2 },
   };
@@ -356,18 +357,40 @@ async function init() {
     it.mv.go(() => it.deskPose, { dur, arc: dur > 0.3 ? 0.03 : 0, onDone: () => sfx(k.place) });
     return true;
   }
-  function returnHome(it) {
+  // nearest free case slot; shelf null = any (own slot preferred), lx = cabinet-local x of the click
+  function freeSlot(it, shelf, lx) {
+    const taken = new Set(items.filter(o => o !== it && o.kind === 'case' && o.loc === 'cabinet').map(o => o.slot));
+    if (shelf === null && !taken.has(it.slot)) return it.slot;
+    const ref = lx ?? slots[it.slot].p.x, refShelf = shelfOf(it.slot);
+    let best = null, bd = 1e9;
+    slots.forEach((s, si) => {
+      if (taken.has(si) || (shelf !== null && shelfOf(si) !== shelf)) return;
+      const d = Math.abs(s.p.x - ref) + (shelf === null && shelfOf(si) !== refShelf ? 1 : 0);
+      if (d < bd) { bd = d; best = si; }
+    });
+    return best;
+  }
+  function returnHome(it, slotIdx) {
     if (it === caseItem && S.caseOpen) closeCase();
     if (it.lid && it.lid.target) { it.lid.target = 0; sfx('caseClose', 0.2); }
     if (it === playerItem && S.playerOpen) { S.playerOpen = false; lids.player.target = 0; sfx('playerClose', 0.17); }
+    if (it.kind === 'case') { const si = slotIdx !== undefined ? slotIdx : freeSlot(it, null, null) ?? it.slot; it.slot = si; it.home = slotsW[si]; }
     it.loc = 'cabinet'; it.desk = null; if (S.carry === it) S.carry = null;
     it.mv.go(() => it.home, { dur: 0.85, arc: 0.03, onDone: () => sfx(KIND[it.kind].place) });
     S.focus = 'cabinet';
   }
   function carryClick(hit) {
     const it = S.carry; if (it.mv.moving) return;
-    if (hit && hit.item === it) return;
-    if (hit && (hit.tag === 'cabinet' || hit.tag === 'cabDoor' || hit.item?.loc === 'cabinet')) return returnHome(it);
+    if (hit && hit.item === it) { hit = pick(it); if (!(hit && (hit.tag === 'cabinet' || hit.item?.loc === 'cabinet'))) return; }
+    if (hit && (hit.tag === 'cabinet' || hit.tag === 'cabDoor' || hit.item?.loc === 'cabinet')) {
+      if (it.kind === 'case' && hit.point && hit.tag !== 'cabDoor') {
+        const lp = cabinet.worldToLocal(hit.point.clone());
+        const si = freeSlot(it, lp.y > CAB.feet + CAB.shelfY + CAB.t / 2 ? 0 : 1, lp.x);
+        if (si === null) { sfx('deny'); return; }
+        return returnHome(it, si);
+      }
+      return returnHome(it);
+    }
     const d = deskHit(); if (!d) return;
     const yaw = defYaw(it), k = KIND[it.kind];
     if (placeItem(it, d.x - Math.cos(yaw) * k.cx, d.z + Math.sin(yaw) * k.cx, yaw)) S.focus = 'overview';
@@ -430,16 +453,17 @@ async function init() {
   }
 
   // ---------- picking ----------
-  function pick() {
+  function pick(skip) {
     ray.setFromCamera(ptr.ndc, camera);
     const targets = [cassette, caseObj, player, room.desk, cabinet, ...colObjs]; if (S.pencil === 'table') targets.push(pencil);
     for (const h of ray.intersectObjects(targets, true)) {
       let o = h.object, tg = null, tobj = null, item = null;
       while (o) { if (!tg && o.userData.tag) { tg = o.userData.tag; tobj = o; } if (o.userData.item) { item = o.userData.item; break; } o = o.parent; }
+      if (skip && item === skip) continue;
       if (tg) {
         if (tg === 'cassette' && S.cassette === 'case') item = caseItem;
         if (tg === 'cassette' && S.cassette === 'player') item = playerItem;
-        return { tag: tg, obj: tobj, item };
+        return { tag: tg, obj: tobj, item, point: h.point };
       }
     }
     return null;

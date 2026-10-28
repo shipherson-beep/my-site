@@ -244,9 +244,12 @@ export function createCabinet(tex) {
     const q = STAND.clone().premultiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, (rnd() - .5) * 0.06, (rnd() - .5) * 0.02)));
     cases.push({ p: new THREE.Vector3(-0.035 + i * 0.0179 + rnd() * 0.0006, bot + 0.0555, BACK + 0.0345 + 0.0008 + rnd() * 0.0012), q });
   }
+  // spare (empty) slots filling the rest of each shelf — appended so the original layout is unchanged
+  for (let i = 12; i <= 20; i++) cases.push({ p: new THREE.Vector3(-W / 2 + t + 0.003 + i * 0.0179, top + 0.0555, BACK + 0.0095 + 0.0345 + rnd() * 0.0015), q: STAND.clone().premultiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, (rnd() - .5) * 0.06, (rnd() - .5) * 0.02))) });
+  for (let i = 8; i <= 11; i++) cases.push({ p: new THREE.Vector3(-0.035 + i * 0.0179, bot + 0.0555, BACK + 0.0345 + 0.0008 + rnd() * 0.0012), q: STAND.clone().premultiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, (rnd() - .5) * 0.06, (rnd() - .5) * 0.02))) });
   root.userData.slots = {
     cases,
-    player: { p: new THREE.Vector3(-0.115, bot, 0.022), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.06, 0)) },
+    player: { p: new THREE.Vector3(-0.118, bot, 0.018), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.06, 0)) },
     pencil: { p: new THREE.Vector3(-W / 2 + t + 0.0012, top, BACK + 0.0044), q: new THREE.Quaternion() }, // back-left corner, fully behind the upper row
   };
   root.userData.doors = doors;
@@ -276,85 +279,115 @@ export function createPencil(tex) {
 
 // ===================== PLAYER =====================
 export function createPlayer(tex) {
-  const PW = 0.114, PD = 0.088, B = 0.011, F = 0.024;
+  // flat desktop recorder: the whole white top face is the door (hinged at the back), dark key edge at the front
+  const PW = 0.118, PD = 0.082, B = 0.009, H = 0.028, LT = 0.004;
+  const cx = 0, cz = -0.0035; // cassette centre (under the window)
   const root = tag(new THREE.Group(), 'player'); root.name = 'cassette_player';
-  const body = new THREE.MeshStandardMaterial({ name: 'player_body', color: 0x2b2522, roughness: 0.5, metalness: 0.05 });
-  const bodyDark = new THREE.MeshStandardMaterial({ name: 'player_well', color: 0x141110, roughness: 0.75 });
-  const alu = new THREE.MeshPhysicalMaterial({ name: 'player_lid_alu', color: 0xe6dccb, map: tex.brushed, metalness: 0.7, roughness: 0.4, anisotropy: 0.6, envMapIntensity: 2.2 });
-  const glass = new THREE.MeshPhysicalMaterial({ name: 'lid_window', color: 0x2a1c14, transparent: true, opacity: 0.38, roughness: 0.04, clearcoat: 1, depthWrite: false });
+  const DS = THREE.DoubleSide;
+  const body = new THREE.MeshStandardMaterial({ name: 'player_body', color: 0xe6e3dc, roughness: 0.42, metalness: 0 });
+  const inner = new THREE.MeshStandardMaterial({ name: 'player_inner', color: 0x6d6c6a, roughness: 0.6 });
+  const dark = new THREE.MeshStandardMaterial({ name: 'player_dark', color: 0x29292b, roughness: 0.55, side: DS });
+  const grey = new THREE.MeshStandardMaterial({ name: 'player_band', color: 0x7c7b78, roughness: 0.5, side: DS });
+  const seam = new THREE.MeshStandardMaterial({ name: 'player_seam', color: 0x9d9a94, roughness: 0.6 });
+  const speakerM = new THREE.MeshStandardMaterial({ name: 'speaker', color: 0x1e1e1f, roughness: 0.8, side: DS });
+  const glass = new THREE.MeshPhysicalMaterial({ name: 'lid_window', color: 0x232220, transparent: true, opacity: 0.5, roughness: 0.04, clearcoat: 1, depthWrite: false, side: DS });
   const chrome = new THREE.MeshStandardMaterial({ name: 'chrome', color: 0xdedbd2, metalness: 1, roughness: 0.18 });
   const rubber = new THREE.MeshStandardMaterial({ name: 'rubber', color: 0x111111, roughness: 0.9 });
-  const keyM = new THREE.MeshStandardMaterial({ name: 'key', color: 0x3a332e, roughness: 0.45 });
-  const iconM = new THREE.MeshStandardMaterial({ name: 'key_icon', color: 0xe8dfcf, roughness: 0.6 });
-  const iconPlay = new THREE.MeshStandardMaterial({ name: 'key_icon_play', color: 0xe2502c, roughness: 0.6 });
+  const keyM = new THREE.MeshStandardMaterial({ name: 'key', color: 0xe9e7e2, roughness: 0.4 });
+  const keyRed = new THREE.MeshStandardMaterial({ name: 'key_play', color: 0xd8401f, roughness: 0.4 });
+  const iconM = new THREE.MeshStandardMaterial({ name: 'key_icon', color: 0x6a6763, roughness: 0.6, side: DS });
+  const iconPlay = new THREE.MeshStandardMaterial({ name: 'key_icon_play', color: 0xf3ece2, roughness: 0.6, side: DS });
   const spinM = new THREE.MeshStandardMaterial({ name: 'spindle', color: 0xd9d4c8, roughness: 0.5 });
-
   const xz = (geo) => geo.rotateX(-Math.PI / 2); // shape XY → XZ (shape y = -z)
-  const baseShape = rr(new THREE.Shape(), 0, 0, PW - 0.0016, PD - 0.0016, 0.009);
-  const baseGeo = xz(new THREE.ExtrudeGeometry(baseShape, { depth: B - 0.0016, bevelEnabled: true, bevelThickness: 0.0008, bevelSize: 0.0008, bevelSegments: 3, curveSegments: 16 })); baseGeo.translate(0, 0.0008, 0);
+  const rect = (x0, y0, x1, y1) => new THREE.Shape([new THREE.Vector2(x0, y0), new THREE.Vector2(x1, y0), new THREE.Vector2(x1, y1), new THREE.Vector2(x0, y1)]);
+
+  // shell: base + walls, open top (closed by the door)
+  const baseGeo = xz(new THREE.ExtrudeGeometry(rr(new THREE.Shape(), 0, 0, PW - 0.0016, PD - 0.0016, 0.004), { depth: B - 0.0016, bevelEnabled: true, bevelThickness: 0.0008, bevelSize: 0.0008, bevelSegments: 3, curveSegments: 12 })); baseGeo.translate(0, 0.0008, 0);
   root.add(mesh(baseGeo, body, 'player_base'));
-  const frameShape = rr(new THREE.Shape(), 0, 0, PW - 0.001, PD - 0.001, 0.009);
-  frameShape.holes.push(rr(new THREE.Path(), 0, 0, 0.1045, 0.0675, 0.003));
-  const frameGeo = xz(new THREE.ExtrudeGeometry(frameShape, { depth: F - B - 0.001, bevelEnabled: true, bevelThickness: 0.0005, bevelSize: 0.0005, bevelSegments: 2, curveSegments: 16 })); frameGeo.translate(0, B + 0.0005, 0);
+  const frameShape = rr(new THREE.Shape(), 0, 0, PW - 0.001, PD - 0.001, 0.004);
+  frameShape.holes.push(rr(new THREE.Path(), 0, 0, PW - 0.007, PD - 0.007, 0.002));
+  const frameGeo = xz(new THREE.ExtrudeGeometry(frameShape, { depth: H - LT - B - 0.0005, bevelEnabled: false, curveSegments: 12 })); frameGeo.translate(0, B, 0);
   root.add(mesh(frameGeo, body, 'player_frame'));
-  const floor = mesh(new THREE.PlaneGeometry(0.1045, 0.0675).rotateX(-Math.PI / 2), bodyDark, 'well_floor', false, true); floor.position.y = B + 0.0001; root.add(floor);
+  const floor = mesh(new THREE.PlaneGeometry(PW - 0.007, PD - 0.007).rotateX(-Math.PI / 2), inner, 'well_floor', false, true); floor.position.y = B + 0.0001; root.add(floor);
+  // dark front edge (keys) + dark right side
+  const front = mesh(box(PW - 0.006, H - 0.007, 0.0012), dark, 'front_band', false); front.position.set(0, H / 2 + 0.0005, PD / 2 - 0.0001); root.add(front);
+  const side = mesh(box(0.0012, H - 0.006, PD - 0.012), dark, 'side_band', false); side.position.set(PW / 2 - 0.0001, H / 2, 0); root.add(side);
   const spindles = {};
-  for (const [s, side] of [[-1, 'L'], [1, 'R']]) {
-    const g = new THREE.Group(); g.position.set(s * CAS.HX, B, -CAS.HY);
+  for (const [s, sd] of [[-1, 'L'], [1, 'R']]) {
+    const g = new THREE.Group(); g.position.set(cx + s * CAS.HX, B, cz - CAS.HY);
     g.add(mesh(new THREE.CylinderGeometry(0.0052, 0.0056, 0.0012, 24).translate(0, 0.0006, 0), spinM, 'spindle_table'));
     g.add(mesh(new THREE.CylinderGeometry(0.0026, 0.0026, 0.0075, 16).translate(0, 0.004, 0), spinM, 'spindle'));
     for (let i = 0; i < 3; i++) { const t = mesh(box(0.0011, 0.005, 0.0016), spinM, 'spindle_tooth'); const a = i / 3 * Math.PI * 2; t.position.set(Math.cos(a) * 0.003, 0.0045, Math.sin(a) * 0.003); t.rotation.y = -a; g.add(t); }
-    root.add(g); spindles[side] = g;
+    root.add(g); spindles[sd] = g;
   }
-  const head = mesh(box(0.011, 0.0075, 0.0034), chrome, 'tape_head'); head.position.set(0, B + 0.0042, 0.0335); root.add(head);
-  const capstan = mesh(new THREE.CylinderGeometry(0.0008, 0.0008, 0.009, 10), chrome, 'capstan'); capstan.position.set(0.0335, B + 0.0045, 0.0333); root.add(capstan);
-  const pinch = mesh(new THREE.CylinderGeometry(0.0024, 0.0024, 0.0055, 20), rubber, 'pinch_roller'); pinch.position.set(0.0285, B + 0.004, 0.0336); root.add(pinch);
+  const head = mesh(box(0.011, 0.0075, 0.0034), chrome, 'tape_head'); head.position.set(cx, B + 0.0042, cz + 0.0335); root.add(head);
+  const capstan = mesh(new THREE.CylinderGeometry(0.0008, 0.0008, 0.009, 10), chrome, 'capstan'); capstan.position.set(cx + 0.0335, B + 0.0045, cz + 0.0333); root.add(capstan);
+  const pinch = mesh(new THREE.CylinderGeometry(0.0024, 0.0024, 0.0055, 20), rubber, 'pinch_roller'); pinch.position.set(cx + 0.0285, B + 0.004, cz + 0.0336); root.add(pinch);
 
-  // lid
-  const lidPivot = tag(new THREE.Group(), 'playerLid'); lidPivot.name = 'player_lid'; lidPivot.position.set(0, F, -PD / 2); root.add(lidPivot);
-  const lidShape = rr(new THREE.Shape(), 0, 0, PW - 0.002, PD - 0.002, 0.008);
-  lidShape.holes.push(rr(new THREE.Path(), 0, 0.003, 0.07, 0.026, 0.004));
-  const lidGeo = xz(new THREE.ExtrudeGeometry(lidShape, { depth: 0.0042, bevelEnabled: true, bevelThickness: 0.0008, bevelSize: 0.0008, bevelSegments: 3, curveSegments: 16 }));
-  lidGeo.translate(0, 0.0008, PD / 2);
-  lidPivot.add(mesh(lidGeo, alu, 'lid'));
-  const win = mesh(new THREE.PlaneGeometry(0.071, 0.027).rotateX(-Math.PI / 2), glass, 'lid_window', false, false); win.position.set(0, 0.0035, -0.003 + PD / 2); win.renderOrder = 5; lidPivot.add(win);
+  // door = whole top face. Layout (front → back): ribbed grille with 3-column speaker block on the left,
+  // grey band with the dark tape window, plain white strip; separate panel at the back-right.
+  const LW = PW - 0.002, LL = PD - 0.003, z0 = -PD / 2 + 0.001;
+  const lidPivot = tag(new THREE.Group(), 'playerLid'); lidPivot.name = 'player_lid'; lidPivot.position.set(0, H - LT, z0); root.add(lidPivot);
+  const L = zw => zw - z0, sy = zw => -(L(zw) - LL / 2); // world z → lid-local z / shape y
+  const W = { x0: -0.032, x1: 0.02, z0: cz - 0.0085, z1: cz + 0.0075 }, bandX1 = -PW / 2 + 0.72 * PW, bandZ0 = cz - 0.014, bandZ1 = cz + 0.013;
+  const lidShape = rr(new THREE.Shape(), 0, 0, LW, LL, 0.0035);
+  lidShape.holes.push(rect(W.x0, sy(W.z1), W.x1, sy(W.z0)));
+  const lidGeo = xz(new THREE.ExtrudeGeometry(lidShape, { depth: LT - 0.0008, bevelEnabled: true, bevelThickness: 0.0004, bevelSize: 0.0004, bevelSegments: 2, curveSegments: 12 }));
+  lidGeo.translate(0, 0.0004, LL / 2);
+  lidPivot.add(mesh(lidGeo, body, 'lid'));
+  const TOP = LT + 0.0002, flat = (shape, mat, name, y = TOP) => { const o = mesh(xz(new THREE.ShapeGeometry(shape)), mat, name, false, false); o.position.set(0, y, LL / 2); lidPivot.add(o); return o; };
+  const bandS = rect(-LW / 2 + 0.0012, sy(bandZ1), bandX1, sy(bandZ0)); bandS.holes.push(rect(W.x0 - 0.002, sy(W.z1 + 0.002), W.x1 + 0.002, sy(W.z0 - 0.002)));
+  flat(bandS, grey, 'lid_band');
+  const frS = rect(W.x0 - 0.002, sy(W.z1 + 0.002), W.x1 + 0.002, sy(W.z0 - 0.002)); frS.holes.push(rect(W.x0, sy(W.z1), W.x1, sy(W.z0)));
+  flat(frS, dark, 'window_frame', TOP + 0.0001);
+  const win = mesh(new THREE.PlaneGeometry(W.x1 - W.x0, W.z1 - W.z0).rotateX(-Math.PI / 2), glass, 'lid_window', false, false);
+  win.position.set((W.x0 + W.x1) / 2, LT * 0.5, L((W.z0 + W.z1) / 2)); win.renderOrder = 5; lidPivot.add(win);
+  // back-right panel seams
+  const sx = bandX1 + 0.0012;
+  const s1 = mesh(box(0.0006, 0.0003, L(bandZ1) - 0.001), seam, 'panel_seam', false, false); s1.position.set(sx, TOP, (L(bandZ1) + 0.001) / 2); lidPivot.add(s1);
+  const s2 = mesh(box(LW / 2 - sx - 0.001, 0.0003, 0.0006), seam, 'panel_seam', false, false); s2.position.set((sx + LW / 2 - 0.001) / 2, TOP, L(bandZ1)); lidPivot.add(s2);
+  // grille ribs
+  const gz0 = bandZ1 + 0.004, gz1 = PD / 2 - 0.006, xL = -LW / 2 + 0.005, xR = LW / 2 - 0.005, spkW = 0.25 * PW;
+  for (let z = gz0; z <= gz1; z += 0.0021) {
+    const segs = [[xL + spkW + 0.002, xR]]; for (let c = 0; c < 3; c++) segs.push([xL + c * spkW / 3, xL + (c + 1) * spkW / 3 - 0.0014]);
+    for (const [a0, a1] of segs) { const r = mesh(box(a1 - a0, 0.0005, 0.0009), body, 'grille_rib', false, false); r.position.set((a0 + a1) / 2, LT + 0.00025, L(z)); lidPivot.add(r); }
+  }
 
   // keys on the front edge
-  const FZ = PD / 2;
-  const slot = mesh(box(0.050, 0.0098, 0.001), bodyDark, 'key_slot', false); slot.position.set(0.027, 0.0175, FZ + 0.0003); root.add(slot);
+  const FZ = PD / 2, KY = H / 2 + 0.0005;
+  const slot = mesh(box(0.062, 0.0112, 0.001), speakerM, 'key_slot', false); slot.position.set(0.025, KY, FZ + 0.0006); root.add(slot);
   const keys = {};
-  const icon = (shape, m) => { const g = new THREE.ShapeGeometry(shape); return mesh(g, m, 'key_icon', false, false); };
+  const icon = (shape, m) => mesh(new THREE.ShapeGeometry(shape), m, 'key_icon', false, false);
   const tri = (dir) => new THREE.Shape(dir === 'r' ? [new THREE.Vector2(-0.0015, -0.0017), new THREE.Vector2(0.0018, 0), new THREE.Vector2(-0.0015, 0.0017)] : [new THREE.Vector2(-0.0018, -0.0004), new THREE.Vector2(0.0018, -0.0004), new THREE.Vector2(0, 0.0016)]);
-  [['btnEject', 0.012], ['btnStop', 0.027], ['btnPlay', 0.042]].forEach(([name, x]) => {
+  [['btnEject', 0.0055], ['btnStop', 0.0245], ['btnPlay', 0.0445]].forEach(([name, x]) => {
     const k = tag(new THREE.Group(), name); k.name = name;
-    k.add(mesh(box(0.0128, 0.0076, 0.008), keyM, name + '_cap'));
-    const hit = mesh(box(0.0148, 0.0155, 0.032), new THREE.MeshBasicMaterial({ visible: false }), name + '_hit', false, false); hit.position.set(0, -0.0002, 0.010); k.add(hit); // generous touch target
+    k.add(mesh(box(0.0172, 0.0094, 0.008), name === 'btnPlay' ? keyRed : keyM, name + '_cap'));
+    const hit = mesh(box(0.0188, 0.017, 0.032), new THREE.MeshBasicMaterial({ visible: false }), name + '_hit', false, false); hit.position.set(0, -0.0002, 0.010); k.add(hit);
     let ic;
     if (name === 'btnPlay') ic = icon(tri('r'), iconPlay);
     else if (name === 'btnStop') ic = icon(rr(new THREE.Shape(), 0, 0, 0.003, 0.003, 0.0003), iconM);
     else { ic = icon(tri('u'), iconM); const bar = mesh(new THREE.PlaneGeometry(0.0036, 0.0006), iconM, 'icon_bar', false, false); bar.position.set(0, -0.0013, 0.0041); k.add(bar); ic.position.y = 0.0004; }
     ic.position.z = 0.0041; k.add(ic);
-    k.userData.rest = new THREE.Vector3(x, 0.0175, FZ + 0.0007);
+    k.userData.rest = new THREE.Vector3(x, KY, FZ + 0.0012);
     k.position.copy(k.userData.rest);
     k.userData.press = 0; k.userData.target = 0;
     root.add(k); keys[name] = k;
   });
-  // counter + LED
   const ledMat = new THREE.MeshStandardMaterial({ name: 'led', color: 0x3a0e08, emissive: 0xff3a1a, emissiveIntensity: 0 });
-  const led = mesh(new THREE.CylinderGeometry(0.0011, 0.0011, 0.0008, 16).rotateX(Math.PI / 2), ledMat, 'led', false, false); led.position.set(-0.006, 0.0175, FZ + 0.0005); root.add(led);
-  // side details
-  const wheel = mesh(new THREE.CylinderGeometry(0.0075, 0.0075, 0.0035, 40).rotateZ(Math.PI / 2), rubber, 'volume_wheel'); wheel.position.set(PW / 2 - 0.0006, 0.0125, -0.018); root.add(wheel);
-  for (let i = 0; i < 40; i++) { const a = i / 40 * Math.PI * 2; const r = mesh(box(0.0034, 0.0007, 0.0007), rubber, 'wheel_rib', false, false); r.position.set(PW / 2 - 0.0006, 0.0125 + Math.sin(a) * 0.0075, -0.018 + Math.cos(a) * 0.0075); r.rotation.x = -a; root.add(r); }
-  const jack = mesh(new THREE.CylinderGeometry(0.0022, 0.0022, 0.002, 20).rotateZ(Math.PI / 2), chrome, 'phones_jack', false); jack.position.set(-PW / 2 + 0.0002, 0.0125, 0.018); root.add(jack);
-  const jackHole = mesh(new THREE.CylinderGeometry(0.0012, 0.0012, 0.0022, 16).rotateZ(Math.PI / 2), rubber, 'jack_hole', false); jackHole.position.set(-PW / 2 - 0.0001, 0.0125, 0.018); root.add(jackHole);
+  const led = mesh(new THREE.CylinderGeometry(0.0011, 0.0011, 0.0008, 16).rotateX(Math.PI / 2), ledMat, 'led', false, false); led.position.set(-0.011, KY, FZ + 0.0007); root.add(led);
+  // right side: volume wheel + jack
+  const wheel = mesh(new THREE.CylinderGeometry(0.0075, 0.0075, 0.0035, 40).rotateZ(Math.PI / 2), rubber, 'volume_wheel'); wheel.position.set(PW / 2 - 0.0006, H / 2, -0.012); root.add(wheel);
+  for (let i = 0; i < 40; i++) { const a = i / 40 * Math.PI * 2; const r = mesh(box(0.0034, 0.0007, 0.0007), rubber, 'wheel_rib', false, false); r.position.set(PW / 2 - 0.0006, H / 2 + Math.sin(a) * 0.0075, -0.012 + Math.cos(a) * 0.0075); r.rotation.x = -a; root.add(r); }
+  const jack = mesh(new THREE.CylinderGeometry(0.0024, 0.0024, 0.002, 20).rotateZ(Math.PI / 2), chrome, 'phones_jack', false); jack.position.set(PW / 2 + 0.0004, H / 2, 0.022); root.add(jack);
+  const jackHole = mesh(new THREE.CylinderGeometry(0.0013, 0.0013, 0.0022, 16).rotateZ(Math.PI / 2), rubber, 'jack_hole', false); jackHole.position.set(PW / 2 + 0.0007, H / 2, 0.022); root.add(jackHole);
   const feet = new THREE.CylinderGeometry(0.004, 0.004, 0.001, 16);
-  for (const [x, z] of [[-0.045, -0.033], [0.045, -0.033], [-0.045, 0.033], [0.045, 0.033]]) { const f = mesh(feet, rubber, 'foot', false, false); f.position.set(x, -0.0004, z); root.add(f); }
+  for (const [x, z] of [[-0.048, -0.032], [0.048, -0.032], [-0.048, 0.032], [0.048, 0.032]]) { const f = mesh(feet, rubber, 'foot', false, false); f.position.set(x, -0.0004, z); root.add(f); }
 
   root.userData.lid = lidPivot;
   root.userData.keys = keys;
   root.userData.spindles = spindles;
   root.userData.led = ledMat;
-  root.userData.cassetteLocal = new THREE.Vector3(0, B + 0.0003 + CAS.T / 2, 0);
+  root.userData.cassetteLocal = new THREE.Vector3(cx, B + 0.0003 + CAS.T / 2, cz);
   root.userData.mats = collectMats(root).filter(m => m !== ledMat);
   return root;
 }
