@@ -12,14 +12,14 @@ const TXT = {
   uk: {
     loading: 'Готуємо кімнату…', track: 'Завантажуємо запис…', synth: 'Записуємо тимчасовий трек…', enter: 'Клацніть, щоб увійти',
     start: 'Відкрийте кейс із касетою', inspect: 'Тягніть, щоб роздивитися касету · олівець — на столі',
-    approach: 'Піднесіть олівець до лівої котушки й клацніть', wind: 'Затисніть і ведіть по колу проти годинникової · клацніть ще раз — вийняти олівець',
+    approach: 'Піднесіть олівець до лівої котушки й клацніть', wind: 'Затисніть і ведіть по колу за годинниковою · клацніть ще раз — вийняти олівець',
     toPlayer: 'Тепер — плеєр праворуч', needCassette: 'Спершу дістаньте касету', lidOpen: 'Закрийте кришку плеєра',
     noCassette: 'У плеєрі немає касети', stopFirst: 'Спершу натисніть Stop', endOfTape: 'Кінець плівки', limit: 'Плівка закінчилась',
   },
   en: {
     loading: 'Setting up the room…', track: 'Loading the recording…', synth: 'Recording a placeholder track…', enter: 'Click to enter',
     start: 'Open the cassette case', inspect: 'Drag to look the cassette over · the pencil is on the desk',
-    approach: 'Bring the pencil to the left reel and click', wind: 'Hold and circle counter-clockwise · click again to pull the pencil out',
+    approach: 'Bring the pencil to the left reel and click', wind: 'Hold and circle clockwise · click again to pull the pencil out',
     toPlayer: 'Now the player, on the right', needCassette: 'Take the cassette out first', lidOpen: 'Close the player lid',
     noCassette: 'There is no cassette in the player', stopFirst: 'Press Stop first', endOfTape: 'End of tape', limit: 'End of tape',
   },
@@ -595,7 +595,7 @@ async function init() {
       W.pending -= step;
       if (!W.active) W.pending *= Math.exp(-dt * 10);
       const applied = tape.driveHub(S.side, step);
-      const slack = S.side === 'L' ? step < 0 : step > 0; // turning a hub the "push" way only pays out slack
+      const slack = S.side === 'L' ? step > 0 : step < 0; // turning a hub the "push" way only pays out slack
       if (slack) W.pending = 0;
       else if (Math.abs(step) > 1e-4 && Math.abs(applied) < Math.abs(step) * 0.3) {
         W.pending = 0;
