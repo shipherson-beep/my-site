@@ -315,7 +315,7 @@ h1,h2,h3,h4,p{margin:0}
 .heroslider{position:relative;height:100svh;min-height:480px;overflow:hidden;background:var(--bg);touch-action:pan-y}
 .heroslider__slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 620ms ease,visibility 620ms ease;z-index:0}
 .heroslider__slide.is-current{opacity:1;visibility:visible;z-index:1}
-.heroslider .hero{height:100%;min-height:0}
+.heroslider .hero{height:100%;min-height:0}.heroslider .heroslider__slide.hero{position:absolute;inset:0}
 .heroslider__slide.hposter{background:#e3e4df;display:block;position:absolute;inset:0}
 @media (max-width:899px){.heroslider__slide.hposter{background:#ebebe3}}
 .hposter__img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;display:block}
@@ -675,6 +675,7 @@ h1,h2,h3,h4,p{margin:0}
 @media (min-width: 900px){
   .hero__photo{ min-height: 0; }
 }
+.hero__photo video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .hero__photo img{
   position:absolute; inset: 0;
   width:100%; height:100%;
@@ -1036,6 +1037,9 @@ h1,h2,h3,h4,p{margin:0}
 /* Spotify hover-embed (only on covers that opt-in via data-spotify) */
 .cover--art[data-spotify],
 .cover--art[data-bandcamp]{ cursor: pointer; }
+.cover--art:not(.is-ready) .cover__embed{ opacity:0 !important; pointer-events:none !important; }
+.cover--art:not(.is-ready) .cover__img{ opacity:1 !important; }
+.cover--art .cover__embed{ background:#1f1f1f; color-scheme: normal; }
 .cover--art .cover__embed{
   position:absolute; inset:0;
   width:100%; height:100%;
@@ -1968,17 +1972,39 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
      ============================================================ -->
 <div class="heroslider" id="hero-slider" aria-roledescription="carousel" aria-label="Ship Her Son">
 
-<section class="heroslider__slide hposter is-current" data-screen-label="01 Poster 10/10" aria-label="10/10 Ship Her Son with Friends — POPUP, Kyiv">
-  <picture>
-    <source media="(max-width: 899px)" srcset="assets/poster-1010-mobile.png" />
-    <img class="hposter__img" src="assets/poster-1010-desktop.png" alt="10/10 — Ship Her Son with Friends. Великий концерт до першої річниці альбому «Саундтрек до порядку денного». POPUP, Кирилівська 60." width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async" />
-  </picture>
-  <div class="hposter__body hero__body">
+<section class="hero heroslider__slide is-current" id="hero-zhyva" data-variant="stacked" data-screen-label="01 Жива істота" aria-label="Жива істота — Ship Her Son x Хамерман">
+  <div class="hero__body">
+    <div class="hero__type">
+    </div>
     <div class="hero__bottom">
+      <p class="hero__release">
+        Жива істота
+      </p>
       <div class="hero__cta">
-        <a class="btn btn--ghost btn--vinyl" href="https://concert.ua/widget/booking/ship-her-son/?promo=popup" target="_blank" rel="noopener noreferrer"><span data-lang-only="uk">Купити квитки ↗</span><span data-lang-only="en">Buy Tickets ↗</span></a>
+      <a class="btn btn--ghost btn--icon-mobile" href="https://ship-her-son.bandcamp.com/track/--6" target="_blank" rel="noopener noreferrer" aria-label="Bandcamp">
+        <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 18.5l4.6-13h15.4l-4.6 13z"/></svg></span>
+        <span class="btn__text">Bandcamp ↗</span>
+      </a>
+      <a class="btn btn--ghost btn--icon-mobile" href="https://open.spotify.com/album/3n32X1v8SeJ9BfQ5Uhf7jD" target="_blank" rel="noopener noreferrer" aria-label="Spotify">
+        <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.7.7 0 0 1-1 .2c-2.6-1.6-5.9-2-9.8-1.1a.7.7 0 1 1-.3-1.4c4.2-1 7.9-.6 10.8 1.2.4.2.5.7.3 1.1zm1.2-2.7a.9.9 0 0 1-1.2.3c-3-1.8-7.5-2.4-11-1.3a.9.9 0 1 1-.5-1.7c4-1.2 9-.6 12.4 1.5.4.3.5.8.3 1.2zm.1-2.8c-3.5-2.1-9.4-2.3-12.8-1.3a1 1 0 1 1-.6-2c3.9-1.2 10.4-1 14.4 1.4a1 1 0 1 1-1 1.9z"/></svg></span>
+        <span class="btn__text">Spotify ↗</span>
+      </a>
+      <a class="btn btn--ghost btn--icon-mobile" href="https://music.apple.com/ua/song/%D0%B6%D0%B8%D0%B2%D0%B0-%D1%96%D1%81%D1%82%D0%BE%D1%82%D0%B0/6822678385" target="_blank" rel="noopener noreferrer" aria-label="Apple Music">
+        <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3.5c0-.8-.7-1.5-1.5-1.4l-8.6 1.2c-.8.1-1.4.8-1.4 1.6V15a3 3 0 1 0 2 2.8V8.6l8-1.1V12a3 3 0 1 0 2 2.8z"/></svg></span>
+        <span class="btn__text">Apple Music ↗</span>
+      </a>
+      <a class="btn btn--ghost btn--icon-mobile" href="https://music.youtube.com/playlist?list=OLAK5uy_mGj01KTCUWi7RwwWNPRydyJxtM7oSRCTQ" target="_blank" rel="noopener noreferrer" aria-label="YouTube Music">
+        <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5l5.5 3.5L10 15.5z" fill="currentColor" stroke="none"/></svg></span>
+        <span class="btn__text">YouTube Music ↗</span>
+      </a>
       </div>
     </div>
+  </div>
+  <div class="hero__photo">
+    <video autoplay muted loop playsinline preload="auto" poster="assets/collab-zhyva-istota.jpg" aria-hidden="true">
+      <source src="assets/zhi-site-bg-1.webm" type="video/webm" />
+      <source src="assets/zhi-site-bg-1.mp4" type="video/mp4" />
+    </video>
   </div>
 </section>
 
@@ -2085,7 +2111,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </button>
         <button class="disc-tab" type="button" role="tab" aria-selected="false" data-disc-tab="collabs">
           <span><span data-lang-only="uk">Колаборації</span><span data-lang-only="en">Collaborations</span></span>
-          <span class="count">04</span>
+          <span class="count">05</span>
         </button>
         <button class="disc-tab" type="button" role="tab" aria-selected="false" data-disc-tab="remixes">
           <span><span data-lang-only="uk">Ремікси</span><span data-lang-only="en">Remixes</span></span>
@@ -2283,6 +2309,19 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     <div class="disc-panel" data-disc-panel="collabs" role="tabpanel" hidden>
     <div class="disc">
       <article class="disc-item">
+        <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/1PIofMkcyd2JfzA0XMrRfT?utm_source=generator&amp;theme=0">
+          <img class="cover__img" src="assets/collab-zhyva-istota.jpg" alt="Жива істота × Хамерман — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
+          <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — Жива істота" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
+        </div>
+        <div class="disc-item__row">
+          <span class="title">
+            <span class="name">Жива істота × Хамерман</span>
+            <span class="year"><span data-lang-only="uk">Лист. 2026</span><span data-lang-only="en">Nov 2026</span></span>
+          </span>
+          <span class="type"><span data-lang-only="uk">Сингл</span><span data-lang-only="en">Single</span></span>
+        </div>
+      </article>
+      <article class="disc-item">
         <div class="cover cover--art" data-spotify="https://open.spotify.com/embed/track/6ztirDg04nHhqI03JQJ3XW?utm_source=generator&amp;theme=0">
           <img class="cover__img" src="assets/collab-elektronna.jpg" alt="електронна × АНТАЙТЛД — artwork" width="1200" height="1200" loading="lazy" decoding="async" />
           <iframe class="cover__embed" data-testid="embed-iframe" title="Spotify player — електронна" src="about:blank" loading="lazy" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen=""></iframe>
@@ -2414,7 +2453,20 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     </div>
 
     <div class="videos">
-      <a class="video-card" href="https://www.youtube.com/watch?v=Jb9_TxCv4Ag" data-yt="Jb9_TxCv4Ag" data-yt-title="Я не маю сил (feat. Divuar)" target="_blank" rel="noopener noreferrer" aria-label="Play Я не маю сил feat. Divuar (2025)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=WqV4WioxPDI" data-yt="WqV4WioxPDI" data-yt-title="Жива істота" target="_blank" rel="noopener noreferrer" aria-label="Play Жива істота">
+        <div class="video-card__thumb video-card__thumb--art">
+          <img class="video-card__img" src="assets/video-zhyva-istota.jpg" alt="Жива істота feat. Хамерман — video still" width="1920" height="1080" loading="lazy" decoding="async" />
+          <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <polygon points="23,18 41,28 23,38" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="video-card__row">
+          <span class="video-card__title">Жива істота</span>
+          <span class="video-card__meta">4:09</span>
+        </div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/watch?v=Jb9_TxCv4Ag" data-yt="Jb9_TxCv4Ag" data-yt-title="Я не маю сил (feat. Divuar)" target="_blank" rel="noopener noreferrer" aria-label="Play Я не маю сил feat. Divuar">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-ya-ne-mayu-syl.jpg" alt="Я не маю сил feat. Divuar — burning wreckage on a field" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2424,11 +2476,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Я не маю сил (feat. Divuar)</span>
-          <span class="video-card__meta">2025 · 3:59</span>
+          <span class="video-card__meta">3:59</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=O3atvRGw_Xs" data-yt="O3atvRGw_Xs" data-yt-title="У вічність / Вдих" target="_blank" rel="noopener noreferrer" aria-label="Play У вічність / Вдих (2024)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=O3atvRGw_Xs" data-yt="O3atvRGw_Xs" data-yt-title="У вічність / Вдих" target="_blank" rel="noopener noreferrer" aria-label="Play У вічність / Вдих">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-vichnist-vdykh.jpg" alt="У вічність / Вдих feat. Антон Слєпаков — red-tinted portrait" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2438,11 +2490,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">У вічність / Вдих</span>
-          <span class="video-card__meta">2024 · 7:31</span>
+          <span class="video-card__meta">7:31</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=Q1LjJZp0TfY" data-yt="Q1LjJZp0TfY" data-yt-title="Das ist anders" target="_blank" rel="noopener noreferrer" aria-label="Play Das ist anders (2023)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=Q1LjJZp0TfY" data-yt="Q1LjJZp0TfY" data-yt-title="Das ist anders" target="_blank" rel="noopener noreferrer" aria-label="Play Das ist anders">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-das-ist-anders.jpg" alt="Das ist anders — sheep in a field of red poppies" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2452,11 +2504,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Das ist anders</span>
-          <span class="video-card__meta">2023 · 3:41</span>
+          <span class="video-card__meta">3:41</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=Z6ZZ_lWexMc" data-yt="Z6ZZ_lWexMc" data-yt-title="Alles wird gut" target="_blank" rel="noopener noreferrer" aria-label="Play Alles wird gut (2022)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=Z6ZZ_lWexMc" data-yt="Z6ZZ_lWexMc" data-yt-title="Alles wird gut" target="_blank" rel="noopener noreferrer" aria-label="Play Alles wird gut">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-alles-wird-gut.jpg" alt="Alles wird gut — hand holding a tape spool, deep red tone" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2466,11 +2518,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Alles wird gut</span>
-          <span class="video-card__meta">2022 · 3:43</span>
+          <span class="video-card__meta">3:43</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=0ylS0a5KEDU" data-yt="0ylS0a5KEDU" data-yt-title="Gott" target="_blank" rel="noopener noreferrer" aria-label="Play Gott (2021)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=0ylS0a5KEDU" data-yt="0ylS0a5KEDU" data-yt-title="Gott" target="_blank" rel="noopener noreferrer" aria-label="Play Gott">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-gott.jpg" alt="Gott — black and white close-up portrait with eyes closed" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2480,11 +2532,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Gott</span>
-          <span class="video-card__meta">2021 · 3:48</span>
+          <span class="video-card__meta">3:48</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=F_lq1ghwYNk" data-yt="F_lq1ghwYNk" data-yt-title="Vier Liter Wasser" target="_blank" rel="noopener noreferrer" aria-label="Play Vier Liter Wasser (2021)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=F_lq1ghwYNk" data-yt="F_lq1ghwYNk" data-yt-title="Vier Liter Wasser" target="_blank" rel="noopener noreferrer" aria-label="Play Vier Liter Wasser">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-vier-liter-wasser.jpg" alt="Vier Liter Wasser — blue gas flame on black" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2494,11 +2546,11 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Vier Liter Wasser</span>
-          <span class="video-card__meta">2021 · 4:40</span>
+          <span class="video-card__meta">4:40</span>
         </div>
       </a>
 
-      <a class="video-card" href="https://www.youtube.com/watch?v=o67Ik8EmF_0" data-yt="o67Ik8EmF_0" data-yt-title="Kunst" target="_blank" rel="noopener noreferrer" aria-label="Play Kunst (2020)">
+      <a class="video-card" href="https://www.youtube.com/watch?v=o67Ik8EmF_0" data-yt="o67Ik8EmF_0" data-yt-title="Kunst" target="_blank" rel="noopener noreferrer" aria-label="Play Kunst">
         <div class="video-card__thumb video-card__thumb--art">
           <img class="video-card__img" src="assets/video-kunst.jpg" alt="Kunst — torn posters on a graffitied brick wall, black and white" width="1920" height="1080" loading="lazy" decoding="async" />
           <svg class="video-card__play" viewBox="0 0 56 56" aria-hidden="true">
@@ -2508,7 +2560,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
         </div>
         <div class="video-card__row">
           <span class="video-card__title">Kunst</span>
-          <span class="video-card__meta">2020 · 4:03</span>
+          <span class="video-card__meta">4:03</span>
         </div>
       </a>
     </div>
@@ -2745,9 +2797,9 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
 <section class="section section--invert section--about" id="bio" data-screen-label="07 About">
   <div class="about-split">
     <figure class="about-split__photo">
-      <img src="assets/anton.jpg"
-           width="1665" height="2500"
-           alt="Anton Shiferson, sole member of Ship Her Son, lit from one side with a red lamp."
+      <img src="assets/anton-bw.jpg"
+           width="1400" height="1750"
+           alt="Anton Shiferson, sole member of Ship Her Son — black and white portrait."
            loading="lazy" decoding="async" />
     </figure>
 
@@ -3247,6 +3299,7 @@ html[lang="en"] [data-lang-only="uk"]{ display:none !important; }
     if (!iframe) return;
     var url = cover.getAttribute('data-spotify') || cover.getAttribute('data-bandcamp');
     var loaded = false;
+    iframe.addEventListener('load', function(){ if (loaded) setTimeout(function(){ cover.classList.add('is-ready'); }, 250); });
     function load(){
       if (loaded) return;
       loaded = true;
