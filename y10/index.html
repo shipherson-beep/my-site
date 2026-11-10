@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Y10 Trifold Vinyl</title>
+<meta charset="utf-8">
+<base href="/y10/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Y10 Trifold Vinyl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#1f2022;color:#e9e7e3;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#e9e7e3}a:hover{color:#ffffff}
+button{font-family:inherit}
+input[type=range]{accent-color:#e9e7e3}
+</style>
+</helmet>
+<div style="height:100dvh;background:#1f2022">
+
+  <div style="height:100%;min-width:0;position:relative;background:#2b2c2e;overflow:hidden">
+    <div ref="{{ canvasRef }}" style="position:absolute;inset:0"></div>
+    <div ref="{{ hotRef }}" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+
+    <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);background:rgba(31,32,34,0.88);color:#e9e7e3;font-size:14px;line-height:20px;padding:10px 16px;border-radius:8px;pointer-events:none;text-align:center;max-width:calc(100% - 40px)">Потягніть, щоб повернути. Торкніться об’єкта, щоб оглянути, ще раз — щоб перевернути.</div>
+    </sc-if>
+    <sc-if value="{{ showPhase }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:16px;top:52px;background:rgba(31,32,34,0.88);color:#e9e7e3;font-size:14px;line-height:20px;padding:8px 14px;border-radius:8px;pointer-events:none">{{ phaseLabel }}</div>
+    </sc-if>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a3a19c;font-size:14px">Завантаження сцени…</div>
+    </sc-if>
+    <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:32px;background:#2b2c2e">
+        <div style="max-width:420px;font-size:15px;line-height:23px;color:#e9e7e3;text-wrap:pretty">{{ errorText }}</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ lost }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;background:rgba(31,32,34,0.92)">
+        <div style="font-size:15px">Графічний контекст втрачено.</div>
+        <button onClick="{{ reload }}" style="height:44px;padding:0 20px;border-radius:8px;border:1px solid #4a4b50;background:#e9e7e3;color:#1f2022;font-size:15px;cursor:pointer">Перезапустити перегляд</button>
+      </div>
+    </sc-if>
+
+    <div style="position:absolute;left:16px;top:16px;font-size:17px;font-weight:600;line-height:22px;letter-spacing:-0.01em;color:#e9e7e3;pointer-events:none">YUKO 10 LIVE IN KYIV</div>
+
+    <div style="position:absolute;left:16px;bottom:16px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(50% - 116px)">
+      <button onClick="{{ zoomIn }}" aria-label="Наблизити" title="Наблизити" style="width:44px;height:44px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:20px;cursor:pointer">+</button>
+      <button onClick="{{ zoomOut }}" aria-label="Віддалити" title="Віддалити" style="width:44px;height:44px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:20px;cursor:pointer">−</button>
+      <button onClick="{{ rotL }}" aria-label="Повернути ліворуч" title="Повернути ліворуч" style="width:44px;height:44px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:18px;cursor:pointer">↺</button>
+      <button onClick="{{ rotR }}" aria-label="Повернути праворуч" title="Повернути праворуч" style="width:44px;height:44px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:18px;cursor:pointer">↻</button>
+      <button onClick="{{ viewFront }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Лице</button>
+      <button onClick="{{ viewBack }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Зворот</button>
+    </div>
+    <div style="position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex">
+      <input type="range" min="0" max="1" step="0.001" value="{{ slider }}" disabled="{{ sliderDisabled }}" onChange="{{ onSlider }}" aria-label="Ступінь розкриття" title="Ступінь розкриття" style="width:180px;height:44px;margin:0;cursor:pointer;opacity:{{ sliderOpacity }}">
+    </div>
+    <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;max-width:calc(50% - 116px)">
+      <button onClick="{{ openAll }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Розкрити</button>
+      <button onClick="{{ closeAll }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Закрити</button>
+      <button onClick="{{ extractAll }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Дістати все</button>
+      <button onClick="{{ returnAll }}" style="height:44px;padding:0 14px;border-radius:8px;border:1px solid #3d3e42;background:rgba(31,32,34,0.9);color:#e9e7e3;font-size:14px;font-weight:500;cursor:pointer">Сховати все</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ui: null };
+  canvasRef = React.createRef();
+  hotRef = React.createRef();
+
+  componentDidMount() {
+    const base = new URL('./trifold/', document.baseURI).href;
+    import(base + 'viewer.js')
+      .then(m => m.createViewer({ host: this.canvasRef.current, hotspotLayer: this.hotRef.current, baseUrl: base, onState: ui => this.setState({ ui }) }))
+      .then(v => { this.v = v; })
+      .catch(e => this.setState({ ui: { error: 'Не вдалося запустити сцену: ' + (e && e.message ? e.message : e) } }));
+    this.onKey = e => { if (e.key === 'Escape' && this.v) this.v.overview(); };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); if (this.v) this.v.dispose(); }
+
+  renderVals() {
+    const u = this.state.ui || {};
+    const v = (fn) => () => this.v && fn(this.v);
+    const ready = !!u.ready;
+    const pairNames = ['Платівка 1', 'Платівка 2', 'Платівка 3'];
+    const typeName = { panel: 'панель обкладинки', sleeve: 'конверт', record: 'платівка' };
+    const statusText = { placeholder: 'заглушка', default: 'стандартний матеріал', loading: 'завантаження…', loaded: 'завантажено', error: 'помилка — заглушка' };
+    return {
+      canvasRef: this.canvasRef, hotRef: this.hotRef,
+      loading: !this.state.ui,
+      hasError: !!u.error, errorText: u.error || '',
+      lost: !!u.lost, reload: () => location.reload(),
+      showHint: ready && !u.interacted,
+      showPhase: !!u.phaseLabel, phaseLabel: u.phaseLabel || '',
+      openAll: v(x => x.open()), closeAll: v(x => x.close()),
+      slider: u.slider ?? 0, sliderDisabled: !!u.sliderDisabled, sliderOpacity: u.sliderDisabled ? 0.4 : 1,
+      onSlider: e => this.v && this.v.setOpen(parseFloat(e.target.value)),
+      pairs: pairNames.map((label, i) => {
+        const on = (u.pair ?? 0) === i;
+        return { label, pressed: on ? 'true' : 'false', bg: on ? '#e9e7e3' : '#2b2c2f', fg: on ? '#1f2022' : '#e9e7e3', border: on ? '#e9e7e3' : '#3d3e42', select: () => this.v && this.v.selectPair(i) };
+      }),
+      sleeveOut: !!u.sleeveOut, sleeveIn: !u.sleeveOut,
+      recordOut: !!u.recordOut, recordIn: !u.recordOut,
+      toggleSleeve: v(x => x.toggleSleeve()), toggleRecord: v(x => x.toggleRecord()),
+      flip: v(x => x.flip()), flipDisabled: !u.canFlip, flipOpacity: u.canFlip ? 1 : 0.4,
+      inspect: v(x => x.inspect()),
+      overview: v(x => x.overview()), overviewDisabled: !u.inspecting, overviewOpacity: u.inspecting ? 1 : 0.4,
+      selectionText: ready ? `Вибрано: ${typeName[u.activeType] || ''}, пара ${(u.pair ?? 0) + 1}` : '',
+      returnAll: v(x => x.returnAll()), extractAll: v(x => x.extractAll()), resetAll: v(x => x.reset()),
+      zoomIn: v(x => x.zoom(0.8)), zoomOut: v(x => x.zoom(1.25)),
+      rotL: v(x => x.rotate(-1)), rotR: v(x => x.rotate(1)),
+      viewFront: v(x => x.viewFront()), viewBack: v(x => x.viewBack())
+    };
+  }
+}
+</script>
+</body>
+</html>

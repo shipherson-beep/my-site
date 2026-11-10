@@ -1,0 +1,89 @@
+{
+  "units": "mm",
+  "sceneUnitsPerMm": 0.001,
+  "panelHeight": 315,
+  "panelWidths": [322.7, 323.4, 322.7],
+  "spineWidths": { "H12": 6, "H23": 8 },
+  "closeOrder": ["P1", "P3"],
+  "openOrder": ["P3", "P1"],
+  "closedFront": "P3.outer",
+  "closedBack": "P2.outer",
+  "pocketExitDirections": {
+    "P1": [-1, 0, 0],
+    "P2": [-1, 0, 0],
+    "P3": [1, 0, 0]
+  },
+  "sleeveSize": [308, 308],
+  "recordDiameter": 300,
+  "recordThickness": 1.5,
+  "labelDiameter": 100,
+  "centerHoleDiameter": 7.3,
+  "dimensionsStatus": "pdf-measured-and-provisional",
+
+  "boardThickness": 0.45,
+  "sleevePaperThickness": 0.12,
+  "sleeveInnerClearance": 0.06,
+  "pocketCavityClearance": 0.2,
+  "foldClearance": 0.1,
+  "enforceFoldClearance": true,
+  "hingeSplit": { "H12": [0.5, 0.5], "H23": [0.5, 0.5] },
+  "pocketNotch": { "panels": ["P2"], "height": 20, "depth": 10 },
+
+  "pairs": [
+    { "id": 1, "panel": "P1", "sleeve": "S1", "record": "R1" },
+    { "id": 2, "panel": "P2", "sleeve": "S2", "record": "R2" },
+    { "id": 3, "panel": "P3", "sleeve": "S3", "record": "R3" }
+  ],
+  "neighborBendDeg": 85,
+
+  "layout": {
+    "rowGap": 24,
+    "forwardZ": 70,
+    "recordPassZ": 110,
+    "inspectForward": 260,
+    "exitMargin": 14,
+    "recordExitMargin": 12
+  },
+
+  "durations": {
+    "flap": 0.85,
+    "slide": 0.8,
+    "move": 0.85,
+    "flip": 0.5,
+    "bend": 0.75,
+    "inspect": 0.6,
+    "unrotate": 0.45,
+    "reducedMotionFactor": 0.3
+  },
+
+  "materials": {
+    "printRoughness": 0.85,
+    "board": "#c4bdb0",
+    "cavity": "#a9a295",
+    "sleevePaper": "#e2ded6",
+    "sleeveRoughness": 0.82,
+    "spine": "#141414",
+    "spineInner": "#141414",
+    "vinyl": { "color": "#0c0c0d", "opacity": 1, "roughness": 0.3, "clearcoat": 0.6, "clearcoatRoughness": 0.3, "grooveBump": 0.5 },
+    "vinylStyles": [
+      { "type": "splatter", "base": "#5fc12c", "accent": "#ffe41c", "seed": 3, "rays": 34, "drops": 260 },
+      { "type": "marble", "base": "#5b1bd6", "accent": "#f08fdc", "highlight": "#ffc8f0", "seed": 7 },
+      { "type": "swirl", "base": "#a6e9ee", "accent": "#22b2b6", "seed": 11, "twist": 2.4, "angle": 0.6 }
+    ],
+    "labelRoughness": 0.7
+  },
+
+  "interaction": { "dragThresholdPx": 6, "touchDragThresholdPx": 10 },
+
+  "camera": {
+    "fov": 30,
+    "startDir": [0.62, 0.34, -1],
+    "frontDir": [0.0, 0.12, -1],
+    "backDir": [0.0, 0.12, 1],
+    "margin": 1.12,
+    "minZoom": 0.18,
+    "maxZoom": 2.5
+  },
+
+  "render": { "maxPixelRatio": 2, "shadows": true, "baseTextureSize": 1024, "labelTextureSize": 512, "detailTextureSize": 2048 }
+}

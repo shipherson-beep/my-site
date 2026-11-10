@@ -1,0 +1,364 @@
+{
+  "_readme": "Щоб підключити графіку: покладіть файл у trifold/assets/ і впишіть його назву в поле src відповідного слота. src: null = заглушка. fit: contain | cover | stretch. rotation: 0/90/180/270. offset у частках поверхні.",
+  "basePath": "assets/",
+  "displayNames": {
+    "record.1.labelA": "A",
+    "record.1.labelB": "B",
+    "record.2.labelA": "C",
+    "record.2.labelB": "D",
+    "record.3.labelA": "E",
+    "record.3.labelB": "F"
+  },
+  "slots": {
+    "jacket.p1.outer": {
+      "file": "jacket_p1_outer.jpg",
+      "src": "jacket_p1_outer.jpg",
+      "kind": "panel",
+      "fit": "cover",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "jacket.p2.outer": {
+      "file": "jacket_p2_outer.jpg",
+      "src": "jacket_p2_outer.jpg",
+      "kind": "panel",
+      "fit": "cover",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "jacket.p3.outer": {
+      "file": "jacket_p3_outer.jpg",
+      "src": "jacket_p3_outer.jpg",
+      "kind": "panel",
+      "fit": "cover",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "jacket.p1.inner": {
+      "file": "jacket_p1_inner.jpg",
+      "src": "jacket_p1_inner.jpg",
+      "kind": "panel",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.93,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "jacket.p2.inner": {
+      "file": "jacket_p2_inner.jpg",
+      "src": "jacket_p2_inner.jpg",
+      "kind": "panel",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.93,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "jacket.p3.inner": {
+      "file": "jacket_p3_inner.jpg",
+      "src": "jacket_p3_inner.jpg",
+      "kind": "panel",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.93,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.1.front": {
+      "file": "sleeve_01_front.jpg",
+      "src": "sleeve_01_front.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.1.back": {
+      "file": "sleeve_01_back.jpg",
+      "src": "sleeve_01_back.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.2.front": {
+      "file": "sleeve_02_front.jpg",
+      "src": "sleeve_02_front.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.2.back": {
+      "file": "sleeve_02_back.jpg",
+      "src": "sleeve_02_back.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.3.front": {
+      "file": "sleeve_03_back.jpg",
+      "src": "sleeve_03_back.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "sleeve.3.back": {
+      "file": "sleeve_03_front.jpg",
+      "src": "sleeve_03_front.jpg",
+      "kind": "sleeve",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 0.86,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false,
+      "fill": "#000000"
+    },
+    "record.1.labelA": {
+      "file": "record_01_label_a.png",
+      "src": "record_01_label_a.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.1.labelB": {
+      "file": "record_01_label_b.png",
+      "src": "record_01_label_b.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.2.labelA": {
+      "file": "record_02_label_c.png",
+      "src": "record_02_label_c.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.2.labelB": {
+      "file": "record_02_label_d.png",
+      "src": "record_02_label_d.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.3.labelA": {
+      "file": "record_03_label_e.png",
+      "src": "record_03_label_e.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.3.labelB": {
+      "file": "record_03_label_f.png",
+      "src": "record_03_label_f.png",
+      "kind": "label",
+      "fit": "stretch",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    }
+  },
+  "optional": {
+    "spine.h12.outer": {
+      "file": "spine_h12_outer.webp",
+      "src": null,
+      "kind": "spine",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "spine.h23.outer": {
+      "file": "spine_h23_outer.webp",
+      "src": null,
+      "kind": "spine",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.1.vinylA": {
+      "file": "record_01_vinyl_a.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.1.vinylB": {
+      "file": "record_01_vinyl_b.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.2.vinylA": {
+      "file": "record_02_vinyl_a.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.2.vinylB": {
+      "file": "record_02_vinyl_b.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.3.vinylA": {
+      "file": "record_03_vinyl_a.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    },
+    "record.3.vinylB": {
+      "file": "record_03_vinyl_b.webp",
+      "src": null,
+      "kind": "vinyl",
+      "fit": "contain",
+      "rotation": 0,
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ],
+      "mirror": false
+    }
+  },
+  "_labels": "Етикетки: вихідні PDF 106×106 мм (3 мм обріз з кожного боку) обрізані до 100×100 мм; геометрія вирізає коло ⌀100 і отвір."
+}
